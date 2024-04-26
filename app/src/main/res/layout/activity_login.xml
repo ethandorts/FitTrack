@@ -32,13 +32,13 @@
         android:textColor="#000000"
         android:textSize="34sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/edit_text_email"
+        app:layout_constraintBottom_toTopOf="@+id/edit_text_firstname"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logo" />
 
     <EditText
-        android:id="@+id/edit_text_email"
+        android:id="@+id/edit_text_firstname"
         android:layout_width="230dp"
         android:layout_height="0dp"
         android:layout_marginBottom="23dp"
@@ -65,7 +65,7 @@
         app:layout_constraintBottom_toTopOf="@+id/btnLogin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_text_email" />
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_firstname" />
 
     <Button
         android:id="@+id/btnLogin"
