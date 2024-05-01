@@ -10,6 +10,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,21 +45,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void requestLocationPermissions() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Request location permissions
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
                     LOCATION_PERMISSION_REQUEST_CODE);
         } else {
-            // Permissions already granted, fetch last known location
             getLastLocation();
+            startLocationUpdates();
         }
     }
 
     private void getLastLocation() {
-        // Check if permission is granted before accessing location
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Handle permission not granted
             Log.d("MainActivity", "Location permission not granted");
             return;
         }
@@ -67,9 +67,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     public void onSuccess(Location location) {
                         if (location != null) {
                             Log.d("MainActivity", "Latitude: " + location.getLatitude() + ", Longitude: " + location.getLongitude());
-                            LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                            googleMap.addMarker(new MarkerOptions().position(currentLocation).title("Current Location"));
-                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 12)); // This line sets the map camera to the current location
+                            updateMapWithLocation(location);
                         } else {
                             Log.d("MainActivity", "No location found");
                         }
@@ -83,15 +81,50 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 });
     }
 
+    private void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.d("MainActivity", "Location permission not granted");
+            return;
+        }
+
+        fusedLocationClient.requestLocationUpdates(createLocationRequest(),
+                new LocationCallback() {
+                    @Override
+                    public void onLocationResult(LocationResult locationResult) {
+                        if (locationResult == null) {
+                            return;
+                        }
+                        for (Location location : locationResult.getLocations()) {
+                            updateMapWithLocation(location);
+                        }
+                    }
+                },
+                null );
+    }
+
+    private LocationRequest createLocationRequest() {
+        return LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(10000)
+                .setFastestInterval(5000);
+    }
+
+    private void updateMapWithLocation(Location location) {
+        LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        googleMap.clear();
+        googleMap.addMarker(new MarkerOptions().position(currentLocation).title("Current Location"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 12));
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, fetch last known location
                 getLastLocation();
+                startLocationUpdates();
             } else {
-                // Permission denied, handle accordingly
                 Log.d("MainActivity", "Location permission denied");
             }
         }
@@ -100,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        LatLng derryLocation = new LatLng(37.4220936, -122.083922);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(derryLocation, 12));
+        LatLng initialLocation = new LatLng(54.597, -5.930);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 12));
     }
 }
