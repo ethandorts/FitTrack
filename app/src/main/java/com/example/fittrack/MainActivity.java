@@ -2,9 +2,15 @@ package com.example.fittrack;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -20,43 +26,60 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 101;
     private FusedLocationProviderClient fusedLocationClient;
     private GoogleMap googleMap;
+    private Location previousLocation;
+    private double distanceTravelled;
+    private TextView txtDistanceTravelled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        txtDistanceTravelled = findViewById(R.id.txtDistanceTravelled);
+        Button btnClear = findViewById(R.id.btnClearMap);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(this);
 
+        btnClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                googleMap.clear();
+            }
+        });
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        requestLocationPermissions();
+        TrackRun();
+
+        txtDistanceTravelled.setText(String.valueOf(distanceTravelled) + "metres");
     }
 
-    private void requestLocationPermissions() {
+    private void TrackRun() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
                     LOCATION_PERMISSION_REQUEST_CODE);
         } else {
-            getLastLocation();
-            startLocationUpdates();
+            retrieveLatestLocation();
+            getLocationUpdates();
         }
     }
 
-    private void getLastLocation() {
+    // Method to get device's latest location - used to update the google map.
+    private void retrieveLatestLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "Location permissions are disabled", Toast.LENGTH_SHORT);
             Log.d("MainActivity", "Location permission not granted");
             return;
         }
@@ -68,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if (location != null) {
                             Log.d("MainActivity", "Latitude: " + location.getLatitude() + ", Longitude: " + location.getLongitude());
                             updateMapWithLocation(location);
+                            previousLocation = location;
                         } else {
                             Log.d("MainActivity", "No location found");
                         }
@@ -81,10 +105,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 });
     }
 
-    private void startLocationUpdates() {
+    // Method to receive ongoing updates of device's location.
+    private void getLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.d("MainActivity", "Location permission not granted");
+            Log.d("MainActivity", "Location permissions were not granted");
             return;
         }
 
@@ -95,39 +120,58 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if (locationResult == null) {
                             return;
                         }
+                        Location prevLocation = null;
                         for (Location location : locationResult.getLocations()) {
                             updateMapWithLocation(location);
+                            previousLocation = location;
                         }
                     }
                 },
                 null );
     }
 
+    // Specifies interval of location updates.
     private LocationRequest createLocationRequest() {
         return LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(10000)
-                .setFastestInterval(5000);
+                .setInterval(3000)
+                .setFastestInterval(1000);
     }
 
+    // Updates Map with latest location found.
     private void updateMapWithLocation(Location location) {
         LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-        googleMap.clear();
-        googleMap.addMarker(new MarkerOptions().position(currentLocation).title("Current Location"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 12));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16));
+        if(previousLocation != null) {
+            double distanceTravelledInterval = previousLocation.distanceTo(location);
+            distanceTravelled += distanceTravelledInterval;
+            String.valueOf(distanceTravelled);
+            txtDistanceTravelled.setText(String.format("%.2f meters", distanceTravelled));
+            LatLng prevLocation = new LatLng(previousLocation.getLatitude(), previousLocation.getLongitude());
+        googleMap.addPolyline(new PolylineOptions()
+                .add(prevLocation, currentLocation)
+                .clickable(true)
+                .width(6)
+                .color(Color.RED));
+        }
     }
 
+    // Requests appropriate location permissions.
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLastLocation();
-                startLocationUpdates();
+                retrieveLatestLocation();
+                getLocationUpdates();
             } else {
-                Log.d("MainActivity", "Location permission denied");
+                Log.d("MainActivity", "Location permissions denied");
             }
         }
+    }
+
+    public void ClearMap() {
+        googleMap.clear();
     }
 
     @Override
