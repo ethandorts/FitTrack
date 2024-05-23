@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -30,6 +31,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.time.LocalDate;
+
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 101;
@@ -38,6 +41,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Location previousLocation;
     private double distanceTravelled;
     private TextView txtDistanceTravelled;
+    private TextView txtRunTime;
+    private Button btnStartRun;
+    private Button btnStopRun;
+
+    private LatLng currentLocation;
+    private boolean isTrackingRun;
+    private boolean isTimerStarted;
+    private int timePassed;
+    private Handler runTimeHandler;
+    private Runnable timer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,25 +59,56 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_main);
         txtDistanceTravelled = findViewById(R.id.txtDistanceTravelled);
         Button btnClear = findViewById(R.id.btnClearMap);
+        Button btnStartRun = findViewById(R.id.btnStart);
+        Button btnStopRun = findViewById(R.id.btnStop);
+        txtRunTime = findViewById(R.id.txtRunTime);
+
+        runTimeHandler = new Handler();
+        timer = new Runnable() {
+            @Override
+            public void run () {
+                if(isTrackingRun) {
+                    timePassed++;
+                    txtRunTime.setText(formatRunTime(timePassed));
+                    runTimeHandler.postDelayed(this, 1000);
+                }
+            }
+        };
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(this);
 
+        txtDistanceTravelled.setText(String.valueOf(distanceTravelled) + "metres");
+
         btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 googleMap.clear();
+                distanceTravelled = 0.00;
+                Toast.makeText(MainActivity.this, "Map and Distance Travelled Reset", Toast.LENGTH_SHORT);
+            }
+        });
+
+        btnStartRun.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isTrackingRun = true;
+            }
+        });
+
+        btnStopRun.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isTrackingRun = false;
             }
         });
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        TrackRun();
-
-        txtDistanceTravelled.setText(String.valueOf(distanceTravelled) + "metres");
+        getUserLocation();
     }
 
-    private void TrackRun() {
+    private void getUserLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -130,6 +175,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 null );
     }
 
+   private void startTimer() {
+       isTimerStarted = true;
+       runTimeHandler.post(timer);
+   }
+
+    private void stopTimer() {
+        isTimerStarted = false;
+        runTimeHandler.removeCallbacks(timer);
+    }
+
     // Specifies interval of location updates.
     private LocationRequest createLocationRequest() {
         return LocationRequest.create()
@@ -140,20 +195,35 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     // Updates Map with latest location found.
     private void updateMapWithLocation(Location location) {
-        LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16));
+        if(isTrackingRun) {
+            if (!isTimerStarted) {
+                startTimer();
+            }
+            DrawRoute(location);
+        } else {
+            stopTimer();
+        }
+    }
+
+    private void DrawRoute(Location location) {
         if(previousLocation != null) {
             double distanceTravelledInterval = previousLocation.distanceTo(location);
             distanceTravelled += distanceTravelledInterval;
             String.valueOf(distanceTravelled);
             txtDistanceTravelled.setText(String.format("%.2f meters", distanceTravelled));
             LatLng prevLocation = new LatLng(previousLocation.getLatitude(), previousLocation.getLongitude());
-        googleMap.addPolyline(new PolylineOptions()
-                .add(prevLocation, currentLocation)
-                .clickable(true)
-                .width(6)
-                .color(Color.RED));
+            googleMap.addPolyline(new PolylineOptions()
+                    .add(prevLocation, currentLocation)
+                    .clickable(true)
+                    .width(6)
+                    .color(Color.RED));
         }
+    }
+
+    private void startRunningClock() {
+        LocalDate date = LocalDate.now();
     }
 
     // Requests appropriate location permissions.
@@ -168,6 +238,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Log.d("MainActivity", "Location permissions denied");
             }
         }
+    }
+
+    private String formatRunTime(int timePassed) {
+        int hours = timePassed / 3600;
+        int minutes = (timePassed % 3600) / 60;
+        int seconds = timePassed % 60;
+        String formattedRunTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+
+        return formattedRunTime;
     }
 
     public void ClearMap() {

@@ -13,31 +13,69 @@
         android:layout_height="0dp"
         android:layout_marginStart="13dp"
         android:layout_marginEnd="13dp"
-        android:layout_marginBottom="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtDistanceTravelled" />
+
+    <Button
+        android:id="@+id/btnStop"
+        android:layout_width="150dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="21dp"
+        android:layout_marginBottom="22dp"
+        android:text="Stop"
+        android:textColorLink="#008000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/map_fragment"
         app:layout_constraintTop_toBottomOf="@+id/txtDistanceTravelled" />
 
     <TextView
         android:id="@+id/txtDistanceTravelled"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="120dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="37dp"
+        android:layout_marginBottom="626dp"
         android:text="Distance Travelled"
-        app:layout_constraintBottom_toTopOf="@+id/map_fragment"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btnStop"
+        app:layout_constraintStart_toEndOf="@+id/btnClearMap"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnClearMap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="35dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="53dp"
+        android:layout_marginBottom="560dp"
         android:text="Clear Map"
+        app:layout_constraintBottom_toTopOf="@+id/btnStart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.092"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnStart"
+        android:layout_width="150dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginBottom="22dp"
+        android:text="Start"
+        android:textColorLink="#008000"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/btnStop"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/map_fragment"
+        app:layout_constraintTop_toBottomOf="@+id/btnClearMap" />
+
+    <TextView
+        android:id="@+id/txtRunTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:text="Run Time"
+        app:layout_constraintBottom_toTopOf="@+id/map_fragment"
+        app:layout_constraintEnd_toEndOf="@+id/btnStart"
+        app:layout_constraintStart_toStartOf="@+id/btnStart" />
 </androidx.constraintlayout.widget.ConstraintLayout>
