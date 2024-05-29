@@ -78,4 +78,5 @@
         app:layout_constraintBottom_toTopOf="@+id/map_fragment"
         app:layout_constraintEnd_toEndOf="@+id/btnStart"
         app:layout_constraintStart_toStartOf="@+id/btnStart" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

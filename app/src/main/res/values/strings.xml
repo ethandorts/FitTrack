@@ -7,4 +7,5 @@
     <string name="fb_login_protocol_scheme">fb1486987472220581</string>
     <string name="facebook_client_token">2debffe31a15442d86340e6ebb9105d1</string>
     <string name="google_maps_api_key">AIzaSyBpAD_WhJNYjpzvB4gvp0z6CgWzFB8HEtA</string>
+    <string name="default_web_client_id">1021387748354-n3rmgtv2g1q7ea48cuolo64l7hok3ol0.apps.googleusercontent.com</string>
 </resources>

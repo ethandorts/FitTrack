@@ -253,6 +253,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         googleMap.clear();
     }
 
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;

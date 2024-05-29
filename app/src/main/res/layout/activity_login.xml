@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/btnLogout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/fit_track_background"
@@ -107,30 +108,28 @@
         app:layout_constraintEnd_toEndOf="@+id/txt_no_account"
         app:layout_constraintTop_toBottomOf="@+id/txt_no_account" />
 
-    <Button
+    <com.facebook.login.widget.LoginButton
         android:id="@+id/btnFacebookLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/button_blue"
-        android:text="Login with Facebook"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="252dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="68dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnRegister"
-        app:layout_constraintVertical_bias="0.183" />
+        app:layout_constraintTop_toBottomOf="@+id/btnRegister" />
 
     <Button
         android:id="@+id/btnGoogleLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
+        android:layout_marginStart="33dp"
+        android:layout_marginTop="22dp"
         android:backgroundTint="@color/white"
         android:text="Login with Google"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/btnFacebookLogin"
         app:layout_constraintTop_toBottomOf="@+id/btnFacebookLogin"
-        app:layout_constraintVertical_bias="0.111" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <!-- Hint text color -->
 
