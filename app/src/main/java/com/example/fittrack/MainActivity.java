@@ -15,6 +15,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -26,11 +28,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -101,6 +104,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
                 isTrackingRun = false;
+                SaveActivityDialog saveActivityDialog = new SaveActivityDialog();
+
+                Bundle runningData = new Bundle();
+                runningData.putDouble("distance", distanceTravelled);
+                runningData.putDouble("time", timePassed);
+
+                saveActivityDialog.setArguments(runningData);
+                saveActivityDialog.show(getSupportFragmentManager(), "SaveActivity");
+
             }
         });
 
