@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -35,6 +36,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -54,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private int timePassed;
     private Handler runTimeHandler;
     private Runnable timer;
+    private List<LatLng> activityLocations = new ArrayList<>();
 
 
     @Override
@@ -82,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(this);
 
-        txtDistanceTravelled.setText(String.valueOf(distanceTravelled) + "metres");
+        txtDistanceTravelled.setText(String.format("%.2f metres", distanceTravelled));
 
         btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,11 +108,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
                 isTrackingRun = false;
+                System.out.println(activityLocations);
                 SaveActivityDialog saveActivityDialog = new SaveActivityDialog();
 
                 Bundle runningData = new Bundle();
                 runningData.putDouble("distance", distanceTravelled);
                 runningData.putDouble("time", timePassed);
+                runningData.putParcelableArrayList("activityLocations", (ArrayList<? extends Parcelable>) activityLocations);
 
                 saveActivityDialog.setArguments(runningData);
                 saveActivityDialog.show(getSupportFragmentManager(), "SaveActivity");
@@ -127,40 +133,42 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
                     LOCATION_PERMISSION_REQUEST_CODE);
         } else {
-            retrieveLatestLocation();
+//            retrieveLatestLocation();
             getLocationUpdates();
         }
     }
 
     // Method to get device's latest location - used to update the google map.
-    private void retrieveLatestLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "Location permissions are disabled", Toast.LENGTH_SHORT);
-            Log.d("MainActivity", "Location permission not granted");
-            return;
-        }
-
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null) {
-                            Log.d("MainActivity", "Latitude: " + location.getLatitude() + ", Longitude: " + location.getLongitude());
-                            updateMapWithLocation(location);
-                            previousLocation = location;
-                        } else {
-                            Log.d("MainActivity", "No location found");
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("MainActivity", "Failed to get location", e);
-                    }
-                });
-    }
+//    private void retrieveLatestLocation() {
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+//                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            Toast.makeText(this, "Location permissions are disabled", Toast.LENGTH_SHORT);
+//            Log.d("MainActivity", "Location permission not granted");
+//            return;
+//        }
+//
+//        fusedLocationClient.getLastLocation()
+//                .addOnSuccessListener(new OnSuccessListener<Location>() {
+//                    @Override
+//                    public void onSuccess(Location location) {
+//                        if (location != null) {
+//                            Log.d("MainActivity", "Latitude: " + location.getLatitude() + ", Longitude: " + location.getLongitude());
+//                            updateMapWithLocation(location);
+//                            //LatLng NowLocation = new LatLng(location.getLatitude(), location.getLongitude());
+//                            //activityLocations.add(NowLocation);
+//                            previousLocation = location;
+//                        } else {
+//                            Log.d("MainActivity", "No location found");
+//                        }
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Log.e("MainActivity", "Failed to get location", e);
+//                    }
+//                });
+//    }
 
     // Method to receive ongoing updates of device's location.
     private void getLocationUpdates() {
@@ -181,6 +189,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         for (Location location : locationResult.getLocations()) {
                             updateMapWithLocation(location);
                             previousLocation = location;
+
+                            if(isTrackingRun) {
+                                LatLng newLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                                activityLocations.add(newLocation);
+                            }
                         }
                     }
                 },
@@ -244,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                retrieveLatestLocation();
+//                retrieveLatestLocation();
                 getLocationUpdates();
             } else {
                 Log.d("MainActivity", "Location permissions denied");

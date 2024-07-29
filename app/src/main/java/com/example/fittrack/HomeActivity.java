@@ -18,9 +18,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -66,6 +68,7 @@ public class HomeActivity extends AppCompatActivity {
         ActivitiesRecyclerViewAdapter activitiesAdapter = new ActivitiesRecyclerViewAdapter(this, UserActivities);
         activitiesRecyclerView.setAdapter(activitiesAdapter);
         activitiesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        activitiesRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         DocumentReference documentReference = db.collection("Users").document(UserID);
         documentReference.get()
@@ -83,8 +86,6 @@ public class HomeActivity extends AppCompatActivity {
                         System.out.println(e.getMessage());
                     }
                 });
-
-        UserName.setText("Username");
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -109,31 +110,67 @@ public class HomeActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()) {
-                            for(QueryDocumentSnapshot document : task.getResult()) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
                                 Map<String, Object> ActivitiesRetrieved = document.getData();
-
-                                // create ActivityModels for each activity query returns
-                                ActivityModel activityReturned = new ActivityModel(
-                                        String.valueOf(ActivitiesRetrieved.get("type")),
-                                        String.valueOf(ActivitiesRetrieved.get("typeImage")),
-                                        String.valueOf(ActivitiesRetrieved.get("date")),
-                                        String.valueOf(ActivitiesRetrieved.get("distance")),
-                                        String.valueOf(ActivitiesRetrieved.get("time")),
-                                        String.valueOf(ActivitiesRetrieved.get("pace")),
-                                        String.valueOf(ActivitiesRetrieved.get("UserID")),
-                                        String.valueOf(ActivitiesRetrieved.get("UserImage"))
-                                );
-                                UserActivities.add(activityReturned);
+                                String UserUUID = String.valueOf(ActivitiesRetrieved.get("UserID"));
+                                queryForUserFullName(UserUUID, new FullUserNameCallback() {
+                                    @Override
+                                    public void onCallback(String Username) {
+                                        if (FullName != null) {
+                                            // create ActivityModels for each activity query returns
+                                            ActivityModel activityReturned = new ActivityModel(
+                                                    String.valueOf(ActivitiesRetrieved.get("type")),
+                                                    String.valueOf(ActivitiesRetrieved.get("typeImage")),
+                                                    String.valueOf(ActivitiesRetrieved.get("date")),
+                                                    String.valueOf(ActivitiesRetrieved.get("distance")),
+                                                    formatRunTime(Double.parseDouble(String.valueOf(ActivitiesRetrieved.get("time")))),
+                                                    String.valueOf(ActivitiesRetrieved.get("pace")),
+                                                    FullName,
+                                                    String.valueOf(ActivitiesRetrieved.get("UserImage")),
+                                                    (List<Object>) ActivitiesRetrieved.get("activityCoordinates")
+                                            );
+                                            UserActivities.add(activityReturned);
+                                        }
+                                        System.out.println("UserActivities: " + UserActivities.size());
+                                        activitiesAdapter.notifyDataSetChanged();
+                                    }
+                                });
                             }
-                            System.out.println( "UserActivities: " + UserActivities.size());
-                            activitiesAdapter.notifyDataSetChanged();
-
                         } else {
                             Log.d(TAG, "Retrieval Errors: ", task.getException());
                         }
                     }
                 });
-        System.out.println("Made it to the end");
     }
+
+    private String formatRunTime(double timePassed) {
+        int hours = (int) (timePassed / 3600);
+        int minutes = (int) ((timePassed % 3600) / 60);
+        int seconds = (int) (timePassed % 60);
+        String formattedRunTime = String.format("%02d:%02d:%2d", hours, minutes, seconds);
+
+        return formattedRunTime;
+    }
+
+    private void queryForUserFullName(String UserID, FullUserNameCallback callback) {
+        DocumentReference documentReference = db.collection("Users").document(UserID);
+        documentReference.get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Map<String, Object> data = documentSnapshot.getData();
+                        FullName = data.get("FirstName") + " " + data.get("Surname");
+                        callback.onCallback(FullName);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        System.out.println("Couldn't fetch user details");
+                        System.out.println(e.getMessage());
+                        callback.onCallback(null);
+                    }
+                });
+    }
+
 }

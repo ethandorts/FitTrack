@@ -72,9 +72,6 @@ public class MenuActivity extends AppCompatActivity {
                     }
                 });
 
-
-
-
         btnRecordActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
