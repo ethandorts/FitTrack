@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ActivitiesRecyclerViewAdapter extends RecyclerView.Adapter<ActivitiesRecyclerViewAdapter.MyViewHolder> {
-
-
     private Context context;
     private ArrayList<ActivityModel> userActivities;
 
@@ -98,9 +97,11 @@ public class ActivitiesRecyclerViewAdapter extends RecyclerView.Adapter<Activiti
         TextView activityType, activityDate, activityDistance, activityTime, activityPace, activityUser;
         ImageView activityTypeImage, activityUserImage;
         MapView activityMapContainer;
+        ProgressBar loadingActivities;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
+            loadingActivities = itemView.findViewById(R.id.LoadingActivitiesProgressBar);
             activityType = itemView.findViewById(R.id.txtRunningActivityTitle);
             activityDate = itemView.findViewById(R.id.txtActivityDateValue);
             activityDistance = itemView.findViewById(R.id.txtDistanceValue);
@@ -110,29 +111,6 @@ public class ActivitiesRecyclerViewAdapter extends RecyclerView.Adapter<Activiti
             activityTypeImage = itemView.findViewById(R.id.running_icon);
             activityUserImage = itemView.findViewById(R.id.profileImage);
             activityMapContainer = itemView.findViewById(R.id.mapView);
-        }
-
-        void onMapViewResume() {
-            if (activityMapContainer != null) {
-                activityMapContainer.onResume();
-            }
-        }
-        void onMapViewPause() {
-            if (activityMapContainer != null) {
-                activityMapContainer.onPause();
-            }
-        }
-
-        void onMapViewDestroy() {
-            if (activityMapContainer != null) {
-                activityMapContainer.onDestroy();
-            }
-        }
-
-        void onMapViewLowMemory() {
-            if (activityMapContainer != null) {
-                activityMapContainer.onLowMemory();
-            }
         }
         @Override
         public void onMapReady(@NonNull GoogleMap googleMap) {

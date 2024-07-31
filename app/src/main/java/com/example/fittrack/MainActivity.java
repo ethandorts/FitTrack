@@ -54,9 +54,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LatLng currentLocation;
     private boolean isTrackingRun;
     private boolean isTimerStarted;
-    private int timePassed;
     private Handler runTimeHandler;
     private Runnable timer;
+    private long startTime;
+    private int elapsedTime;
     private List<LatLng> activityLocations = new ArrayList<>();
 
 
@@ -75,8 +76,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void run () {
                 if(isTrackingRun) {
-                    timePassed++;
-                    txtRunTime.setText(formatRunTime(timePassed));
+                    elapsedTime = (int) ((System.currentTimeMillis() - startTime) / 1000);
+                    txtRunTime.setText(formatRunTime(elapsedTime));
                     runTimeHandler.postDelayed(this, 1000);
                 }
             }
@@ -113,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 Bundle runningData = new Bundle();
                 runningData.putDouble("distance", distanceTravelled);
-                runningData.putDouble("time", timePassed);
+                runningData.putDouble("time", elapsedTime);
                 runningData.putParcelableArrayList("activityLocations", (ArrayList<? extends Parcelable>) activityLocations);
 
                 saveActivityDialog.setArguments(runningData);
@@ -133,42 +134,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
                     LOCATION_PERMISSION_REQUEST_CODE);
         } else {
-//            retrieveLatestLocation();
             getLocationUpdates();
         }
     }
-
-    // Method to get device's latest location - used to update the google map.
-//    private void retrieveLatestLocation() {
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-//                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            Toast.makeText(this, "Location permissions are disabled", Toast.LENGTH_SHORT);
-//            Log.d("MainActivity", "Location permission not granted");
-//            return;
-//        }
-//
-//        fusedLocationClient.getLastLocation()
-//                .addOnSuccessListener(new OnSuccessListener<Location>() {
-//                    @Override
-//                    public void onSuccess(Location location) {
-//                        if (location != null) {
-//                            Log.d("MainActivity", "Latitude: " + location.getLatitude() + ", Longitude: " + location.getLongitude());
-//                            updateMapWithLocation(location);
-//                            //LatLng NowLocation = new LatLng(location.getLatitude(), location.getLongitude());
-//                            //activityLocations.add(NowLocation);
-//                            previousLocation = location;
-//                        } else {
-//                            Log.d("MainActivity", "No location found");
-//                        }
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Log.e("MainActivity", "Failed to get location", e);
-//                    }
-//                });
-//    }
 
     // Method to receive ongoing updates of device's location.
     private void getLocationUpdates() {
@@ -202,12 +170,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
    private void startTimer() {
        isTimerStarted = true;
+       startTime = System.currentTimeMillis();
        runTimeHandler.post(timer);
    }
 
     private void stopTimer() {
         isTimerStarted = false;
         runTimeHandler.removeCallbacks(timer);
+        elapsedTime = (int) (System.currentTimeMillis() - startTime);
     }
 
     // Specifies interval of location updates.
@@ -257,7 +227,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                retrieveLatestLocation();
                 getLocationUpdates();
             } else {
                 Log.d("MainActivity", "Location permissions denied");
