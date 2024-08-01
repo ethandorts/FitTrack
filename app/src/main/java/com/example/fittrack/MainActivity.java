@@ -7,6 +7,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -38,6 +39,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -58,7 +60,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Runnable timer;
     private long startTime;
     private int elapsedTime;
+    private double milestoneTarget = 100;
     private List<LatLng> activityLocations = new ArrayList<>();
+    private TextToSpeech DistanceTalker;
 
 
     @Override
@@ -71,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Button btnStopRun = findViewById(R.id.btnStop);
         txtRunTime = findViewById(R.id.txtRunTime);
 
+
         runTimeHandler = new Handler();
         timer = new Runnable() {
             @Override
@@ -82,6 +87,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
         };
+
+        DistanceTalker = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status != TextToSpeech.ERROR) {
+                    DistanceTalker.setLanguage(Locale.UK);
+                }
+            }
+        });
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_fragment);
@@ -195,8 +209,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if(isTrackingRun) {
             if (!isTimerStarted) {
                 startTimer();
+                DistanceTalker.speak("Activity Started", TextToSpeech.QUEUE_FLUSH, null);
             }
             DrawRoute(location);
+            DistanceSpeakerAssistant(distanceTravelled);
         } else {
             stopTimer();
         }
@@ -241,6 +257,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         String formattedRunTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
 
         return formattedRunTime;
+    }
+
+    private void DistanceSpeakerAssistant(double DistanceTravelled) {
+        while(distanceTravelled >= milestoneTarget) {
+            DistanceTalker.speak(milestoneTarget + " metres done" , TextToSpeech.QUEUE_FLUSH, null);
+            milestoneTarget += 100;
+        }
     }
 
     public void ClearMap() {

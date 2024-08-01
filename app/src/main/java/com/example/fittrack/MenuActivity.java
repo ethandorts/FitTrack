@@ -56,21 +56,7 @@ public class MenuActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance().getCurrentUser();
         UserID = mAuth.getUid();
 
-        DocumentReference documentReference = db.collection("Users").document(UserID);
-        documentReference.get()
-                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                            @Override
-                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                 Map<String, Object> data = documentSnapshot.getData();
-                                 FullName = data.get("FirstName") + " " + data.get("Surname");
-                                 txtWelcome.setText("Welcome " + FullName);
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        System.out.println(e.getMessage());
-                    }
-                });
+        fetchUserData(UserID);
 
         btnRecordActivity.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,5 +71,29 @@ public class MenuActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void fetchUserData(String UserID) {
+        DocumentReference documentReference = db.collection("Users").document(UserID);
+        documentReference.get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Map<String, Object> data = documentSnapshot.getData();
+                        FullName = data.get("FirstName") + " " + data.get("Surname");
+                        txtWelcome.setText("Welcome " + FullName);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchUserData(UserID);
     }
 }

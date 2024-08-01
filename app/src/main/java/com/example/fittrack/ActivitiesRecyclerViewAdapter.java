@@ -97,11 +97,9 @@ public class ActivitiesRecyclerViewAdapter extends RecyclerView.Adapter<Activiti
         TextView activityType, activityDate, activityDistance, activityTime, activityPace, activityUser;
         ImageView activityTypeImage, activityUserImage;
         MapView activityMapContainer;
-        ProgressBar loadingActivities;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            loadingActivities = itemView.findViewById(R.id.LoadingActivitiesProgressBar);
             activityType = itemView.findViewById(R.id.txtRunningActivityTitle);
             activityDate = itemView.findViewById(R.id.txtActivityDateValue);
             activityDistance = itemView.findViewById(R.id.txtDistanceValue);

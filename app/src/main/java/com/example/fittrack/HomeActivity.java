@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -48,9 +50,11 @@ public class HomeActivity extends AppCompatActivity {
     FirebaseFirestore db;
     FirebaseUser mAuth;
     String UserID;
+    ProgressBar loadingActivities;
 
     ArrayList<ActivityModel> UserActivities = new ArrayList<ActivityModel>();
     private String FullName;
+    private ActivitiesRecyclerViewAdapter activitiesAdapter;
     private StringBuilder ActivityDataBuilder;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +62,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         UserName = findViewById(R.id.txtUserName);
+        loadingActivities = findViewById(R.id.LoadingActivitiesProgressBar);
 
         db = FirebaseFirestore.getInstance();
 
@@ -65,7 +70,7 @@ public class HomeActivity extends AppCompatActivity {
         UserID = mAuth.getUid();
 
         RecyclerView activitiesRecyclerView = findViewById(R.id.activitiesRecyclerView);
-        ActivitiesRecyclerViewAdapter activitiesAdapter = new ActivitiesRecyclerViewAdapter(this, UserActivities);
+        activitiesAdapter = new ActivitiesRecyclerViewAdapter(this, UserActivities);
         activitiesRecyclerView.setAdapter(activitiesAdapter);
         activitiesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         activitiesRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
@@ -102,8 +107,26 @@ public class HomeActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
 
-        ActivityDataBuilder = new StringBuilder();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        fetchActivitiesData(UserID);
+    }
+
+    private String formatRunTime(double timePassed) {
+        int hours = (int) (timePassed / 3600);
+        int minutes = (int) ((timePassed % 3600) / 60);
+        int seconds = (int) (timePassed % 60);
+        String formattedRunTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+
+        return formattedRunTime;
+    }
+
+    private void fetchActivitiesData(String UserID) {
+        UserActivities.clear();
+        loadingActivities.setVisibility(View.VISIBLE);
         db.collection("Activities")
                 .whereEqualTo("UserID", UserID)
                 .get()
@@ -134,6 +157,7 @@ public class HomeActivity extends AppCompatActivity {
                                         }
                                         System.out.println("UserActivities: " + UserActivities.size());
                                         activitiesAdapter.notifyDataSetChanged();
+                                        loadingActivities.setVisibility(View.GONE);
                                     }
                                 });
                             }
@@ -142,15 +166,6 @@ public class HomeActivity extends AppCompatActivity {
                         }
                     }
                 });
-    }
-
-    private String formatRunTime(double timePassed) {
-        int hours = (int) (timePassed / 3600);
-        int minutes = (int) ((timePassed % 3600) / 60);
-        int seconds = (int) (timePassed % 60);
-        String formattedRunTime = String.format("%02d:%02d:%2d", hours, minutes, seconds);
-
-        return formattedRunTime;
     }
 
     private void queryForUserFullName(String UserID, FullUserNameCallback callback) {
