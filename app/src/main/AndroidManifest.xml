@@ -7,16 +7,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <meta-data
-        android:name="com.parse.SERVER_URL"
-        android:value="@string/back4app_server_url" />
-    <meta-data
-        android:name="com.parse.APPLICATION_ID"
-        android:value="@string/back4app_app_id" />
-    <meta-data
-        android:name="com.parse.CLIENT_KEY"
-        android:value="@string/back4app_client_key" />
-
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -58,13 +48,13 @@
             android:resource="@array/preloaded_fonts" />
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
+            android:value="${FACEBOOK_APP_ID}" />
         <meta-data
             android:name="com.facebook.sdk.ClientToken"
-            android:value="@string/facebook_client_token" />
+            android:value="${FACEBOOK_CLIENT_TOKEN}" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_api_key" />
+            android:value="${GOOGLE_MAPS_API_KEY}" />
 
         <provider
             android:name="com.facebook.FacebookContentProvider"
