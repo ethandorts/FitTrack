@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Runnable timer;
     private long startTime;
     private int elapsedTime;
-    private double milestoneTarget = 100;
+    private double milestoneTarget = 1000;
     private List<LatLng> activityLocations = new ArrayList<>();
     private TextToSpeech DistanceTalker;
 
@@ -198,8 +198,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationRequest createLocationRequest() {
         return LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(3000)
-                .setFastestInterval(1000);
+                .setInterval(1000)
+                .setFastestInterval(200);
     }
 
     // Updates Map with latest location found.
@@ -262,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void DistanceSpeakerAssistant(double DistanceTravelled) {
         while(distanceTravelled >= milestoneTarget) {
             DistanceTalker.speak(milestoneTarget + " metres done" , TextToSpeech.QUEUE_FLUSH, null);
-            milestoneTarget += 100;
+            milestoneTarget += 1000;
         }
     }
 
