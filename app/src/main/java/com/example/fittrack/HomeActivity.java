@@ -47,7 +47,7 @@ import java.util.concurrent.Executors;
 
 public class HomeActivity extends AppCompatActivity {
 
-    ImageView addFriend;
+    ImageView addFriend, btnMessageFriends;
     TextView UserName;
     FirebaseFirestore db;
     FirebaseUser mAuth;
@@ -64,6 +64,7 @@ public class HomeActivity extends AppCompatActivity {
 
         UserName = findViewById(R.id.txtUserName);
         loadingActivities = findViewById(R.id.LoadingActivitiesProgressBar);
+        btnMessageFriends = findViewById(R.id.btnMessageFriends);
 
         db = FirebaseFirestore.getInstance();
 
@@ -91,6 +92,15 @@ public class HomeActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        btnMessageFriends.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, DirectMessagingMenu.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -213,5 +223,4 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 });
     }
-
 }
