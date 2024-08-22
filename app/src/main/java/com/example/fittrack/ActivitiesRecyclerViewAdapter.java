@@ -22,8 +22,12 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.Timestamp;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -48,10 +52,10 @@ public class ActivitiesRecyclerViewAdapter extends RecyclerView.Adapter<Activiti
         ActivityModel activity = userActivities.get(position);
 
         holder.activityType.setText(activity.getActivityType());
-        holder.activityDate.setText(activity.getActivityDate());
-        holder.activityDistance.setText(activity.getActivityDistance() + " km");
+        holder.activityDate.setText(dateFormatter(activity.getActivityDate()));
+        holder.activityDistance.setText(activity.getActivityDistance() + " m");
         holder.activityTime.setText(activity.getActivityTime());
-        holder.activityPace.setText(activity.getActivityPace() + " km/h");
+        holder.activityPace.setText(activity.getActivityPace() + " /km");
         holder.activityUser.setText(activity.getActivityUser());
         holder.activityMapContainer.onCreate(null);
         holder.activityMapContainer.onResume();
@@ -89,6 +93,14 @@ public class ActivitiesRecyclerViewAdapter extends RecyclerView.Adapter<Activiti
     @Override
     public int getItemCount() {
         return userActivities.size();
+    }
+
+    private String dateFormatter(Timestamp timestamp) {
+        Date date = timestamp.toDate();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        String formattedDate = formatter.format(date);
+
+        return formattedDate;
     }
 
 

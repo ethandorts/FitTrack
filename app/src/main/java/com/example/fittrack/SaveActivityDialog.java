@@ -13,6 +13,7 @@ import androidx.fragment.app.DialogFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.internal.ParcelableSparseArray;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -33,11 +34,11 @@ public class SaveActivityDialog extends DialogFragment {
     private FirebaseUser mAuth;
     private String UserID;
     private FirebaseFirestore db;
-    private static final DecimalFormat rounder = new DecimalFormat("0.00");
+    private static final DecimalFormat TwoDecimalRounder = new DecimalFormat("0.00");
+
     private double distance;
     private double time;
     private LocalDate date;
-    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private List<Parcelable> activityLocations = new ArrayList<>();
     @Override
     public Dialog onCreateDialog(Bundle SavedInstanceState) {
@@ -54,12 +55,13 @@ public class SaveActivityDialog extends DialogFragment {
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
+
         Map<String, Object> data = new HashMap<>();
-        data.put("distance", rounder.format(distance));
+        data.put("distance", TwoDecimalRounder.format(distance));
         data.put("time", time);
         data.put("UserID", UserID);
-        data.put("date", date.now().format(dateFormatter));
-        data.put("pace", "5:30"); // inserted value for pace
+        data.put("date", Timestamp.now());
+        data.put("pace", (calculateAveragePace(distance, time)));
         data.put("type", "Running");
         data.put("activityCoordinates", activityLocations);
 
@@ -89,5 +91,16 @@ public class SaveActivityDialog extends DialogFragment {
                     }
                 });
         return builder.create();
+    }
+
+    private String calculateAveragePace(double distance, double time) {
+        double speed = distance / time;
+        double kilometresPerHour = speed * 3.6;
+        double averagePace = Double.parseDouble(TwoDecimalRounder.format(60 / kilometresPerHour));
+        int seconds = (int) (averagePace % 1 * 60);
+        int minutes = (int) averagePace;
+        String formattedPace = minutes + ":" + seconds;
+
+        return String.valueOf(formattedPace);
     }
 }

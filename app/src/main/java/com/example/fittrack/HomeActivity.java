@@ -30,6 +30,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -49,13 +50,13 @@ public class HomeActivity extends AppCompatActivity {
 
     ImageView addFriend, btnMessageFriends;
     TextView UserName;
-    FirebaseFirestore db;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseUser mAuth;
     String UserID;
     ProgressBar loadingActivities;
+    FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
 
     ArrayList<ActivityModel> UserActivities = new ArrayList<ActivityModel>();
-    private String FullName;
     private ActivitiesRecyclerViewAdapter activitiesAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +67,21 @@ public class HomeActivity extends AppCompatActivity {
         loadingActivities = findViewById(R.id.LoadingActivitiesProgressBar);
         btnMessageFriends = findViewById(R.id.btnMessageFriends);
 
-        db = FirebaseFirestore.getInstance();
-
         mAuth = FirebaseAuth.getInstance().getCurrentUser();
         UserID = mAuth.getUid();
+
+        DatabaseUtil.retrieveUserName(UserID, new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
+            @Override
+            public void onCallback(String FullName) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        UserName.setText(FullName);
+                    }
+                });
+            }
+        });
+
 
         RecyclerView activitiesRecyclerView = findViewById(R.id.activitiesRecyclerView);
         activitiesAdapter = new ActivitiesRecyclerViewAdapter(this, UserActivities);
@@ -111,7 +123,29 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        fetchActivitiesData(UserID);
+        UserActivities.clear();
+        loadingActivities.setVisibility(View.VISIBLE);
+        DatabaseUtil.retrieveUserActivities(UserID, new FirebaseDatabaseHelper.FirestoreActivitiesCallback() {
+            @Override
+            public void onCallback(List<Map<String, Object>> data) {
+                for(Map<String, Object> activity : data) {
+                    ActivityModel activityInfo = new ActivityModel(
+                            String.valueOf(activity.get("type")),
+                            String.valueOf(activity.get("typeImage")),
+                            (Timestamp) activity.get("date"),
+                            String.valueOf(activity.get("distance")),
+                            formatRunTime(Double.parseDouble(String.valueOf(activity.get("time")))),
+                            String.valueOf(activity.get("pace")),
+                            (String) UserName.getText(),
+                            String.valueOf(activity.get("UserImage")),
+                            (List<Object>) activity.get("activityCoordinates")
+                    );
+                    UserActivities.add(activityInfo);
+                }
+                activitiesAdapter.notifyDataSetChanged();
+                loadingActivities.setVisibility(View.GONE);
+            }
+        });
     }
 
     private String formatRunTime(double timePassed) {
@@ -121,106 +155,5 @@ public class HomeActivity extends AppCompatActivity {
         String formattedRunTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
 
         return formattedRunTime;
-    }
-
-    private void fetchUserName() {
-            DocumentReference documentReference = db.collection("Users").document(UserID);
-            documentReference.get()
-                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            Map<String, Object> data = documentSnapshot.getData();
-                            FullName = data.get("FirstName") + " " + data.get("Surname");
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    UserName.setText(FullName);
-                                }
-                            });
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            System.out.println("Couldn't fetch user details");
-                            System.out.println(e.getMessage());
-                        }
-                    });
-
-    }
-
-    private void fetchActivitiesData(String UserID) {
-        loadingActivities.setVisibility(View.VISIBLE);
-        UserActivities.clear();
-        new Thread(() -> {
-            fetchUserName();
-            if(UserID != null) {
-                db.collection("Activities")
-                        .whereEqualTo("UserID", UserID)
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        Map<String, Object> ActivitiesRetrieved = document.getData();
-                                        String UserUUID = String.valueOf(ActivitiesRetrieved.get("UserID"));
-                                        queryForUserFullName(UserUUID, new FullUserNameCallback() {
-                                            @Override
-                                            public void onCallback(String Username) {
-                                                if (FullName != null) {
-                                                    // create ActivityModels for each activity query returns
-                                                    ActivityModel activityReturned = new ActivityModel(
-                                                            String.valueOf(ActivitiesRetrieved.get("type")),
-                                                            String.valueOf(ActivitiesRetrieved.get("typeImage")),
-                                                            String.valueOf(ActivitiesRetrieved.get("date")),
-                                                            String.valueOf(ActivitiesRetrieved.get("distance")),
-                                                            formatRunTime(Double.parseDouble(String.valueOf(ActivitiesRetrieved.get("time")))),
-                                                            String.valueOf(ActivitiesRetrieved.get("pace")),
-                                                            FullName,
-                                                            String.valueOf(ActivitiesRetrieved.get("UserImage")),
-                                                            (List<Object>) ActivitiesRetrieved.get("activityCoordinates")
-                                                    );
-                                                    UserActivities.add(activityReturned);
-                                                }
-                                                System.out.println("UserActivities: " + UserActivities.size());
-                                                runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        activitiesAdapter.notifyDataSetChanged();
-                                                        loadingActivities.setVisibility(View.GONE);
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }
-                                } else {
-                                    Log.d(TAG, "Retrieval Errors: ", task.getException());
-                                }
-                            }
-                        });
-            } else {
-                System.out.println("No UserID");
-            }
-        }).start();
-    }
-
-    private void queryForUserFullName(String UserID, FullUserNameCallback callback) {
-        DocumentReference documentReference = db.collection("Users").document(UserID);
-        documentReference.get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        Map<String, Object> data = documentSnapshot.getData();
-                        FullName = data.get("FirstName") + " " + data.get("Surname");
-                        callback.onCallback(FullName);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        System.out.println("Couldn't fetch user details");
-                        System.out.println(e.getMessage());
-                        callback.onCallback(null);
-                    }
-                });
     }
 }

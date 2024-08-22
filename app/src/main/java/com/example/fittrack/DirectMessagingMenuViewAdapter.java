@@ -44,6 +44,7 @@ public class DirectMessagingMenuViewAdapter extends RecyclerView.Adapter<DirectM
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, MessagingChatActivity.class);
             intent.putExtra("name", user.getUserFullName());
+            intent.putExtra("UserID", user.getUserID());
             context.startActivity(intent);
         });
     }

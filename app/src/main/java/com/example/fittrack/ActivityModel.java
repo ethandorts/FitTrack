@@ -1,15 +1,13 @@
 package com.example.fittrack;
 
-import android.graphics.drawable.Drawable;
-
-import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.Timestamp;
 
 import java.util.List;
 
 public class ActivityModel {
     String activityType;
     String activityTypeImage;
-    String activityDate;
+    Timestamp activityDate;
     String activityDistance;
     String activityTime;
     String activityPace;
@@ -17,9 +15,7 @@ public class ActivityModel {
     String activityUserImage;
     List<Object> activityCoordinates;
 
-
-
-    public ActivityModel(String activityType, String activityTypeImage, String activityDate, String activityDistance, String activityTime, String activityPace, String activityUser, String activityUserImage, List<Object> activityCoordinates) {
+    public ActivityModel(String activityType, String activityTypeImage, Timestamp activityDate, String activityDistance, String activityTime, String activityPace, String activityUser, String activityUserImage, List<Object> activityCoordinates) {
         this.activityType = activityType;
         this.activityTypeImage = activityTypeImage;
         this.activityDate = activityDate;
@@ -39,7 +35,7 @@ public class ActivityModel {
         return activityTypeImage;
     }
 
-    public String getActivityDate() {
+    public Timestamp getActivityDate() {
         return activityDate;
     }
 

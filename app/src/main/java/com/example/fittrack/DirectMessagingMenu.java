@@ -2,6 +2,7 @@ package com.example.fittrack;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -20,54 +21,44 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class DirectMessagingMenu extends AppCompatActivity implements RecyclerViewInterface {
     private DirectMessagingMenuViewAdapter chatsAdapter;
     private ArrayList<UserModel> userList = new ArrayList<UserModel>();
-    DatabaseHelper dbHelper;
-    private FirebaseFirestore db;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_direct_messaging_menu);
 
-        db = FirebaseFirestore.getInstance();
-        getUsers();
+        DatabaseUtil.retrieveAllUsers(new FirebaseDatabaseHelper.FirestoreAllUsersCallback() {
+            @Override
+            public void onCallback(List<Map<String, Object>> data) {
+                for(Map<String, Object> userMap : data) {
+                    UserModel user = new UserModel((String) userMap.get("FirstName") + " " + userMap.get("Surname"),
+                            "Hello",
+                            (String) userMap.get("UserID"));
+                    userList.add(user);
+                }
+                chatsAdapter.notifyDataSetChanged();
+            }
+        });
 
-        RecyclerView chatsRecyclerView = findViewById(R.id.recyclerViewChats);
         chatsAdapter = new DirectMessagingMenuViewAdapter(this, userList, this);
+        RecyclerView chatsRecyclerView = findViewById(R.id.recyclerViewChats);
         chatsRecyclerView.setAdapter(chatsAdapter);
         chatsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         chatsRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-    }
 
-    public void getUsers() {
-        db.collection("Users")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()) {
-                            for(QueryDocumentSnapshot document : task.getResult()) {
-                                Map<String, Object> UserMap = document.getData();
-                                UserModel user = new UserModel(
-                                        UserMap.get("FirstName") + " " + UserMap.get("Surname"),
-                                        "Hello"
-                                );
-                                userList.add(user);
-                            }
-                            chatsAdapter.notifyDataSetChanged();
-                        }
-                    }
-                });
     }
 
     @Override
     public void onItemClick(int position) {
         Intent intent = new Intent(DirectMessagingMenu.this, MessagingChatActivity.class);
-        //intent.putExtra("Name", )
         startActivity(intent);
     }
 }

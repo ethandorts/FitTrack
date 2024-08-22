@@ -5,10 +5,12 @@ import java.io.Serializable;
 public class UserModel {
     String UserFullName;
     String UserLastMessage;
+    String UserID;
 
-    public UserModel(String UserFullName, String UserLastMessage) {
+    public UserModel(String UserFullName, String UserLastMessage, String UserID) {
         this.UserFullName = UserFullName;
         this.UserLastMessage = UserLastMessage;
+        this.UserID = UserID;
     }
 
     public String getUserFullName() {
@@ -17,5 +19,9 @@ public class UserModel {
 
     public String getUserLastMessage() {
         return UserLastMessage;
+    }
+
+    public String getUserID() {
+        return UserID;
     }
 }

@@ -93,6 +93,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 Map<String, Object> UserToInsert = new HashMap<>();
                                 UserToInsert.put("FirstName", firstname);
                                 UserToInsert.put("Surname", surname);
+                                UserToInsert.put("FullName", firstname + "" + surname);
                                 UserToInsert.put("DOB", StringtoTimeStamp(dob));
 
                                 Log.d("Passed inserts", "Passed inserts");
