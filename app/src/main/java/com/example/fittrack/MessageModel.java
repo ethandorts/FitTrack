@@ -7,6 +7,7 @@ public class MessageModel {
     String recipient;
     String message_content;
     Timestamp time_sent;
+    String SenderID;
 
     public MessageModel(String sender, String recipient, String message_content, Timestamp time_sent) {
         this.sender = sender;

@@ -91,6 +91,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 uuid = user.getUid();
 
                                 Map<String, Object> UserToInsert = new HashMap<>();
+                                UserToInsert.put("UserID", uuid);
                                 UserToInsert.put("FirstName", firstname);
                                 UserToInsert.put("Surname", surname);
                                 UserToInsert.put("FullName", firstname + "" + surname);

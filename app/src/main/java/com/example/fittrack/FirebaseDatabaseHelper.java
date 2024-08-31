@@ -1,7 +1,11 @@
 package com.example.fittrack;
 
+import android.net.Uri;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -11,6 +15,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +37,7 @@ public class FirebaseDatabaseHelper {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            // Initialize data to avoid NullPointerException
                             List<Map<String, Object>> data = new ArrayList<>();
-
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 data.add(document.getData());
                             }
@@ -65,7 +69,7 @@ public class FirebaseDatabaseHelper {
                 });
     }
 
-    public void retrieveAllUsers(FirestoreAllUsersCallback callback) {
+    public void retrieveAllUsers( String loggedInID, FirestoreAllUsersCallback callback) {
         db.collection("Users")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -74,14 +78,35 @@ public class FirebaseDatabaseHelper {
                         if(task.isSuccessful()) {
                             List<Map<String, Object>> data = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Map<String, Object> userInfo = document.getData();
-                                userInfo.put("UserID", document.getId());
-                                data.add(userInfo);
+                                String documentID = document.getId();
+                                if(!documentID.equals(loggedInID)) {
+                                    Map<String, Object> userInfo = document.getData();
+                                    userInfo.put("UserID", document.getId());
+                                    data.add(userInfo);
+                                }
                             }
                             callback.onCallback(data);
                         }
                     }
                 });
+    }
+
+    public void retrieveProfilePicture( String userPath, ProfilePictureCallback callback) {
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReference("profile-images/" + userPath);
+
+        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                callback.onCallback(uri);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("Profile Picture Failure", "Couldn't retrieve profile picture");
+            }
+        });
     }
 
     public interface FirestoreUserNameCallback {
@@ -95,6 +120,10 @@ public class FirebaseDatabaseHelper {
 
     public interface FirestoreAllUsersCallback {
         void onCallback(List<Map<String, Object>> data);
+    }
+
+    public interface ProfilePictureCallback {
+        void onCallback(Uri PicturePath);
     }
 
 }

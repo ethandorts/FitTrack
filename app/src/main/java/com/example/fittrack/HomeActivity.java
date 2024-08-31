@@ -3,7 +3,9 @@ package com.example.fittrack;
 import static android.content.ContentValues.TAG;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -24,11 +26,17 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.wearable.DataClient;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.Wearable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,7 +47,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.auth.User;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,9 +59,10 @@ import java.util.concurrent.Executors;
 
 public class HomeActivity extends AppCompatActivity {
 
-    ImageView addFriend, btnMessageFriends;
+    ImageView profileImage, addFriend, btnMessageFriends;
     TextView UserName;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseStorage storage = FirebaseStorage.getInstance();
     FirebaseUser mAuth;
     String UserID;
     ProgressBar loadingActivities;
@@ -64,6 +76,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         UserName = findViewById(R.id.txtUserName);
+        profileImage = findViewById(R.id.profile_image);
         loadingActivities = findViewById(R.id.LoadingActivitiesProgressBar);
         btnMessageFriends = findViewById(R.id.btnMessageFriends);
 
@@ -82,6 +95,14 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        DatabaseUtil.retrieveProfilePicture(UserID + ".jpeg", new FirebaseDatabaseHelper.ProfilePictureCallback() {
+            @Override
+            public void onCallback(Uri PicturePath) {
+                Glide.with(HomeActivity.this)
+                        .load(PicturePath)
+                        .into(profileImage);
+            }
+        });
 
         RecyclerView activitiesRecyclerView = findViewById(R.id.activitiesRecyclerView);
         activitiesAdapter = new ActivitiesRecyclerViewAdapter(this, UserActivities);
@@ -99,7 +120,8 @@ public class HomeActivity extends AppCompatActivity {
                     Intent intent = new Intent(HomeActivity.this, MainActivity.class);
                     startActivity(intent);
                 } else if (menuItem.getItemId() == R.id.settings_bottom) {
-                    // for future settings button
+                    Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+                    startActivity(intent);
                 }
                 return false;
             }

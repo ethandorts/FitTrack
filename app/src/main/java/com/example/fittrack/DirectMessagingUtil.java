@@ -6,11 +6,18 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,6 +80,31 @@ public class DirectMessagingUtil {
                 });
     }
 
+    public void retrieveChannelMessages(String sender, String recipient , ChannelMessagesCallback callback) {
+        messageDocumentID = getDocumentID(sender, recipient);
+        db.collection("DM")
+                .document(messageDocumentID)
+                .collection("Messages")
+                .orderBy("timestamp", Query.Direction.ASCENDING)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        List<Map<String, Object>> documentMessages = new ArrayList<>();
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                System.out.println(task.getResult());
+                                documentMessages.add(document.getData());
+                            }
+                            callback.onCallback(documentMessages);
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                            callback.onCallback(null);
+                        }
+                    }
+                });
+    }
+
     private String getDocumentID (String sender, String recipient) {
         List<String> users = new ArrayList<>();
         users.add(sender);
@@ -80,5 +112,9 @@ public class DirectMessagingUtil {
         users.sort(String::compareTo);
 
         return String.join("-", users);
+    }
+
+    public interface ChannelMessagesCallback {
+        void onCallback(List<Map<String, Object>> documentMessages);
     }
 }

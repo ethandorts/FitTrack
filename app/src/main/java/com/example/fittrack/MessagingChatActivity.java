@@ -16,6 +16,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -41,8 +44,11 @@ public class MessagingChatActivity extends AppCompatActivity {
     FirebaseUser mAuth;
     String currentUser, recipientUser, recipientName;
     TextView txtRecipientUser;
+    MessagesRecyclerViewAdapter messagesAdapter;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     DirectMessagingUtil MessagingUtil = new DirectMessagingUtil(db);
+    ArrayList<MessageModel> messages = new ArrayList<>();
+    String messageDocumentID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +68,27 @@ public class MessagingChatActivity extends AppCompatActivity {
 
         txtRecipientUser.setText(recipientName);
 
+        RecyclerView messagesRecyclerView = findViewById(R.id.MessagesRecyclerView);
+        messagesAdapter = new MessagesRecyclerViewAdapter(this, messages, currentUser);
+        messagesRecyclerView.setAdapter(messagesAdapter);
+        messagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        messagesRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+
+        MessagingUtil.retrieveChannelMessages(currentUser, recipientUser, new DirectMessagingUtil.ChannelMessagesCallback() {
+            @Override
+            public void onCallback(List<Map<String, Object>> data) {
+                for(Map<String, Object> message : data) {
+                    MessageModel SingleMessage = new MessageModel(String.valueOf(message.get("sender")),
+                            String.valueOf(message.get("recipient")),
+                            String.valueOf(message.get("message-content")),
+                            (Timestamp) (message.get("timestamp"))
+                    );
+                    messages.add(SingleMessage);
+                }
+                messagesAdapter.notifyDataSetChanged();
+            }
+        });
+
         btnSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,11 +101,11 @@ public class MessagingChatActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     private void sendDirectMessage(String sender, String recipient, String message_content) {
         MessagingUtil.CreateDirectMessagingChannel(sender, recipient);
         MessagingUtil.AddMessage(sender, recipient, message_content);
     }
-
 }

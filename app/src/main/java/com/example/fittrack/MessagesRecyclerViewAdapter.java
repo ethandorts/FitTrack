@@ -1,10 +1,10 @@
 package com.example.fittrack;
 
 import android.content.Context;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,10 +15,12 @@ import java.util.ArrayList;
 public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRecyclerViewAdapter.MessageBoxHolder> {
     private Context context;
     private ArrayList<MessageModel> messages;
+    private String UserID;
 
-    public MessagesRecyclerViewAdapter(Context context, ArrayList<MessageModel> messages) {
+    public MessagesRecyclerViewAdapter(Context context, ArrayList<MessageModel> messages, String UserID) {
         this.context = context;
         this.messages = messages;
+        this.UserID = UserID;
     }
 
     @NonNull
@@ -30,9 +32,7 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
     @Override
     public void onBindViewHolder(@NonNull MessageBoxHolder holder, int position) {
         MessageModel message = messages.get(position);
-
         holder.MessageBody.setText(message.getMessageContent());
-
     }
 
     @Override

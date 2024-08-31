@@ -16,15 +16,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.auth.User;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class DirectMessagingMenu extends AppCompatActivity implements RecyclerViewInterface {
+    private FirebaseUser mAuth = FirebaseAuth.getInstance().getCurrentUser();
+    private String UserID;
     private DirectMessagingMenuViewAdapter chatsAdapter;
     private ArrayList<UserModel> userList = new ArrayList<UserModel>();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -35,7 +40,9 @@ public class DirectMessagingMenu extends AppCompatActivity implements RecyclerVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_direct_messaging_menu);
 
-        DatabaseUtil.retrieveAllUsers(new FirebaseDatabaseHelper.FirestoreAllUsersCallback() {
+        String UserID = mAuth.getUid();
+
+        DatabaseUtil.retrieveAllUsers(UserID, new FirebaseDatabaseHelper.FirestoreAllUsersCallback() {
             @Override
             public void onCallback(List<Map<String, Object>> data) {
                 for(Map<String, Object> userMap : data) {

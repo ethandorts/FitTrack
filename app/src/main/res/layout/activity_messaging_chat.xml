@@ -85,7 +85,7 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/MessagesRecyclerView"
         android:layout_width="0dp"
         android:layout_height="586dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
