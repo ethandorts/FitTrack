@@ -3,10 +3,13 @@ package com.example.fittrack;
 import static android.content.ContentValues.TAG;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,7 +39,9 @@ import com.google.android.gms.wearable.DataClient;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
+import com.google.android.gms.wearable.WearableListenerService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -70,6 +75,9 @@ public class HomeActivity extends AppCompatActivity {
 
     ArrayList<ActivityModel> UserActivities = new ArrayList<ActivityModel>();
     private ActivitiesRecyclerViewAdapter activitiesAdapter;
+    private DocumentSnapshot lastVisible = null;
+    private boolean isLoading = false;
+    private boolean isEndofArray = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,8 +115,25 @@ public class HomeActivity extends AppCompatActivity {
         RecyclerView activitiesRecyclerView = findViewById(R.id.activitiesRecyclerView);
         activitiesAdapter = new ActivitiesRecyclerViewAdapter(this, UserActivities);
         activitiesRecyclerView.setAdapter(activitiesAdapter);
-        activitiesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layout = new LinearLayoutManager(this);
+        activitiesRecyclerView.setLayoutManager(layout);
         activitiesRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+
+        activitiesRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if(layout != null) {
+                    int onScreen = layout.getChildCount();
+                    int totalItems = layout.getItemCount();
+                    int firstItem = layout.findFirstVisibleItemPosition();
+
+                    if( !isEndofArray && !isLoading && (onScreen + firstItem) >= totalItems) {
+                        loadUserActivities();
+                    }
+                }
+            }
+        });
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -146,11 +171,37 @@ public class HomeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         UserActivities.clear();
-        loadingActivities.setVisibility(View.VISIBLE);
+        isEndofArray = false;
+        lastVisible = null;
+        loadUserActivities();
+    }
+
+    private String formatRunTime(double timePassed) {
+        int hours = (int) (timePassed / 3600);
+        int minutes = (int) ((timePassed % 3600) / 60);
+        int seconds = (int) (timePassed % 60);
+        String formattedRunTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+
+        return formattedRunTime;
+    }
+
+    private void loadUserActivities() {
+        if( isLoading || isEndofArray) {
+            return;
+        }
+
+        isLoading = true;
         DatabaseUtil.retrieveUserActivities(UserID, new FirebaseDatabaseHelper.FirestoreActivitiesCallback() {
             @Override
-            public void onCallback(List<Map<String, Object>> data) {
+            public void onCallback(List<Map<String, Object>> data, DocumentSnapshot lastItemVisible) {
                 for(Map<String, Object> activity : data) {
+                    isLoading = false;
+                    loadingActivities.setVisibility(View.GONE);
+
+                    if(data == null || data.isEmpty()) {
+                        isEndofArray = true;
+                        return;
+                    }
                     ActivityModel activityInfo = new ActivityModel(
                             String.valueOf(activity.get("type")),
                             String.valueOf(activity.get("typeImage")),
@@ -162,20 +213,12 @@ public class HomeActivity extends AppCompatActivity {
                             String.valueOf(activity.get("UserImage")),
                             (List<Object>) activity.get("activityCoordinates")
                     );
-                    UserActivities.add(activityInfo);
+                        UserActivities.add(activityInfo);
                 }
+                lastVisible = lastItemVisible;
+                System.out.println(UserActivities.size());
                 activitiesAdapter.notifyDataSetChanged();
-                loadingActivities.setVisibility(View.GONE);
             }
-        });
-    }
-
-    private String formatRunTime(double timePassed) {
-        int hours = (int) (timePassed / 3600);
-        int minutes = (int) ((timePassed % 3600) / 60);
-        int seconds = (int) (timePassed % 60);
-        String formattedRunTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
-
-        return formattedRunTime;
+        }, lastVisible);
     }
 }

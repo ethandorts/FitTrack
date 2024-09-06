@@ -3,6 +3,7 @@ package com.example.fittrack;
 import static android.content.ContentValues.TAG;
 
 import android.os.Bundle;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -30,6 +32,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -47,7 +50,6 @@ public class MessagingChatActivity extends AppCompatActivity {
     MessagesRecyclerViewAdapter messagesAdapter;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     DirectMessagingUtil MessagingUtil = new DirectMessagingUtil(db);
-    ArrayList<MessageModel> messages = new ArrayList<>();
     String messageDocumentID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,32 +64,27 @@ public class MessagingChatActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         recipientName = (String) bundle.get("name");
         recipientUser = bundle.getString("UserID");
+        messageDocumentID = DirectMessagingUtil.getDocumentID(currentUser, recipientUser);
 
         txtRecipientUser = findViewById(R.id.txtChatUser);
         TypeBox = findViewById(R.id.editTypeMessage);
 
         txtRecipientUser.setText(recipientName);
 
+        Query query =  db.collection("DM")
+                .document(messageDocumentID)
+                .collection("Messages")
+                .orderBy("timestamp", Query.Direction.ASCENDING);
+
+        FirestoreRecyclerOptions<MessageModel> options =
+                new FirestoreRecyclerOptions.Builder<MessageModel>()
+                        .setQuery(query, MessageModel.class)
+                        .build();
+
         RecyclerView messagesRecyclerView = findViewById(R.id.MessagesRecyclerView);
-        messagesAdapter = new MessagesRecyclerViewAdapter(this, messages, currentUser);
+        messagesAdapter = new MessagesRecyclerViewAdapter(options,this, currentUser);
         messagesRecyclerView.setAdapter(messagesAdapter);
         messagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        messagesRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-
-        MessagingUtil.retrieveChannelMessages(currentUser, recipientUser, new DirectMessagingUtil.ChannelMessagesCallback() {
-            @Override
-            public void onCallback(List<Map<String, Object>> data) {
-                for(Map<String, Object> message : data) {
-                    MessageModel SingleMessage = new MessageModel(String.valueOf(message.get("sender")),
-                            String.valueOf(message.get("recipient")),
-                            String.valueOf(message.get("message-content")),
-                            (Timestamp) (message.get("timestamp"))
-                    );
-                    messages.add(SingleMessage);
-                }
-                messagesAdapter.notifyDataSetChanged();
-            }
-        });
 
         btnSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,11 +98,26 @@ public class MessagingChatActivity extends AppCompatActivity {
                 }
             }
         });
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (messagesAdapter != null)
+            messagesAdapter.startListening();
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        if(messagesAdapter != null) {
+            messagesAdapter.stopListening();
+        }
     }
 
     private void sendDirectMessage(String sender, String recipient, String message_content) {
         MessagingUtil.CreateDirectMessagingChannel(sender, recipient);
         MessagingUtil.AddMessage(sender, recipient, message_content);
     }
+
 }

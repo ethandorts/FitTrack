@@ -1,6 +1,7 @@
 package com.example.fittrack;
 
 import android.net.Uri;
+import android.provider.DocumentsContract;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -13,10 +14,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,22 +33,30 @@ public class FirebaseDatabaseHelper {
     FirebaseDatabaseHelper( FirebaseFirestore db) {
         this.db = db;
     }
-    public void retrieveUserActivities(String userID, FirestoreActivitiesCallback callback) {
-        db.collection("Activities")
+    public void retrieveUserActivities(String userID, FirestoreActivitiesCallback callback, DocumentSnapshot lastVisible) {
+
+        Query query = db.collection("Activities")
                 .whereEqualTo("UserID", userID)
-                .get()
+                .limit(5);
+
+        if (lastVisible != null) {
+            query = query.startAfter(lastVisible);
+        }
+                query.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             List<Map<String, Object>> data = new ArrayList<>();
+                            DocumentSnapshot lastVisible = null;
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 data.add(document.getData());
+                                lastVisible = document;
                             }
-                            callback.onCallback(data);
+                            callback.onCallback(data, lastVisible);
                         } else {
                             System.out.println("Error getting data: " + task.getException());
-                            callback.onCallback(null);
+                            callback.onCallback(null, null);
                         }
                     }
                 });
@@ -79,7 +91,7 @@ public class FirebaseDatabaseHelper {
                             List<Map<String, Object>> data = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String documentID = document.getId();
-                                if(!documentID.equals(loggedInID)) {
+                                if (!documentID.equals(loggedInID)) {
                                     Map<String, Object> userInfo = document.getData();
                                     userInfo.put("UserID", document.getId());
                                     data.add(userInfo);
@@ -115,7 +127,7 @@ public class FirebaseDatabaseHelper {
 
 
     public interface FirestoreActivitiesCallback {
-        void onCallback(List<Map<String, Object>> data);
+        void onCallback(List<Map<String, Object>> data, DocumentSnapshot lastVisible);
     }
 
     public interface FirestoreAllUsersCallback {

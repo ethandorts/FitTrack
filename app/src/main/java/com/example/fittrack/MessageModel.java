@@ -1,34 +1,56 @@
 package com.example.fittrack;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.PropertyName;
 
 public class MessageModel {
-    String sender;
-    String recipient;
-    String message_content;
-    Timestamp time_sent;
-    String SenderID;
+    @PropertyName("sender")
+    private String sender;
+    @PropertyName("recipient")
+    private String recipient;
+    @PropertyName("message")
+    private String message;
 
-    public MessageModel(String sender, String recipient, String message_content, Timestamp time_sent) {
+    @PropertyName("timestamp")
+    private Timestamp timestamp;
+    public MessageModel () {}
+    public MessageModel(String sender, String recipient, String message, Timestamp timestamp) {
         this.sender = sender;
         this.recipient = recipient;
-        this.message_content = message_content;
-        this.time_sent = time_sent;
+        this.message = message;
+        this.timestamp = timestamp;
     }
 
-    public String getMessageSender() {
+    public String getSender() {
         return sender;
     }
 
-    public String getMessageRecipient() {
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public String getRecipient() {
         return recipient;
     }
 
-    public String getMessageContent() {
-        return message_content;
+    public void setRecipient(String recipient) {
+        this.recipient = recipient;
     }
 
-    public Timestamp getMessageTimeSent() {
-        return time_sent;
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessageContent(String message) {
+        this.message = message;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 }
+

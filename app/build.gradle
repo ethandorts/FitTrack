@@ -60,6 +60,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation 'com.google.firebase:firebase-analytics'
     implementation("com.google.firebase:firebase-firestore")
+    implementation 'com.firebaseui:firebase-ui-firestore:8.0.0'
     implementation 'com.github.parse-community.Parse-SDK-Android:parse:1.26.0'
     implementation 'com.github.parse-community:ParseFacebookUtils-Android:1.14.0'
     implementation 'com.facebook.android:facebook-android-sdk:latest.release'

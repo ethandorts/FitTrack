@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,11 +58,11 @@ public class DirectMessagingUtil {
                 });
     }
 
-    public void AddMessage(String sender, String recipient, String message_content) {
+    public void AddMessage(String sender, String recipient, String message) {
         Map<String, Object> IndividualMessageMap = new HashMap<>();
         IndividualMessageMap.put("sender", sender);
         IndividualMessageMap.put("recipient", recipient);
-        IndividualMessageMap.put("message-content", message_content);
+        IndividualMessageMap.put("message", message);
         IndividualMessageMap.put("timestamp", Timestamp.now());
 
         DocumentReference documentReference = db.collection("DM").document(messageDocumentID);
@@ -78,6 +79,10 @@ public class DirectMessagingUtil {
                         Log.d("Unsuccessful Write", "Unsuccessfully written to sub-collection");
                     }
                 });
+
+        Map<String, Object> lastMessageMap = new HashMap<>();
+        lastMessageMap.put("LastMessage", message);
+        documentReference.set(lastMessageMap, SetOptions.merge());
     }
 
     public void retrieveChannelMessages(String sender, String recipient , ChannelMessagesCallback callback) {
@@ -105,7 +110,7 @@ public class DirectMessagingUtil {
                 });
     }
 
-    private String getDocumentID (String sender, String recipient) {
+    public static String getDocumentID(String sender, String recipient) {
         List<String> users = new ArrayList<>();
         users.add(sender);
         users.add(recipient);

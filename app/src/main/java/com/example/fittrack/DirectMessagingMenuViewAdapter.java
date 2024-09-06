@@ -2,6 +2,8 @@ package com.example.fittrack;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Picture;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -40,7 +44,7 @@ public class DirectMessagingMenuViewAdapter extends RecyclerView.Adapter<DirectM
     public void onBindViewHolder(@NonNull ChatUsersViewHolder holder, int position) {
         UserModel user = userList.get(position);
         holder.UserName.setText(user.getUserFullName());
-        holder.LastMessage.setText(user.getUserLastMessage());
+        holder.LastMessage.setText(user.getLastMessage());
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, MessagingChatActivity.class);
             intent.putExtra("name", user.getUserFullName());
@@ -58,18 +62,6 @@ public class DirectMessagingMenuViewAdapter extends RecyclerView.Adapter<DirectM
             UserName = itemView.findViewById(R.id.txtUserMessagingName);
             LastMessage = itemView.findViewById(R.id.txtLastMesssageSent);
             UserProfileImage = itemView.findViewById(R.id.user_icon);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(recyclerViewInterface != null) {
-                        int position = getAdapterPosition();
-                        if( position != RecyclerView.NO_POSITION) {
-                            recyclerViewInterface.onItemClick(position);
-                        }
-                    }
-                }
-            });
         }
     }
 }
