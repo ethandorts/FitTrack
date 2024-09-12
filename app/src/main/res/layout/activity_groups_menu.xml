@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@drawable/running_club_background"
+    tools:context=".GroupsMenu">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/GroupsToolbar"
+        android:layout_width="413dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="27dp"
+        android:background="@color/button_blue"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toTopOf="@+id/txtBuildRunningCommunity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/txtFeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Groups"
+            android:textColor="@color/white"
+            android:textSize="40sp"
+            app:layout_constraintBottom_toTopOf="@+id/txtBuildRunningCommunity"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <TextView
+        android:id="@+id/txtBuildRunningCommunity"
+        android:layout_width="359dp"
+        android:layout_height="47dp"
+        android:layout_marginBottom="17dp"
+        android:gravity="center|center_horizontal|center_vertical"
+        android:text="Build a Running Community"
+        android:textColor="#FFFDFD"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@+id/btnFindRunningGroups"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/GroupsToolbar" />
+
+    <Button
+        android:id="@+id/btnFindRunningGroups"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="28dp"
+        android:text="Find Running Groups"
+        app:layout_constraintBottom_toTopOf="@+id/GroupsFrameLayout"
+        app:layout_constraintEnd_toStartOf="@+id/btnYourRunningGroups"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtBuildRunningCommunity" />
+
+    <Button
+        android:id="@+id/btnYourRunningGroups"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="3dp"
+        android:text="Your Running Groups"
+        app:layout_constraintBaseline_toBaselineOf="@+id/btnFindRunningGroups"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnFindRunningGroups" />
+
+    <FrameLayout
+        android:id="@+id/GroupsFrameLayout"
+        android:layout_width="415dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnYourRunningGroups"
+        app:layout_constraintStart_toStartOf="@+id/btnYourRunningGroups"
+        app:layout_constraintTop_toBottomOf="@+id/btnFindRunningGroups">
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -69,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
         EditText Password = findViewById(R.id.edit_text_password);
         Button btnLogin = findViewById(R.id.btnLogin);
         Button btnRegister = findViewById(R.id.btnRegister);
-        LoginButton FacebookLoginButton  = findViewById(R.id.btnFacebookLogin);
+        //LoginButton FacebookLoginButton  = findViewById(R.id.btnFacebookLogin);
         Button btnGoogleLogin = findViewById(R.id.btnGoogleLogin);
 
         mAuth = FirebaseAuth.getInstance();
@@ -100,25 +100,25 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        FacebookLoginButton.setReadPermissions("email", "public_profile");
-        FacebookLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                FacebookAccessTokenHandler(loginResult.getAccessToken());
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
-
-            @Override
-            public void onCancel() {
-                Log.d("Facebook Cancelled", "Facebook Cancelled");
-            }
-
-            @Override
-            public void onError(@NonNull FacebookException e) {
-                Log.d("Facebook Error", "Facebook Error");
-            }
-        });
+//        FacebookLoginButton.setReadPermissions("email", "public_profile");
+//        FacebookLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+//            @Override
+//            public void onSuccess(LoginResult loginResult) {
+//                FacebookAccessTokenHandler(loginResult.getAccessToken());
+//                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//                startActivity(intent);
+//            }
+//
+//            @Override
+//            public void onCancel() {
+//                Log.d("Facebook Cancelled", "Facebook Cancelled");
+//            }
+//
+//            @Override
+//            public void onError(@NonNull FacebookException e) {
+//                Log.d("Facebook Error", "Facebook Error");
+//            }
+//        });
 
         btnGoogleLogin.setOnClickListener(new View.OnClickListener(){
             @Override

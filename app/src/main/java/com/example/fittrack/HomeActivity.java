@@ -129,6 +129,7 @@ public class HomeActivity extends AppCompatActivity {
                     int firstItem = layout.findFirstVisibleItemPosition();
 
                     if( !isEndofArray && !isLoading && (onScreen + firstItem) >= totalItems) {
+                        loadingActivities.setVisibility(View.VISIBLE);
                         loadUserActivities();
                     }
                 }
@@ -143,6 +144,9 @@ public class HomeActivity extends AppCompatActivity {
                     // for future button
                 } else if (menuItem.getItemId() == R.id.record_bottom) {
                     Intent intent = new Intent(HomeActivity.this, MainActivity.class);
+                    startActivity(intent);
+                } else if (menuItem.getItemId() == R.id.group_bottom) {
+                    Intent intent = new Intent(HomeActivity.this, GroupsMenu.class);
                     startActivity(intent);
                 } else if (menuItem.getItemId() == R.id.settings_bottom) {
                     Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
@@ -168,12 +172,22 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         UserActivities.clear();
+        activitiesAdapter.notifyDataSetChanged();
         isEndofArray = false;
         lastVisible = null;
         loadUserActivities();
+    }
+
+    protected void onStop() {
+        super.onStop();
     }
 
     private String formatRunTime(double timePassed) {

@@ -1,12 +1,19 @@
 package com.example.fittrack;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.health.connect.datatypes.ExerciseRoute;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
@@ -44,14 +51,12 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 101;
-    private FusedLocationProviderClient fusedLocationClient;
+    private LocationUpdatesBroadcastReceiver updatesBroadcastReceiver;
     private GoogleMap googleMap;
     private Location previousLocation;
     private double distanceTravelled;
     private TextView txtDistanceTravelled;
     private TextView txtRunTime;
-    private Button btnStartRun;
-    private Button btnStopRun;
 
     private LatLng currentLocation;
     private boolean isTrackingRun;
@@ -71,11 +76,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_main);
         txtDistanceTravelled = findViewById(R.id.txtDistanceTravelled);
         Button btnClear = findViewById(R.id.btnClearMap);
-        Button btnStartRun = findViewById(R.id.btnStart);
-        Button btnStopRun = findViewById(R.id.btnStop);
+        Button btnStopStart = findViewById(R.id.stopStartBtn);
         txtRunTime = findViewById(R.id.txtRunTime);
 
 
+        requestBatteryOptimizationExemption();
         runTimeHandler = new Handler();
         timer = new Runnable() {
             @Override
@@ -112,74 +117,32 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        btnStartRun.setOnClickListener(new View.OnClickListener() {
+        //Need to figure out how to resume the clock
+
+        btnStopStart.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                isTrackingRun = true;
+            public void onClick(View view) {
+                if(isTrackingRun == false) {
+                    isTrackingRun = true;
+                    btnStopStart.setText("Stop Run");
+                    btnStopStart.setBackgroundColor(getResources().getColor(R.color.red));
+                } else {
+                    isTrackingRun = false;
+                    btnStopStart.setText("Resume Run");
+                    btnStopStart.setBackgroundColor(getResources().getColor(R.color.green));
+                    SaveActivityDialog saveActivityDialog = new SaveActivityDialog();
+
+                    Bundle runningData = new Bundle();
+                    runningData.putDouble("distance", distanceTravelled);
+                    runningData.putDouble("time", elapsedTime);
+                    runningData.putParcelableArrayList("activityLocations", (ArrayList<? extends Parcelable>) activityLocations);
+
+                    saveActivityDialog.setArguments(runningData);
+                    saveActivityDialog.show(getSupportFragmentManager(), "SaveActivity");
+                }
             }
         });
-
-        btnStopRun.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isTrackingRun = false;
-                System.out.println(activityLocations);
-                SaveActivityDialog saveActivityDialog = new SaveActivityDialog();
-
-                Bundle runningData = new Bundle();
-                runningData.putDouble("distance", distanceTravelled);
-                runningData.putDouble("time", elapsedTime);
-                runningData.putParcelableArrayList("activityLocations", (ArrayList<? extends Parcelable>) activityLocations);
-
-                saveActivityDialog.setArguments(runningData);
-                saveActivityDialog.show(getSupportFragmentManager(), "SaveActivity");
-
-            }
-        });
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        getUserLocation();
-    }
-
-    private void getUserLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                    LOCATION_PERMISSION_REQUEST_CODE);
-        } else {
-            getLocationUpdates();
-        }
-    }
-
-    // Method to receive ongoing updates of device's location.
-    private void getLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.d("MainActivity", "Location permissions were not granted");
-            return;
-        }
-
-        fusedLocationClient.requestLocationUpdates(createLocationRequest(),
-                new LocationCallback() {
-                    @Override
-                    public void onLocationResult(LocationResult locationResult) {
-                        if (locationResult == null) {
-                            return;
-                        }
-                        Location prevLocation = null;
-                        for (Location location : locationResult.getLocations()) {
-                            updateMapWithLocation(location);
-                            previousLocation = location;
-
-                            if(isTrackingRun) {
-                                LatLng newLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                                activityLocations.add(newLocation);
-                            }
-                        }
-                    }
-                },
-                null );
+        startTrackingLocation();
     }
 
    private void startTimer() {
@@ -191,18 +154,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void stopTimer() {
         isTimerStarted = false;
         runTimeHandler.removeCallbacks(timer);
-        elapsedTime = (int) (System.currentTimeMillis() - startTime);
+        elapsedTime = (int) ((System.currentTimeMillis() - startTime) / 1000);
     }
 
-    // Specifies interval of location updates.
-    private LocationRequest createLocationRequest() {
-        return LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(1000)
-                .setFastestInterval(200);
+    public void startTrackingLocation() {
+        Intent locationTracker = new Intent(MainActivity.this, LocationTracker.class);
+        startForegroundService(locationTracker);
+        LocationUpdatesBroadcastReceiver receiver = new LocationUpdatesBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter("com.example.broadcast.LOCATION_UPDATE");
+        registerReceiver(receiver, intentFilter);
     }
 
-    // Updates Map with latest location found.
+     //Updates Map with latest location found.
     private void updateMapWithLocation(Location location) {
         currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16));
@@ -219,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void DrawRoute(Location location) {
+        if(previousLocation == null) {System.out.println("PreviousLocation is null");}
         if(previousLocation != null) {
             double distanceTravelledInterval = previousLocation.distanceTo(location);
             distanceTravelled += distanceTravelledInterval;
@@ -237,13 +201,40 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         LocalDate date = LocalDate.now();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Intent locationTracker = new Intent(MainActivity.this, LocationTracker.class);
+        stopService(locationTracker);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        System.out.println("Activity Paused");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        System.out.println("Activity Resumed");
+        System.out.println(isTrackingRun + " :result");
+        Intent locationTracker = new Intent(MainActivity.this, LocationTracker.class);
+        startForegroundService(locationTracker);
+    }
+
+
     // Requests appropriate location permissions.
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLocationUpdates();
+                if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED) {
+                } else {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION},LOCATION_PERMISSION_REQUEST_CODE);
+                }
             } else {
                 Log.d("MainActivity", "Location permissions denied");
             }
@@ -266,6 +257,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private void requestBatteryOptimizationExemption() {
+        Intent intent = new Intent();
+        String packageName = getPackageName();
+        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+        if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+            intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+            intent.setData(android.net.Uri.parse("package:" + packageName));
+            startActivity(intent);
+        }
+    }
+
     public void ClearMap() {
         googleMap.clear();
     }
@@ -276,5 +278,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.googleMap = googleMap;
         LatLng initialLocation = new LatLng(54.597, -5.930);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 12));
+    }
+
+    public class LocationUpdatesBroadcastReceiver extends BroadcastReceiver {
+        private static final String TAG = "LocationUpdatesBroadcastReceiver";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Location newLocation = intent.getParcelableExtra("location");
+            System.out.println(newLocation);
+            updateMapWithLocation(newLocation);
+            previousLocation = newLocation;
+        }
     }
 }
