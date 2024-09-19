@@ -286,6 +286,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         public void onReceive(Context context, Intent intent) {
             Location newLocation = intent.getParcelableExtra("location");
+            activityLocations.add(new LatLng(newLocation.getLatitude(), newLocation.getLongitude()));
             System.out.println(newLocation);
             updateMapWithLocation(newLocation);
             previousLocation = newLocation;

@@ -75,13 +75,16 @@ public class ActivitiesRecyclerViewAdapter extends RecyclerView.Adapter<Activiti
                             polylineOptions.add(geoPoint);
                         }
                     }
-                    googleMap.addPolyline(polylineOptions);
-                    //find the middle point of the route
-                    int middlePoint = geoData.size() / 2;
-                    Map<String, Double> middleData = (Map<String, Double>) geoData.get(middlePoint);
-                    LatLng middleLatLng = new LatLng(middleData.get("latitude"), middleData.get("longitude"));
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(middleLatLng, 13));
-                } else {
+                    if(!polylineOptions.getPoints().isEmpty()) {
+                        googleMap.addPolyline(polylineOptions);
+                        int middlePoint = geoData.size() / 2;
+                        Map<String, Double> middleData = (Map<String, Double>) geoData.get(middlePoint);
+                        LatLng middleLatLng = new LatLng(middleData.get("latitude"), middleData.get("longitude"));
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(middleLatLng, 13));
+                    } else {
+                        Log.d("ActivitiesRecyclerViewAdapter", "No points to draw");
+                    }
+                    } else {
                     System.out.println("GeoData object is null");
                 }
             }

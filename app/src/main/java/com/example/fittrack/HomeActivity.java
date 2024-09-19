@@ -3,11 +3,15 @@ package com.example.fittrack;
 import static android.content.ContentValues.TAG;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
@@ -22,6 +26,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.NotificationCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -38,8 +43,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wearable.DataClient;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataItemBuffer;
+import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -56,28 +65,31 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements DataClient.OnDataChangedListener {
 
-    ImageView profileImage, addFriend, btnMessageFriends;
-    TextView UserName;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-    FirebaseStorage storage = FirebaseStorage.getInstance();
-    FirebaseUser mAuth;
-    String UserID;
-    ProgressBar loadingActivities;
-    FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
+    private ImageView profileImage, addFriend, btnMessageFriends;
+    private TextView UserName;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
+    private FirebaseUser mAuth;
+    private String UserID;
+    private ProgressBar loadingActivities;
+    private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
 
-    ArrayList<ActivityModel> UserActivities = new ArrayList<ActivityModel>();
+    private ArrayList<ActivityModel> UserActivities = new ArrayList<ActivityModel>();
     private ActivitiesRecyclerViewAdapter activitiesAdapter;
+    private WearableDataHandler wearableDataHandler = new WearableDataHandler();
     private DocumentSnapshot lastVisible = null;
     private boolean isLoading = false;
     private boolean isEndofArray = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,8 +100,27 @@ public class HomeActivity extends AppCompatActivity {
         loadingActivities = findViewById(R.id.LoadingActivitiesProgressBar);
         btnMessageFriends = findViewById(R.id.btnMessageFriends);
 
+        Wearable.getNodeClient(this).getConnectedNodes()
+                .addOnSuccessListener(new OnSuccessListener<List<Node>>() {
+                    @Override
+                    public void onSuccess(List<Node> nodes) {
+                        if (nodes.isEmpty()) {
+                            Log.d(TAG, "No connected nodes.");
+                        } else {
+                            Log.d(TAG, "Connected nodes: " + nodes.toString());
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "Failed to get connected nodes: " + e.getMessage());
+                    }
+                });
+
+
         mAuth = FirebaseAuth.getInstance().getCurrentUser();
         UserID = mAuth.getUid();
+
 
         DatabaseUtil.retrieveUserName(UserID, new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
             @Override
@@ -169,6 +200,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        Wearable.getDataClient(this).addListener(this);
     }
 
     @Override
@@ -188,6 +220,8 @@ public class HomeActivity extends AppCompatActivity {
 
     protected void onStop() {
         super.onStop();
+        Wearable.getDataClient(this).removeListener(this);
+        System.out.println("listener stopped");
     }
 
     private String formatRunTime(double timePassed) {
@@ -234,5 +268,50 @@ public class HomeActivity extends AppCompatActivity {
                 activitiesAdapter.notifyDataSetChanged();
             }
         }, lastVisible);
+    }
+
+    private void createSyncNotificationChannel() {
+    }
+
+    @Override
+    public void onDataChanged(@NonNull DataEventBuffer dataEventBuffer) {
+        System.out.println("DataEvent count: " + dataEventBuffer.getCount());
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            NotificationChannel channel = new NotificationChannel("syncData", "syncNotification", NotificationManager.IMPORTANCE_HIGH);
+//            channel.setDescription("SyncNotificationAlert");
+//            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+//            notificationManager.createNotificationChannel(channel);
+//            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "syncData")
+//                    .setSmallIcon(R.drawable.baseline_settings_24)
+//                    .setContentTitle("Wearable Data Sync")
+//                    .setContentText("Data from your wearable device is syncing...")
+//                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+//            notificationManager.notify( 1, builder.build());
+//        }
+
+        for (DataEvent event : dataEventBuffer) {
+            if (event.getType() == DataEvent.TYPE_CHANGED) {
+                DataItem dataItem = event.getDataItem();
+                String UriPath = String.valueOf(dataItem.getUri());
+                System.out.println(UriPath);
+
+                if (UriPath.contains("/activity-data")) {
+                    System.out.println("Inside the URI loop");
+                    DataMap dataMap = DataMapItem.fromDataItem(dataItem).getDataMap();
+                    ArrayList<DataMap> activitiesList = dataMap.getDataMapArrayList("fitness_data");
+                    System.out.println("After initialisation code");
+                    if(activitiesList != null) {
+                        for(DataMap activityData : activitiesList) {
+                            System.out.println("Data saving...");
+                            wearableDataHandler.saveWearableData(UserID,
+                                    activityData.get("distance"),
+                                    activityData.get("duration"));
+                        }
+                    } else {
+                        System.out.println("List is not full");
+                    }
+                }
+            }
+        }
     }
 }
