@@ -11,8 +11,8 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/GroupsToolbar"
-        android:layout_width="413dp"
-        android:layout_height="80dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginBottom="27dp"
         android:background="@color/button_blue"
         android:minHeight="?attr/actionBarSize"
@@ -39,8 +39,10 @@
 
     <TextView
         android:id="@+id/txtBuildRunningCommunity"
-        android:layout_width="359dp"
-        android:layout_height="47dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="26dp"
+        android:layout_marginEnd="26dp"
         android:layout_marginBottom="17dp"
         android:gravity="center|center_horizontal|center_vertical"
         android:text="Build a Running Community"
@@ -56,9 +58,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="28dp"
+        android:layout_marginBottom="512dp"
         android:text="Find Running Groups"
-        app:layout_constraintBottom_toTopOf="@+id/GroupsFrameLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnYourRunningGroups"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
@@ -70,17 +72,17 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="3dp"
         android:text="Your Running Groups"
-        app:layout_constraintBaseline_toBaselineOf="@+id/btnFindRunningGroups"
+        app:layout_constraintBottom_toTopOf="@+id/GroupsFrameLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btnFindRunningGroups" />
 
     <FrameLayout
         android:id="@+id/GroupsFrameLayout"
-        android:layout_width="415dp"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnYourRunningGroups"
-        app:layout_constraintStart_toStartOf="@+id/btnYourRunningGroups"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnFindRunningGroups">
 
     </FrameLayout>

@@ -9,6 +9,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 public class GroupsMenu extends AppCompatActivity {
     Button btnFindRunningGroups, btnYourRunningGroups;
@@ -21,17 +24,26 @@ public class GroupsMenu extends AppCompatActivity {
         btnFindRunningGroups = findViewById(R.id.btnFindRunningGroups);
         btnYourRunningGroups = findViewById(R.id.btnYourRunningGroups);
 
+        loadFragment(new FindRunningGroupsFragment());
+
         btnFindRunningGroups.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //loadFragment here
+                loadFragment(new FindRunningGroupsFragment());
             }
         });
         btnYourRunningGroups.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //loadFragment here
+                loadFragment(new MyRunningGroupsFragment());
             }
         });
+    }
+
+    public void loadFragment(Fragment fragment) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.replace(R.id.GroupsFrameLayout, fragment);
+        transaction.commit();
     }
 }
