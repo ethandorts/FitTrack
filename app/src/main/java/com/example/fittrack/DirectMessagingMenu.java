@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,6 +37,7 @@ public class DirectMessagingMenu extends AppCompatActivity implements RecyclerVi
     private ArrayList<UserModel> userList = new ArrayList<UserModel>();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
+    private UserViewModel userViewModel = new UserViewModel();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,35 +48,43 @@ public class DirectMessagingMenu extends AppCompatActivity implements RecyclerVi
     @Override
     protected void onResume() {
         super.onResume();
-        userList.clear();
-        String UserID = mAuth.getUid();
+        userViewModel.loadUsersToChat();
+//        userList.clear();
+//        String UserID = mAuth.getUid();
 
-        DatabaseUtil.retrieveAllUsers(UserID, new FirebaseDatabaseHelper.FirestoreAllUsersCallback() {
-            @Override
-            public void onCallback(List<Map<String, Object>> data) {
-                for(Map<String, Object> userMap : data) {
-                    // data got - formatting users
-                    String documentID = DirectMessagingUtil.getDocumentID(UserID, (String) userMap.get("UserID"));
-                    db.collection("DM").document(documentID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            String lastMessage ="";
-                            DocumentSnapshot retrievedSnapshot = task.getResult();
-                            lastMessage = (String) retrievedSnapshot.get("LastMessage");
-                            UserModel user = new UserModel((String) userMap.get("FirstName") + " " + userMap.get("Surname"),
-                                    lastMessage,
-                                    (String) userMap.get("UserID"));
-                            userList.add(user);
-                            chatsAdapter.notifyDataSetChanged();
-                        }
-                    });
-                }
-            }
-        });
+//        DatabaseUtil.retrieveAllUsers(UserID, new FirebaseDatabaseHelper.FirestoreAllUsersCallback() {
+//            @Override
+//            public void onCallback(List<Map<String, Object>> data) {
+//                for(Map<String, Object> userMap : data) {
+//                    // data got - formatting users
+//                    String documentID = DirectMessagingUtil.getDocumentID(UserID, (String) userMap.get("UserID"));
+//                    db.collection("DM").document(documentID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                            String lastMessage ="";
+//                            DocumentSnapshot retrievedSnapshot = task.getResult();
+//                            lastMessage = (String) retrievedSnapshot.get("LastMessage");
+//                            UserModel user = new UserModel((String) userMap.get("FirstName") + " " + userMap.get("Surname"),
+//                                    lastMessage,
+//                                    (String) userMap.get("UserID"));
+//                            userList.add(user);
+//                            chatsAdapter.notifyDataSetChanged();
+//                        }
+//                    });
+//                }
+//            }
+//        });
 
-        chatsAdapter = new DirectMessagingMenuViewAdapter(this, userList, this);
+        chatsAdapter = new DirectMessagingMenuViewAdapter(this, this);
         RecyclerView chatsRecyclerView = findViewById(R.id.recyclerViewChats);
         chatsRecyclerView.setAdapter(chatsAdapter);
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        userViewModel.getChatUsers().observe(this, new Observer<ArrayList<UserModel>>() {
+            @Override
+            public void onChanged(ArrayList<UserModel> userModels) {
+                chatsAdapter.updateUsers(userModels);
+            }
+        });
         chatsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         chatsRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }

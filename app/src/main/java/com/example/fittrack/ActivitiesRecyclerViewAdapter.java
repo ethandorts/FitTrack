@@ -1,5 +1,6 @@
 package com.example.fittrack;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -33,11 +34,10 @@ import java.util.Map;
 
 public class ActivitiesRecyclerViewAdapter extends RecyclerView.Adapter<ActivitiesRecyclerViewAdapter.MyViewHolder> {
     private Context context;
-    private ArrayList<ActivityModel> userActivities;
+    private ArrayList<ActivityModel> userActivities = new ArrayList<ActivityModel>();
 
-    public ActivitiesRecyclerViewAdapter(Context context, ArrayList<ActivityModel> userActivities) {
+    public ActivitiesRecyclerViewAdapter(Context context) {
         this.context = context;
-        this.userActivities = userActivities;
     }
 
     @NonNull
@@ -91,8 +91,6 @@ public class ActivitiesRecyclerViewAdapter extends RecyclerView.Adapter<Activiti
         });
     }
 
-
-
     @Override
     public int getItemCount() {
         return userActivities.size();
@@ -104,6 +102,16 @@ public class ActivitiesRecyclerViewAdapter extends RecyclerView.Adapter<Activiti
         String formattedDate = formatter.format(date);
 
         return formattedDate;
+    }
+
+    public void updateAdapter(ArrayList<ActivityModel> activities) {
+        int originalSize = userActivities.size();
+        for(ActivityModel activity : activities) {
+            if(!userActivities.contains(activity)) {
+                userActivities.add(activity);
+            }
+        }
+        notifyItemRangeInserted(originalSize, userActivities.size());
     }
 
 

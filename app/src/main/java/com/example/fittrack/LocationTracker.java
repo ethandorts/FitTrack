@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
@@ -85,8 +86,8 @@ public class LocationTracker extends Service {
     private LocationRequest createLocationRequest() {
         return LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(1000)
-                .setFastestInterval(200);
+                .setInterval(4000)
+                .setFastestInterval(1000);
     }
 
     private void getLocationUpdates() {
@@ -96,7 +97,7 @@ public class LocationTracker extends Service {
             Log.d("MainActivity", "Location permissions were not granted");
             return;
         }
-        fusedLocationClient.requestLocationUpdates(createLocationRequest(), locationCallback, null);
+        fusedLocationClient.requestLocationUpdates(createLocationRequest(), locationCallback, Looper.getMainLooper());
     }
 
     public void startForegroundService() {

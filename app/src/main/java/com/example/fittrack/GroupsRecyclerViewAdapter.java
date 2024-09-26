@@ -1,6 +1,9 @@
 package com.example.fittrack;
 
+import static java.security.AccessController.getContext;
+
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +17,10 @@ import java.util.ArrayList;
 
 public class GroupsRecyclerViewAdapter extends RecyclerView.Adapter<GroupsRecyclerViewAdapter.GroupsViewHolder> {
     private Context context;
-    private ArrayList<GroupModel> groupsList;
+    private ArrayList<GroupModel> groupsList = new ArrayList<>();
 
-    public GroupsRecyclerViewAdapter(Context context, ArrayList<GroupModel> groupsList) {
+    public GroupsRecyclerViewAdapter(Context context) {
         this.context = context;
-        this.groupsList = groupsList;
     }
 
     @NonNull
@@ -34,11 +36,24 @@ public class GroupsRecyclerViewAdapter extends RecyclerView.Adapter<GroupsRecycl
 
         holder.GroupName.setText(group.getGroupName());
         holder.GroupDescription.setText(group.getGroupDescription());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(holder.itemView.getContext(), GroupActivity.class);
+                intent.putExtra("GroupName", group.getGroupName());
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return groupsList.size();
+    }
+
+    public void updateGroups(ArrayList<GroupModel> groups) {
+        this.groupsList = groups;
+        notifyDataSetChanged();
     }
 
     public static class GroupsViewHolder extends RecyclerView.ViewHolder {

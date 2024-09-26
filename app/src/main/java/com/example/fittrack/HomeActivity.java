@@ -30,6 +30,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -83,7 +85,8 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
     private ProgressBar loadingActivities;
     private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
 
-    private ArrayList<ActivityModel> UserActivities = new ArrayList<ActivityModel>();
+    //private ArrayList<ActivityModel> UserActivities = new ArrayList<ActivityModel>();
+    private ActivityViewModel activityViewModel = new ActivityViewModel();
     private ActivitiesRecyclerViewAdapter activitiesAdapter;
     private WearableDataHandler wearableDataHandler = new WearableDataHandler();
     private DocumentSnapshot lastVisible = null;
@@ -99,6 +102,7 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
         profileImage = findViewById(R.id.profile_image);
         loadingActivities = findViewById(R.id.LoadingActivitiesProgressBar);
         btnMessageFriends = findViewById(R.id.btnMessageFriends);
+        addFriend = findViewById(R.id.btnAddActivity);
 
         Wearable.getNodeClient(this).getConnectedNodes()
                 .addOnSuccessListener(new OnSuccessListener<List<Node>>() {
@@ -144,11 +148,27 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
         });
 
         RecyclerView activitiesRecyclerView = findViewById(R.id.activitiesRecyclerView);
-        activitiesAdapter = new ActivitiesRecyclerViewAdapter(this, UserActivities);
+        activitiesAdapter = new ActivitiesRecyclerViewAdapter(this);
         activitiesRecyclerView.setAdapter(activitiesAdapter);
+        activityViewModel = new ViewModelProvider(this).get(ActivityViewModel.class);
+        activityViewModel.getUserActivities().observe(this, new Observer<ArrayList<ActivityModel>>() {
+
+            @Override
+            public void onChanged(ArrayList<ActivityModel> activityModels) {
+                loadingActivities.setVisibility(View.GONE);
+                activitiesAdapter.updateAdapter(activityModels);
+            }
+        });
         LinearLayoutManager layout = new LinearLayoutManager(this);
         activitiesRecyclerView.setLayoutManager(layout);
         activitiesRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+
+        activityViewModel.getIsLoading().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                loadingActivities.setVisibility(View.GONE);
+            }
+        });
 
         activitiesRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -159,9 +179,11 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
                     int totalItems = layout.getItemCount();
                     int firstItem = layout.findFirstVisibleItemPosition();
 
-                    if( !isEndofArray && !isLoading && (onScreen + firstItem) >= totalItems) {
-                        loadingActivities.setVisibility(View.VISIBLE);
-                        loadUserActivities();
+                    if(!activityViewModel.getIsLoading().getValue() && !activityViewModel.getIsEndofArray().getValue()) {
+                        if((onScreen + firstItem) >= totalItems - 1 && firstItem >= 0) {
+                            loadingActivities.setVisibility(View.VISIBLE);
+                            activityViewModel.loadUserActivities();
+                        }
                     }
                 }
             }
@@ -195,6 +217,14 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
             }
         });
 
+        addFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, AIAssistantActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -211,11 +241,11 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
     @Override
     protected void onResume() {
         super.onResume();
-        UserActivities.clear();
+        //UserActivities.clear();
         activitiesAdapter.notifyDataSetChanged();
         isEndofArray = false;
         lastVisible = null;
-        loadUserActivities();
+        //loadUserActivities();
     }
 
     protected void onStop() {
@@ -233,42 +263,42 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
         return formattedRunTime;
     }
 
-    private void loadUserActivities() {
-        if( isLoading || isEndofArray) {
-            return;
-        }
-
-        isLoading = true;
-        DatabaseUtil.retrieveUserActivities(UserID, new FirebaseDatabaseHelper.FirestoreActivitiesCallback() {
-            @Override
-            public void onCallback(List<Map<String, Object>> data, DocumentSnapshot lastItemVisible) {
-                for(Map<String, Object> activity : data) {
-                    isLoading = false;
-                    loadingActivities.setVisibility(View.GONE);
-
-                    if(data == null || data.isEmpty()) {
-                        isEndofArray = true;
-                        return;
-                    }
-                    ActivityModel activityInfo = new ActivityModel(
-                            String.valueOf(activity.get("type")),
-                            String.valueOf(activity.get("typeImage")),
-                            (Timestamp) activity.get("date"),
-                            String.valueOf(activity.get("distance")),
-                            formatRunTime(Double.parseDouble(String.valueOf(activity.get("time")))),
-                            String.valueOf(activity.get("pace")),
-                            (String) UserName.getText(),
-                            String.valueOf(activity.get("UserImage")),
-                            (List<Object>) activity.get("activityCoordinates")
-                    );
-                        UserActivities.add(activityInfo);
-                }
-                lastVisible = lastItemVisible;
-                System.out.println(UserActivities.size());
-                activitiesAdapter.notifyDataSetChanged();
-            }
-        }, lastVisible);
-    }
+//    private void loadUserActivities() {
+//        if( isLoading || isEndofArray) {
+//            return;
+//        }
+//
+//        isLoading = true;
+//        DatabaseUtil.retrieveUserActivities(UserID, new FirebaseDatabaseHelper.FirestoreActivitiesCallback() {
+//            @Override
+//            public void onCallback(List<Map<String, Object>> data, DocumentSnapshot lastItemVisible) {
+//                for(Map<String, Object> activity : data) {
+//                    isLoading = false;
+//                    loadingActivities.setVisibility(View.GONE);
+//
+//                    if(data == null || data.isEmpty()) {
+//                        isEndofArray = true;
+//                        return;
+//                    }
+//                    ActivityModel activityInfo = new ActivityModel(
+//                            String.valueOf(activity.get("type")),
+//                            String.valueOf(activity.get("typeImage")),
+//                            (Timestamp) activity.get("date"),
+//                            String.valueOf(activity.get("distance")),
+//                            formatRunTime(Double.parseDouble(String.valueOf(activity.get("time")))),
+//                            String.valueOf(activity.get("pace")),
+//                            (String) UserName.getText(),
+//                            String.valueOf(activity.get("UserImage")),
+//                            (List<Object>) activity.get("activityCoordinates")
+//                    );
+//                        UserActivities.add(activityInfo);
+//                }
+//                lastVisible = lastItemVisible;
+//                System.out.println(UserActivities.size());
+//                activitiesAdapter.notifyDataSetChanged();
+//            }
+//        }, lastVisible);
+//    }
 
     private void createSyncNotificationChannel() {
     }

@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.health.connect.datatypes.ExerciseRoute;
+import android.health.connect.datatypes.units.Power;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +18,7 @@ import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private double distanceTravelled;
     private TextView txtDistanceTravelled;
     private TextView txtRunTime;
-
     private LatLng currentLocation;
     private boolean isTrackingRun;
     private boolean isTimerStarted;
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private double milestoneTarget = 1000;
     private List<LatLng> activityLocations = new ArrayList<>();
     private TextToSpeech DistanceTalker;
+    private PowerManager.WakeLock wakelock;
 
 
     @Override
@@ -78,6 +80,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Button btnClear = findViewById(R.id.btnClearMap);
         Button btnStopStart = findViewById(R.id.stopStartBtn);
         txtRunTime = findViewById(R.id.txtRunTime);
+
+        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakelock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Fittrack:PREVENT_DOZE_MODE");
+        wakelock.acquire();
+        
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 
         requestBatteryOptimizationExemption();
@@ -287,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         public void onReceive(Context context, Intent intent) {
             Location newLocation = intent.getParcelableExtra("location");
             activityLocations.add(new LatLng(newLocation.getLatitude(), newLocation.getLongitude()));
-            System.out.println(newLocation);
+            //System.out.println(newLocation);
             updateMapWithLocation(newLocation);
             previousLocation = newLocation;
         }

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +26,7 @@ public class MyRunningGroupsFragment extends Fragment {
     private String UserID = mAuth.getUid();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ArrayList<GroupModel> groupList = new ArrayList<>();
+    private UserGroupsViewModel groupsViewModel = new UserGroupsViewModel();
     private GroupsRecyclerViewAdapter groupsAdapter;
     private GroupsDatabaseUtil groupsDatabaseUtil = new GroupsDatabaseUtil(db);
 
@@ -33,24 +35,15 @@ public class MyRunningGroupsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.find_running_groups_fragment, container, false);
 
-        groupsDatabaseUtil.retrieveUserGroups(UserID, new GroupsDatabaseUtil.AllGroupsCallback() {
+        RecyclerView groupsRecyclerView = view.findViewById(R.id.groupsRecyclerView);
+        groupsAdapter = new GroupsRecyclerViewAdapter(getContext());
+        groupsRecyclerView.setAdapter(groupsAdapter);
+        groupsViewModel.getGroupsList().observe(getViewLifecycleOwner(), new Observer<ArrayList<GroupModel>>() {
             @Override
-            public void onCallback(List<Map<String, Object>> groupsData) {
-                for(Map<String, Object> data : groupsData) {
-                    GroupModel group = new GroupModel(
-                            (String) data.get("Name"),
-                            (String) data.get("Description"),
-                            null
-                    );
-                    groupList.add(group);
-                    groupsAdapter.notifyDataSetChanged();
-                }
+            public void onChanged(ArrayList<GroupModel> groupModels) {
+                groupsAdapter.updateGroups(groupModels);
             }
         });
-
-        RecyclerView groupsRecyclerView = view.findViewById(R.id.groupsRecyclerView);
-        groupsAdapter = new GroupsRecyclerViewAdapter(getContext(), groupList);
-        groupsRecyclerView.setAdapter(groupsAdapter);
         LinearLayoutManager layout = new LinearLayoutManager(getContext());
         groupsRecyclerView.setLayoutManager(layout);
         groupsRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));

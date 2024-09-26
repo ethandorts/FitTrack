@@ -20,11 +20,10 @@ import java.util.ArrayList;
 public class DirectMessagingMenuViewAdapter extends RecyclerView.Adapter<DirectMessagingMenuViewAdapter.ChatUsersViewHolder> {
     private final RecyclerViewInterface recyclerViewInterface;
     private Context context;
-    private ArrayList<UserModel> userList;
+    private ArrayList<UserModel> userList = new ArrayList<>();
 
-    public DirectMessagingMenuViewAdapter(Context context, ArrayList<UserModel> userList, RecyclerViewInterface recyclerViewInterface) {
+    public DirectMessagingMenuViewAdapter(Context context, RecyclerViewInterface recyclerViewInterface) {
         this.context = context;
-        this.userList = userList;
         this.recyclerViewInterface = recyclerViewInterface;
     }
 
@@ -51,6 +50,11 @@ public class DirectMessagingMenuViewAdapter extends RecyclerView.Adapter<DirectM
             intent.putExtra("UserID", user.getUserID());
             context.startActivity(intent);
         });
+    }
+
+    public void updateUsers(ArrayList<UserModel> users) {
+        this.userList = users;
+        notifyDataSetChanged();
     }
 
     public static class ChatUsersViewHolder extends RecyclerView.ViewHolder {
