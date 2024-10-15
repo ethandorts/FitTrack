@@ -64,6 +64,7 @@ public class SaveActivityDialog extends DialogFragment {
         data.put("pace", (calculateAveragePace(distance, time)));
         data.put("type", "Running");
         data.put("activityCoordinates", activityLocations);
+        //data.put("caloriesBurned", )
 
         builder.setMessage("Do you want to save your activity?")
                 .setPositiveButton("Save Activity", new DialogInterface.OnClickListener() {

@@ -79,7 +79,7 @@ public class AIAssistantActivity extends AppCompatActivity {
         }
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        //String api_key - API key here
+        //String api_key;
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 "https://api.openai.com/v1/chat/completions",

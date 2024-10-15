@@ -26,7 +26,7 @@
                 app:srcCompat="@drawable/profile" />
 
             <TextView
-                android:id="@+id/txtUserMessagingName"
+                android:id="@+id/txtFoodName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -40,7 +40,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/txtLastMesssageSent"
+                android:id="@+id/txtCalories"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -50,7 +50,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.016"
                 app:layout_constraintStart_toEndOf="@id/user_icon"
-                app:layout_constraintTop_toBottomOf="@id/txtUserMessagingName" />
+                app:layout_constraintTop_toBottomOf="@id/txtFoodName" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

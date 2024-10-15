@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Handler runTimeHandler;
     private Runnable timer;
     private long startTime;
+    private int lastSplitKM = 0;
+    private long lastSplitTime;
     private int elapsedTime;
     private double milestoneTarget = 1000;
     private List<LatLng> activityLocations = new ArrayList<>();
@@ -86,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         wakelock.acquire();
         
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
 
         requestBatteryOptimizationExemption();
         runTimeHandler = new Handler();
@@ -262,6 +263,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         while(distanceTravelled >= milestoneTarget) {
             DistanceTalker.speak(milestoneTarget + " metres done" , TextToSpeech.QUEUE_FLUSH, null);
             milestoneTarget += 1000;
+        }
+    }
+
+    private void DisplaySplitFragment() {
+        lastSplitKM = 0;
+        int currentKM = (int) (distanceTravelled / 1000);
+
+        if(currentKM > lastSplitKM) {
+            long SplitTime = System.currentTimeMillis();
+            if(lastSplitKM == 0) {
+                lastSplitTime = startTime;
+            }
+            long time = SplitTime - lastSplitTime;
+            String formattedSplitTime = formatRunTime((int) time);
+
+            // show Dialog Box here
+
+            lastSplitTime = SplitTime;
+            lastSplitKM = currentKM;
+
         }
     }
 

@@ -29,6 +29,12 @@
         android:theme="@style/Theme.FitTrack"
         tools:targetApi="31">
         <activity
+            android:name=".NutritionTracking"
+            android:exported="false" />
+        <activity
+            android:name=".Calendar"
+            android:exported="false" />
+        <activity
             android:name=".AIAssistantActivity"
             android:exported="false" />
         <activity
