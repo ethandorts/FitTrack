@@ -70,7 +70,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private int elapsedTime;
     private double milestoneTarget = 1000;
     private long previousTime = 0;
-    private List<LatLng> activityLocations = new ArrayList<>();
+    private ArrayList<ActivityLocationsEntity> entities;
+    private ActivityLocationsDao activityLocationsDao;
     private List<Long> kmSplits = new ArrayList<>();
     private TextToSpeech DistanceTalker;
     private PowerManager.WakeLock wakelock;
@@ -80,6 +81,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        activityLocationsDao = ActivityLocationsDatabase.getActivityLocationsDatabase(this).activityLocationsDao();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                activityLocationsDao.deleteAllLocations();
+            }
+        });
+
         txtDistanceTravelled = findViewById(R.id.txtDistanceTravelled);
         Button btnClear = findViewById(R.id.btnClearMap);
         Button btnStopStart = findViewById(R.id.stopStartBtn);
@@ -146,7 +156,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Bundle runningData = new Bundle();
                     runningData.putDouble("distance", distanceTravelled);
                     runningData.putDouble("time", elapsedTime);
-                    runningData.putParcelableArrayList("activityLocations", (ArrayList<? extends Parcelable>) activityLocations);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            List<ActivityLocationsEntity> entitiesList = activityLocationsDao.retrieveAllLocations();
+                            List<LatLng> locations = new ArrayList<>();
+                            for( ActivityLocationsEntity entity: entitiesList) {
+                                if(entitiesList != null) {
+                                    locations.add(new LatLng(entity.getLatitude(), entity.getLongitude()));
+                                } else {
+                                    System.out.println("No entities in activity database ");
+                                }
+                            }
+                            runningData.putParcelableArrayList("activityLocations", (ArrayList<? extends Parcelable>) locations);
+                        }
+                    }).start();
                     long[] splits = new long[kmSplits.size()];
                     for(int i = 0; i < kmSplits.size(); i++) {
                         splits[i] = kmSplits.get(i);
@@ -331,7 +355,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         public void onReceive(Context context, Intent intent) {
             Location newLocation = intent.getParcelableExtra("location");
-            activityLocations.add(new LatLng(newLocation.getLatitude(), newLocation.getLongitude()));
+            //activityLocations.add(new LatLng(newLocation.getLatitude(), newLocation.getLongitude()));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    ActivityLocationsEntity entity = new ActivityLocationsEntity();
+                    entity.setLatitude(newLocation.getLatitude());
+                    entity.setLongitude(newLocation.getLongitude());
+                    entity.setTime(System.currentTimeMillis());
+                    System.out.println("Database Input: " + entity.getLatitude() + " " + entity.getLongitude());
+                    if(isTrackingRun) {
+                        activityLocationsDao.addLocation(entity);
+                    }
+                }
+            }).start();
             //System.out.println(newLocation);
             updateMapWithLocation(newLocation);
             previousLocation = newLocation;

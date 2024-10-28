@@ -41,11 +41,14 @@ public class SaveActivityDialog extends DialogFragment {
     private List<Long> splits = new ArrayList<>();
     private LocalDate date;
     private List<Parcelable> activityLocations = new ArrayList<>();
+    private ActivityLocationsDao activityLocationsDao;
     @Override
     public Dialog onCreateDialog(Bundle SavedInstanceState) {
         mAuth = FirebaseAuth.getInstance().getCurrentUser();
         UserID = mAuth.getUid();
         db = FirebaseFirestore.getInstance();
+
+        activityLocationsDao = ActivityLocationsDatabase.getActivityLocationsDatabase(getContext()).activityLocationsDao();
 
         if(getArguments() != null) {
             distance = getArguments().getDouble("distance");
@@ -85,6 +88,12 @@ public class SaveActivityDialog extends DialogFragment {
                                     @Override
                                     public void onSuccess(DocumentReference documentReference) {
                                         Log.d("Successful Activity Write", "Activity Written");
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                activityLocationsDao.deleteAllLocations();
+                                            }
+                                        }).start();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override

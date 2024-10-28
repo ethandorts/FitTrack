@@ -86,8 +86,8 @@ public class LocationTracker extends Service {
     private LocationRequest createLocationRequest() {
         return LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(4000)
-                .setFastestInterval(1000);
+                .setInterval(10000)
+                .setFastestInterval(5000);
     }
 
     private void getLocationUpdates() {
