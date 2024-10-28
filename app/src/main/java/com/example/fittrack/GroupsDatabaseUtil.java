@@ -70,11 +70,34 @@ public class GroupsDatabaseUtil {
                 });
     }
 
+    public void retrieveUsersinGroup(String groupId, UsersinGroupsCallback callback) {
+        db.collection("Groups")
+                .document(groupId)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        ArrayList<String> runners = (ArrayList<String>) documentSnapshot.get("Runners");
+                        callback.onCallback(runners);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        System.out.println("Failure getting runners of a group");
+                        callback.onCallback(null);
+                    }
+                });
+    }
+
     public interface AllGroupsCallback {
         void onCallback(List<Map<String, Object>> groupsData);
     }
 
     public interface UserGroupsCallback {
         void onCallback(List<Map<String, Object>> userGroupsData);
+    }
+
+    public interface UsersinGroupsCallback {
+        void onCallback(ArrayList<String> runners);
     }
 }

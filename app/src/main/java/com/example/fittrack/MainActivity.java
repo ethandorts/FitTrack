@@ -42,6 +42,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -65,11 +66,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Handler runTimeHandler;
     private Runnable timer;
     private long startTime;
-    private int lastSplitKM = 0;
-    private long lastSplitTime;
+    private int targetKM = 1000;
     private int elapsedTime;
     private double milestoneTarget = 1000;
+    private long previousTime = 0;
     private List<LatLng> activityLocations = new ArrayList<>();
+    private List<Long> kmSplits = new ArrayList<>();
     private TextToSpeech DistanceTalker;
     private PowerManager.WakeLock wakelock;
 
@@ -145,6 +147,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     runningData.putDouble("distance", distanceTravelled);
                     runningData.putDouble("time", elapsedTime);
                     runningData.putParcelableArrayList("activityLocations", (ArrayList<? extends Parcelable>) activityLocations);
+                    long[] splits = new long[kmSplits.size()];
+                    for(int i = 0; i < kmSplits.size(); i++) {
+                        splits[i] = kmSplits.get(i);
+                    }
+                    runningData.putLongArray("splits", splits);
 
                     saveActivityDialog.setArguments(runningData);
                     saveActivityDialog.show(getSupportFragmentManager(), "SaveActivity");
@@ -185,6 +192,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             DrawRoute(location);
             DistanceSpeakerAssistant(distanceTravelled);
+            kmSplit();
         } else {
             stopTimer();
         }
@@ -266,24 +274,32 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void DisplaySplitFragment() {
-        lastSplitKM = 0;
-        int currentKM = (int) (distanceTravelled / 1000);
-
-        if(currentKM > lastSplitKM) {
-            long SplitTime = System.currentTimeMillis();
-            if(lastSplitKM == 0) {
-                lastSplitTime = startTime;
-            }
-            long time = SplitTime - lastSplitTime;
-            String formattedSplitTime = formatRunTime((int) time);
-
-            // show Dialog Box here
-
-            lastSplitTime = SplitTime;
-            lastSplitKM = currentKM;
-
+    private void kmSplit() {
+        if(distanceTravelled >= targetKM) {
+            long timeNow = System.currentTimeMillis();
+            System.out.println("TimeNow " + timeNow);
+            long splitTime = previousTime == 0 ? timeNow - startTime : timeNow - previousTime;
+            System.out.println("splitTime " + splitTime);
+            long fullTime = timeNow - startTime;
+            System.out.println("FullTime " + fullTime);
+            DisplaySplitFragment(targetKM, splitTime, fullTime);
+            kmSplits.add(splitTime);
+            targetKM += 1000;
+            previousTime = timeNow;
         }
+    }
+
+    private void DisplaySplitFragment(int Km, long splitTime, long fullTime) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        SplitDialogFragment fragment = new SplitDialogFragment();
+
+        Bundle splitData = new Bundle();
+        splitData.putInt("Km", Km);
+        splitData.putLong("splitTime", splitTime);
+        splitData.putLong("fullTime", fullTime);
+        fragment.setArguments(splitData);
+
+        fragment.show(fragmentManager, "SplitDialogFragment");
     }
 
     private void requestBatteryOptimizationExemption() {

@@ -38,6 +38,7 @@ public class SaveActivityDialog extends DialogFragment {
 
     private double distance;
     private double time;
+    private List<Long> splits = new ArrayList<>();
     private LocalDate date;
     private List<Parcelable> activityLocations = new ArrayList<>();
     @Override
@@ -50,6 +51,13 @@ public class SaveActivityDialog extends DialogFragment {
             distance = getArguments().getDouble("distance");
             time = getArguments().getDouble("time");
             activityLocations = getArguments().getParcelableArrayList("activityLocations");
+            long[] splitsArray = getArguments().getLongArray("splits");
+
+            List<Long> splitsList = new ArrayList<>();
+            for(long split: splitsArray) {
+                splitsList.add(split);
+            }
+            splits = splitsList;
         } else {
             Log.d("getArguments", "Arguments are null");
         }
@@ -64,6 +72,7 @@ public class SaveActivityDialog extends DialogFragment {
         data.put("pace", (calculateAveragePace(distance, time)));
         data.put("type", "Running");
         data.put("activityCoordinates", activityLocations);
+        data.put("splits", splits);
         //data.put("caloriesBurned", )
 
         builder.setMessage("Do you want to save your activity?")

@@ -14,6 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ActivityViewModel extends ViewModel {
     private MutableLiveData<ArrayList<ActivityModel>> UserActivities = new MutableLiveData<>();
@@ -21,8 +22,10 @@ public class ActivityViewModel extends ViewModel {
     private MutableLiveData<Boolean> isEndofArray = new MutableLiveData<>(false);
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private String UserID = mAuth.getUid();
+    private String GroupID;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
+    private GroupsDatabaseUtil GroupsUtil = new GroupsDatabaseUtil(db);
     private DocumentSnapshot lastVisible = null;
 
     public ActivityViewModel() {
@@ -80,6 +83,50 @@ public class ActivityViewModel extends ViewModel {
                 isLoading.setValue(false);
             }
         }, lastVisible);
+    }
+
+    public void loadGroupActivities() {
+        if (Boolean.TRUE.equals(isLoading.getValue()) || Boolean.TRUE.equals(isEndofArray.getValue())) {
+            return;
+        }
+
+        isLoading.setValue(true);
+
+        GroupsUtil.retrieveUsersinGroup("Sg8JLYf9lpE1akjQRHBv", new GroupsDatabaseUtil.UsersinGroupsCallback() {
+            ArrayList<ActivityModel> groupActivities = new ArrayList<>();
+            @Override
+            public void onCallback(ArrayList<String> runners) {
+                AtomicInteger count = new AtomicInteger(0);
+                for(String runner : runners) {
+                    DatabaseUtil.retrieveUserActivities(runner, new FirebaseDatabaseHelper.FirestoreActivitiesCallback() {
+                        @Override
+                        public void onCallback(List<Map<String, Object>> data, DocumentSnapshot lastVisible) {
+                            if(data != null) {
+                                for (Map<String, Object> activity : data) {
+                                    ActivityModel activityInfo = new ActivityModel(
+                                            String.valueOf(activity.get("type")),
+                                            String.valueOf(activity.get("typeImage")),
+                                            (Timestamp) activity.get("date"),
+                                            String.valueOf(activity.get("distance")),
+                                            formatRunTime(Double.parseDouble(String.valueOf(activity.get("time")))),
+                                            String.valueOf(activity.get("pace")),
+                                            "",
+                                            String.valueOf(activity.get("UserImage")),
+                                            (List<Object>) activity.get("activityCoordinates")
+                                    );
+                                    groupActivities.add(activityInfo);
+                                }
+                            }
+                            System.out.println("Group Activities: " + groupActivities.size());
+                            if(count.incrementAndGet() == runners.size()) {
+                                UserActivities.setValue(groupActivities);
+                                isLoading.setValue(false);
+                            }
+                        }
+                    }, lastVisible);
+                }
+            }
+        });
     }
 
     private String formatRunTime(double timePassed) {

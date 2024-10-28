@@ -22,11 +22,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,7 +47,11 @@ public class NutritionTracking extends AppCompatActivity {
     private FirebaseUser mAuth = FirebaseAuth.getInstance().getCurrentUser();
     private String UserID = mAuth.getUid();
     private NutritionListAdapter foodAdapter;
+    private TextView txtCalorieCount;
+    private double dailyCalories = 0;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    private Date today = new Date();
+    private String date = dateFormat.format(today);
 
     @Override
     protected void onStart() {
@@ -68,11 +74,8 @@ public class NutritionTracking extends AppCompatActivity {
 
         EditText editFood = findViewById(R.id.editFood);
         Button btnAddFood = findViewById(R.id.btnAddFood);
-        TextView txtCalorieCount = findViewById(R.id.txtCalorieCount);
+        txtCalorieCount = findViewById(R.id.txtCalorieCount);
         RecyclerView recyclerNutrition = findViewById(R.id.recyclerViewnutrition);
-
-        Date today = new Date();
-        String date = dateFormat.format(today);
 
         Query query = db.collection("Users")
                 .document(UserID)
@@ -86,15 +89,9 @@ public class NutritionTracking extends AppCompatActivity {
                         .build();
 
         foodAdapter = new NutritionListAdapter(options, this);
-        foodAdapter.getItemCount();
         recyclerNutrition.setAdapter(foodAdapter);
         recyclerNutrition.setLayoutManager(new LinearLayoutManager(this));
-        System.out.println("Number of items in food scroller: + " + foodAdapter.getItemCount());
-        if(foodAdapter != null) {
-            System.out.println("Adapter is loaded");
-        } else {
-            System.out.println("Adapter is null");
-        }
+        getCalorieCount();
 
         btnAddFood.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,6 +102,12 @@ public class NutritionTracking extends AppCompatActivity {
                     public void onFoodResponse(String name, double calories, int quantity, String mealType) {
                         FoodModel food = new FoodModel(name, calories, mealType, quantity);
                         foodDatabaseUtil.saveFood(food);
+                        new android.os.Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                getCalorieCount();
+                            }
+                        }, 2000);
                     }
                 });
             }
@@ -137,14 +140,14 @@ public class NutritionTracking extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        System.out.println("Error in getting food data from API");
+                        System.out.println("Error in getting food data from API" + volleyError);
                     }
                 }
         ) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headersMap = new HashMap<>();
-                headersMap.put("X-Api-Key", ""); // insert API KEY HERE
+                //headersMap.put("X-Api-Key", ); // insert API KEY HERE
 
                 return headersMap;
             }
@@ -153,5 +156,24 @@ public class NutritionTracking extends AppCompatActivity {
     }
     public interface FoodResponse {
         void onFoodResponse(String name, double calories, int quantity, String mealType);
+    }
+
+    private void getCalorieCount() {
+        db.collection("Users")
+                .document(UserID)
+                .collection("Nutrition")
+                .document(date)
+                .collection("Meals").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot querySnapshot) {
+                dailyCalories = 0;
+                List<DocumentSnapshot> snapshots = querySnapshot.getDocuments();
+                for(DocumentSnapshot snapshot : snapshots) {
+                    double calories = (double) snapshot.get("calories");
+                    dailyCalories += calories;
+                    txtCalorieCount.setText("Daily Calorie Count: " + dailyCalories);
+                }
+            }
+        });
     }
 }
