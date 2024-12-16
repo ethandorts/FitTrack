@@ -35,6 +35,7 @@ public class SaveActivityDialog extends DialogFragment {
     private String UserID;
     private FirebaseFirestore db;
     private static final DecimalFormat TwoDecimalRounder = new DecimalFormat("0.00");
+    private CaloriesCalculator caloriesCalculator = new CaloriesCalculator();
 
     private double distance;
     private double time;
@@ -76,7 +77,7 @@ public class SaveActivityDialog extends DialogFragment {
         data.put("type", "Running");
         data.put("activityCoordinates", activityLocations);
         data.put("splits", splits);
-        //data.put("caloriesBurned", )
+        data.put("caloriesBurned", caloriesCalculator.calculateCalories(time, (calculateAveragePace(distance, time)), 64));
 
         builder.setMessage("Do you want to save your activity?")
                 .setPositiveButton("Save Activity", new DialogInterface.OnClickListener() {

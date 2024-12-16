@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 public class GroupActivity extends AppCompatActivity {
     private ActivitiesRecyclerViewAdapter groupActivitiesAdapter;
-    private ActivityViewModel groupActivityViewModel;
+    private GroupActivitiesViewModel groupActivityViewModel;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private GroupsDatabaseUtil databaseUtil = new GroupsDatabaseUtil(db);
     private ProgressBar loadingActivities;
@@ -36,8 +36,8 @@ public class GroupActivity extends AppCompatActivity {
         loadingActivities = findViewById(R.id.groupsProgressBar);
         groupActivitiesAdapter = new ActivitiesRecyclerViewAdapter(this);
         recyclerView.setAdapter(groupActivitiesAdapter);
-        groupActivityViewModel = new ViewModelProvider(this).get(ActivityViewModel.class);
-        groupActivityViewModel.getUserActivities().observe(this, new Observer<ArrayList<ActivityModel>>() {
+        groupActivityViewModel = new ViewModelProvider(this).get(GroupActivitiesViewModel.class);
+        groupActivityViewModel.getGroupActivities().observe(this, new Observer<ArrayList<ActivityModel>>() {
             @Override
             public void onChanged(ArrayList<ActivityModel> activityModels) {
                 groupActivitiesAdapter.updateAdapter(activityModels);

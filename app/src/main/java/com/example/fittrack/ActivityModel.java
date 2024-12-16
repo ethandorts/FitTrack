@@ -61,4 +61,27 @@ public class ActivityModel {
     public List<Object> getActivityCoordinates() {
         return activityCoordinates;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ActivityModel that = (ActivityModel) o;
+
+        return activityDate.equals(that.activityDate) &&
+                activityType.equals(that.activityType) &&
+                activityDistance.equals(that.activityDistance) &&
+                activityTime.equals(that.activityTime);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = activityType.hashCode();
+        result = 31 * result + activityDate.hashCode();
+        result = 31 * result + activityDistance.hashCode();
+        result = 31 * result + activityTime.hashCode();
+        return result;
+    }
+
 }

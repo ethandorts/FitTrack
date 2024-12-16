@@ -87,4 +87,5 @@
         android:inputType="text"
         app:layout_constraintBaseline_toBaselineOf="@+id/txtDescription"
         app:layout_constraintStart_toEndOf="@+id/txtDescription" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

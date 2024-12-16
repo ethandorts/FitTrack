@@ -12,6 +12,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -53,12 +54,12 @@ public class ActivityViewModel extends ViewModel {
         DatabaseUtil.retrieveUserActivities(UserID, new FirebaseDatabaseHelper.FirestoreActivitiesCallback() {
             @Override
             public void onCallback(List<Map<String, Object>> data, DocumentSnapshot lastItemVisible) {
-                ArrayList<ActivityModel> NewActivities = new ArrayList<>();
                 if (data == null || data.isEmpty()) {
                     isEndofArray.setValue(true);
                     isLoading.setValue(false);
                     return;
                 }
+                HashSet<ActivityModel> singleActivities = new HashSet<>(UserActivities.getValue() != null ? UserActivities.getValue() : new ArrayList<>());
                 for (Map<String, Object> activity : data) {
                     ActivityModel activityInfo = new ActivityModel(
                             String.valueOf(activity.get("type")),
@@ -71,14 +72,9 @@ public class ActivityViewModel extends ViewModel {
                             String.valueOf(activity.get("UserImage")),
                             (List<Object>) activity.get("activityCoordinates")
                     );
-                    NewActivities.add(activityInfo);
+                    singleActivities.add(activityInfo);
                 }
-                ArrayList<ActivityModel> activitiesInList = UserActivities.getValue();
-                if(activitiesInList == null) {
-                    activitiesInList = new ArrayList<>();
-                }
-                activitiesInList.addAll(NewActivities);
-                UserActivities.setValue(activitiesInList);
+                UserActivities.setValue(new ArrayList<>(singleActivities));
                 lastVisible = lastItemVisible;
                 isLoading.setValue(false);
             }
@@ -93,35 +89,38 @@ public class ActivityViewModel extends ViewModel {
         isLoading.setValue(true);
 
         GroupsUtil.retrieveUsersinGroup("Sg8JLYf9lpE1akjQRHBv", new GroupsDatabaseUtil.UsersinGroupsCallback() {
-            ArrayList<ActivityModel> groupActivities = new ArrayList<>();
             @Override
             public void onCallback(ArrayList<String> runners) {
                 AtomicInteger count = new AtomicInteger(0);
+                System.out.println(runners);
+                HashSet<ActivityModel> singleActivities = new HashSet<>(UserActivities.getValue() != null ? UserActivities.getValue() : new ArrayList<>());
                 for(String runner : runners) {
+                    System.out.println("Runner: " + runner);
                     DatabaseUtil.retrieveUserActivities(runner, new FirebaseDatabaseHelper.FirestoreActivitiesCallback() {
                         @Override
                         public void onCallback(List<Map<String, Object>> data, DocumentSnapshot lastVisible) {
                             if(data != null) {
                                 for (Map<String, Object> activity : data) {
-                                    ActivityModel activityInfo = new ActivityModel(
-                                            String.valueOf(activity.get("type")),
-                                            String.valueOf(activity.get("typeImage")),
-                                            (Timestamp) activity.get("date"),
-                                            String.valueOf(activity.get("distance")),
-                                            formatRunTime(Double.parseDouble(String.valueOf(activity.get("time")))),
-                                            String.valueOf(activity.get("pace")),
-                                            "",
-                                            String.valueOf(activity.get("UserImage")),
-                                            (List<Object>) activity.get("activityCoordinates")
-                                    );
-                                    groupActivities.add(activityInfo);
+                                    System.out.println("Map: " + activity);
+//                                    ActivityModel activityInfo = new ActivityModel(
+//                                            String.valueOf(activity.get("type")),
+//                                            String.valueOf(activity.get("typeImage")),
+//                                            (Timestamp) activity.get("date"),
+//                                            String.valueOf(activity.get("distance")),
+//                                            formatRunTime(Double.parseDouble(String.valueOf(activity.get("time")))),
+//                                            String.valueOf(activity.get("pace")),
+//                                            "",
+//                                            String.valueOf(activity.get("UserImage")),
+//                                            (List<Object>) activity.get("activityCoordinates")
+//                                    );
+                                    //singleActivities.add(activityInfo);
                                 }
                             }
-                            System.out.println("Group Activities: " + groupActivities.size());
-                            if(count.incrementAndGet() == runners.size()) {
-                                UserActivities.setValue(groupActivities);
-                                isLoading.setValue(false);
-                            }
+                            System.out.println("Group Activities: " + singleActivities.size());
+//                            if(count.incrementAndGet() == runners.size()) {
+//                                UserActivities.setValue(new ArrayList<>(singleActivities));
+//                                isLoading.setValue(false);
+//                            }
                         }
                     }, lastVisible);
                 }

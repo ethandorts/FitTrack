@@ -10,10 +10,23 @@
     <Button
         android:id="@+id/btnDeleteAccount"
         android:layout_width="178dp"
-        android:layout_height="65dp"
+        android:layout_height="0dp"
         android:layout_marginBottom="31dp"
         android:text="DELETE MY ACCOUNT"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnCalendar" />
+
+    <Button
+        android:id="@+id/btnCalendar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
+        android:layout_marginBottom="531dp"
+        android:text="Calendar"
+        app:layout_constraintBottom_toTopOf="@+id/btnDeleteAccount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

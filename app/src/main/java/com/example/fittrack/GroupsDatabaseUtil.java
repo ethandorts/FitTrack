@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GroupsDatabaseUtil {
-    FirebaseFirestore db;
+    private FirebaseFirestore db;
 
     public GroupsDatabaseUtil(FirebaseFirestore db) {
         this.db = db;
