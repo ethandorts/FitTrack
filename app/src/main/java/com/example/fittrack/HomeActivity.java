@@ -13,6 +13,7 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
@@ -92,6 +93,7 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
     private DocumentSnapshot lastVisible = null;
     private boolean isLoading = false;
     private boolean isEndofArray = false;
+    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +126,6 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
 
         mAuth = FirebaseAuth.getInstance().getCurrentUser();
         UserID = mAuth.getUid();
-
 
         DatabaseUtil.retrieveUserName(UserID, new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
             @Override
@@ -174,20 +175,28 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if(layout != null) {
-                    int onScreen = layout.getChildCount();
-                    int totalItems = layout.getItemCount();
-                    int firstItem = layout.findFirstVisibleItemPosition();
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
 
-                    if(!activityViewModel.getIsLoading().getValue() && !activityViewModel.getIsEndofArray().getValue()) {
-                        if((onScreen + firstItem) >= totalItems - 1 && firstItem >= 0) {
-                            loadingActivities.setVisibility(View.VISIBLE);
-                            activityViewModel.loadUserActivities();
+                int onScreen = layoutManager.getChildCount();
+                int totalItems = layoutManager.getItemCount();
+                int firstItem = layoutManager.findFirstVisibleItemPosition();
+
+                if (!activityViewModel.getIsLoading().getValue() && !activityViewModel.getIsEndofArray().getValue()) {
+                    if ((onScreen + firstItem) >= totalItems - 5 && firstItem >= 0) {
+                        if (handler != null) {
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    loadingActivities.setVisibility(View.VISIBLE);
+                                    activityViewModel.loadUserActivities();
+                                }
+                            }, 2000);
                         }
                     }
                 }
             }
         });
+
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {

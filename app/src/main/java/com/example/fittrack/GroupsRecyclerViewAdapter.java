@@ -41,6 +41,7 @@ public class GroupsRecyclerViewAdapter extends RecyclerView.Adapter<GroupsRecycl
             public void onClick(View view) {
                 Intent intent = new Intent(holder.itemView.getContext(), GroupActivity.class);
                 intent.putExtra("GroupName", group.getGroupName());
+                intent.putExtra("GroupID", group.getGroupID());
                 context.startActivity(intent);
             }
         });
@@ -67,8 +68,4 @@ public class GroupsRecyclerViewAdapter extends RecyclerView.Adapter<GroupsRecycl
             GroupImage = itemView.findViewById(R.id.group_icon);
         }
     }
-
-
-
-
 }

@@ -3,11 +3,13 @@ package com.example.fittrack;
 import android.widget.ImageView;
 
 public class GroupModel {
+    private String GroupID;
     private String GroupName;
     private String GroupDescription;
     private ImageView GroupIcon;
 
-    public GroupModel(String groupName, String groupDescription, ImageView groupIcon) {
+    public GroupModel(String groupID, String groupName, String groupDescription, ImageView groupIcon) {
+        GroupID = groupID;
         GroupName = groupName;
         GroupDescription = groupDescription;
         GroupIcon = groupIcon;
@@ -35,5 +37,13 @@ public class GroupModel {
 
     public void setGroupIcon(ImageView groupIcon) {
         GroupIcon = groupIcon;
+    }
+
+    public String getGroupID() {
+        return GroupID;
+    }
+
+    public void setGroupID(String groupID) {
+        GroupID = groupID;
     }
 }

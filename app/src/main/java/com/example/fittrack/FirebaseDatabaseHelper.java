@@ -50,7 +50,9 @@ public class FirebaseDatabaseHelper {
                             List<Map<String, Object>> data = new ArrayList<>();
                             DocumentSnapshot lastVisible = null;
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                data.add(document.getData());
+                                Map<String, Object > activityData = document.getData();
+                                activityData.put("ActivityID", document.getId());
+                                data.add(activityData);
                                 lastVisible = document;
                             }
                             callback.onCallback(data, lastVisible);
@@ -58,6 +60,25 @@ public class FirebaseDatabaseHelper {
                             System.out.println("Error getting data: " + task.getException());
                             callback.onCallback(null, null);
                         }
+                    }
+                });
+    }
+
+    public void retrieveSpecificActivity(String ActivityID, SpecificActivityCallback callback) {
+        DocumentReference documentReference = db.collection("Activities").document(ActivityID);
+        documentReference.get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Map<String, Object> data = documentSnapshot.getData();
+                        callback.onCallback(data);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        System.out.println("Couldn't fetch user details");
+                        System.out.println(e.getMessage());
+                        callback.onCallback(null);
                     }
                 });
     }
@@ -128,6 +149,10 @@ public class FirebaseDatabaseHelper {
 
     public interface FirestoreActivitiesCallback {
         void onCallback(List<Map<String, Object>> data, DocumentSnapshot lastVisible);
+    }
+
+    public interface SpecificActivityCallback {
+        void onCallback(Map<String, Object> data);
     }
 
     public interface FirestoreAllUsersCallback {

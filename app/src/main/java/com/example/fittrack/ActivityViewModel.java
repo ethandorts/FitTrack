@@ -70,7 +70,8 @@ public class ActivityViewModel extends ViewModel {
                             String.valueOf(activity.get("pace")),
                             "",
                             String.valueOf(activity.get("UserImage")),
-                            (List<Object>) activity.get("activityCoordinates")
+                            (List<Object>) activity.get("activityCoordinates"),
+                            (String) activity.get("ActivityID")
                     );
                     singleActivities.add(activityInfo);
                 }
@@ -81,14 +82,14 @@ public class ActivityViewModel extends ViewModel {
         }, lastVisible);
     }
 
-    public void loadGroupActivities() {
+    public void loadGroupActivities(String GroupID) {
         if (Boolean.TRUE.equals(isLoading.getValue()) || Boolean.TRUE.equals(isEndofArray.getValue())) {
             return;
         }
 
         isLoading.setValue(true);
 
-        GroupsUtil.retrieveUsersinGroup("Sg8JLYf9lpE1akjQRHBv", new GroupsDatabaseUtil.UsersinGroupsCallback() {
+        GroupsUtil.retrieveUsersinGroup(GroupID, new GroupsDatabaseUtil.UsersinGroupsCallback() {
             @Override
             public void onCallback(ArrayList<String> runners) {
                 AtomicInteger count = new AtomicInteger(0);
@@ -102,25 +103,26 @@ public class ActivityViewModel extends ViewModel {
                             if(data != null) {
                                 for (Map<String, Object> activity : data) {
                                     System.out.println("Map: " + activity);
-//                                    ActivityModel activityInfo = new ActivityModel(
-//                                            String.valueOf(activity.get("type")),
-//                                            String.valueOf(activity.get("typeImage")),
-//                                            (Timestamp) activity.get("date"),
-//                                            String.valueOf(activity.get("distance")),
-//                                            formatRunTime(Double.parseDouble(String.valueOf(activity.get("time")))),
-//                                            String.valueOf(activity.get("pace")),
-//                                            "",
-//                                            String.valueOf(activity.get("UserImage")),
-//                                            (List<Object>) activity.get("activityCoordinates")
-//                                    );
-                                    //singleActivities.add(activityInfo);
+                                    ActivityModel activityInfo = new ActivityModel(
+                                            String.valueOf(activity.get("type")),
+                                            String.valueOf(activity.get("typeImage")),
+                                            (Timestamp) activity.get("date"),
+                                            String.valueOf(activity.get("distance")),
+                                            formatRunTime(Double.parseDouble(String.valueOf(activity.get("time")))),
+                                            String.valueOf(activity.get("pace")),
+                                            "",
+                                            String.valueOf(activity.get("UserImage")),
+                                            (List<Object>) activity.get("activityCoordinates"),
+                                            (String) activity.get("ActivityID")
+                                    );
+                                    singleActivities.add(activityInfo);
                                 }
                             }
                             System.out.println("Group Activities: " + singleActivities.size());
-//                            if(count.incrementAndGet() == runners.size()) {
-//                                UserActivities.setValue(new ArrayList<>(singleActivities));
-//                                isLoading.setValue(false);
-//                            }
+                            if(count.incrementAndGet() == runners.size()) {
+                                UserActivities.setValue(new ArrayList<>(singleActivities));
+                                isLoading.setValue(false);
+                            }
                         }
                     }, lastVisible);
                 }

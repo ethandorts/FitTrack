@@ -2,10 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/txt_ai_response"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GroupActivity">
+    tools:context=".OverviewFitnessStats">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/ActivityOverviewToolbar"
@@ -18,41 +18,7 @@
         app:layout_constraintBottom_toTopOf="@+id/activityTabLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/txtGroupName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:gravity="center"
-            android:text="Group Name"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
-
-        <ImageButton
-            android:id="@+id/btnGroupMessageFriends"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="16dp"
-            android:background="@color/button_blue"
-            android:scaleType="fitXY"
-            android:src="@drawable/baseline_message_24"
-            tools:layout_editor_absoluteX="12dp" />
-
-        <ImageButton
-            android:id="@+id/btnGroupAddActivity"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="16dp"
-            android:background="@color/button_blue"
-            android:scaleType="fitXY"
-            android:src="@drawable/baseline_add_24"
-            tools:layout_editor_absoluteX="16dp" />
-
-    </androidx.appcompat.widget.Toolbar>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager3"
@@ -82,19 +48,41 @@
             android:id="@+id/tabOverview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Activities" />
+            android:text="Overview"
+            tools:layout_editor_absoluteX="-1dp"
+            tools:layout_editor_absoluteY="95dp" />
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/tabStats"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Posts " />
+            android:text="Stats" />
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/tabGraphs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Meetups" />
+            android:text="Splits" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/tabGraphs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Graphs"
+            tools:layout_editor_absoluteX="309dp"
+            tools:layout_editor_absoluteY="94dp" />
     </com.google.android.material.tabs.TabLayout>
+
+    <TextView
+        android:id="@+id/txtActivityOverview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Activity Overview"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/ActivityOverviewToolbar"
+        app:layout_constraintTop_toTopOf="@+id/ActivityOverviewToolbar"
+        tools:layout_editor_absoluteX="111dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

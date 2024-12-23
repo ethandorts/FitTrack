@@ -26,7 +26,10 @@ public class GroupActivitiesViewModel extends ViewModel {
     private GroupsDatabaseUtil GroupsUtil = new GroupsDatabaseUtil(db);
     private DocumentSnapshot lastVisible = null;
 
-    public GroupActivitiesViewModel() {loadGroupActivities();}
+    public GroupActivitiesViewModel() {
+
+    }
+
     public MutableLiveData<Boolean> getIsLoading() {
         return isLoading;
     }
@@ -39,14 +42,14 @@ public class GroupActivitiesViewModel extends ViewModel {
         return GroupActivities;
     }
 
-    public void loadGroupActivities() {
+    public void loadGroupActivities(String GroupID) {
         if (Boolean.TRUE.equals(isLoading.getValue()) || Boolean.TRUE.equals(isEndofArray.getValue())) {
             return;
         }
 
         isLoading.setValue(true);
 
-        GroupsUtil.retrieveUsersinGroup("Sg8JLYf9lpE1akjQRHBv", new GroupsDatabaseUtil.UsersinGroupsCallback() {
+        GroupsUtil.retrieveUsersinGroup(GroupID, new GroupsDatabaseUtil.UsersinGroupsCallback() {
             @Override
             public void onCallback(ArrayList<String> runners) {
                 AtomicInteger count = new AtomicInteger(0);
@@ -69,7 +72,8 @@ public class GroupActivitiesViewModel extends ViewModel {
                                             String.valueOf(activity.get("pace")),
                                             "",
                                             String.valueOf(activity.get("UserImage")),
-                                            (List<Object>) activity.get("activityCoordinates")
+                                            (List<Object>) activity.get("activityCoordinates"),
+                                            (String) activity.get("ActivityID")
                                     );
                                     singleActivities.add(activityInfo);
                                 }

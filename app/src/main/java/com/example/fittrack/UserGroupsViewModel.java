@@ -34,6 +34,7 @@ public class UserGroupsViewModel extends ViewModel {
                     GroupModel group = new GroupModel(
                             (String) data.get("Name"),
                             (String) data.get("Description"),
+                            null,
                             null
                     );
                     groups.add(group);

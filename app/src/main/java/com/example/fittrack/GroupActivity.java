@@ -1,26 +1,21 @@
 package com.example.fittrack;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
-
 public class GroupActivity extends AppCompatActivity {
+    TextView txtGroupName;
+    ViewPager2 pager;
     private ActivitiesRecyclerViewAdapter groupActivitiesAdapter;
     private GroupActivitiesViewModel groupActivityViewModel;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -32,45 +27,36 @@ public class GroupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewGroups);
-        loadingActivities = findViewById(R.id.groupsProgressBar);
-        groupActivitiesAdapter = new ActivitiesRecyclerViewAdapter(this);
-        recyclerView.setAdapter(groupActivitiesAdapter);
-        groupActivityViewModel = new ViewModelProvider(this).get(GroupActivitiesViewModel.class);
-        groupActivityViewModel.getGroupActivities().observe(this, new Observer<ArrayList<ActivityModel>>() {
-            @Override
-            public void onChanged(ArrayList<ActivityModel> activityModels) {
-                groupActivitiesAdapter.updateAdapter(activityModels);
-            }
-        });
-        LinearLayoutManager layout = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layout);
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        txtGroupName = findViewById(R.id.txtGroupName);
+        TabLayout tabs = findViewById(R.id.activityTabLayout);
+        Intent intent = getIntent();
+        String GroupID = intent.getStringExtra("GroupID");
+        String groupName = intent.getStringExtra("GroupName");
+        txtGroupName.setText(groupName);
 
-        groupActivityViewModel.getIsLoading().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                loadingActivities.setVisibility(View.GONE);
-            }
-        });
+        pager = findViewById(R.id.viewPager3);
+        GroupActivitiesFragmentStateAdapter adapter = new GroupActivitiesFragmentStateAdapter(this);
+        adapter.addFragment(new GroupActivitiesFragment());
+        adapter.addFragment(new GroupPostsFragment());
+        adapter.addFragment(new GroupMeetupsFragment());
+        pager.setAdapter(adapter);
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if(layout != null) {
-                    int onScreen = layout.getChildCount();
-                    int totalItems = layout.getItemCount();
-                    int firstItem = layout.findFirstVisibleItemPosition();
-
-                    if(!groupActivityViewModel.getIsLoading().getValue() && !groupActivityViewModel.getIsEndofArray().getValue()) {
-                        if((onScreen + firstItem) >= totalItems - 1 && firstItem >= 0) {
-                            loadingActivities.setVisibility(View.VISIBLE);
-                            groupActivityViewModel.loadGroupActivities();
+        new TabLayoutMediator(tabs, pager,
+                new TabLayoutMediator.TabConfigurationStrategy() {
+                    @Override
+                    public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+                        switch (position) {
+                            case 0:
+                                tab.setText("Activities");
+                                break;
+                            case 1:
+                                tab.setText("Posts");
+                                break;
+                            case 2:
+                                tab.setText("Meetup Requests");
+                                break;
                         }
                     }
-                }
-            }
-        });
+                }).attach();
     }
 }

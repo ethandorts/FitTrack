@@ -2,6 +2,7 @@ package com.example.fittrack;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -51,6 +52,7 @@ public class ActivitiesRecyclerViewAdapter extends RecyclerView.Adapter<Activiti
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         ActivityModel activity = userActivities.get(position);
 
+        holder.itemView.setTag(activity.getActivityID());
         holder.activityType.setText(activity.getActivityType());
         holder.activityDate.setText(dateFormatter(activity.getActivityDate()));
         holder.activityDistance.setText(activity.getActivityDistance() + " m");
@@ -132,6 +134,15 @@ public class ActivitiesRecyclerViewAdapter extends RecyclerView.Adapter<Activiti
             activityTypeImage = itemView.findViewById(R.id.running_icon);
             activityUserImage = itemView.findViewById(R.id.profileImage);
             activityMapContainer = itemView.findViewById(R.id.mapView);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(view.getContext(), OverviewFitnessStats.class);
+                    intent.putExtra("ActivityID", String.valueOf(view.getTag()));
+                    view.getContext().startActivity(intent);
+                }
+            });
         }
         @Override
         public void onMapReady(@NonNull GoogleMap googleMap) {

@@ -33,6 +33,7 @@ public class GroupsViewModel extends ViewModel {
             public void onCallback(List<Map<String, Object>> groupsData) {
                 for(Map<String, Object> data : groupsData) {
                     GroupModel group = new GroupModel(
+                            (String) data.get("GroupID"),
                             (String) data.get("Name"),
                             (String) data.get("Description"),
                             null
@@ -50,6 +51,7 @@ public class GroupsViewModel extends ViewModel {
             public void onCallback(List<Map<String, Object>> groupsData) {
                 for(Map<String, Object> data : groupsData) {
                     GroupModel group = new GroupModel(
+                            (String) data.get("GroupID"),
                             (String) data.get("Name"),
                             (String) data.get("Description"),
                             null

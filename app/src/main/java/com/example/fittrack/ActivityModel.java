@@ -5,17 +5,18 @@ import com.google.firebase.Timestamp;
 import java.util.List;
 
 public class ActivityModel {
-    String activityType;
-    String activityTypeImage;
-    Timestamp activityDate;
-    String activityDistance;
-    String activityTime;
-    String activityPace;
-    String activityUser;
-    String activityUserImage;
-    List<Object> activityCoordinates;
+    private String activityType;
+    private String activityTypeImage;
+    private Timestamp activityDate;
+    private String activityDistance;
+    private String activityTime;
+    private String activityPace;
+    private String activityUser;
+    private String activityUserImage;
+    private List<Object> activityCoordinates;
+    private String ActivityID;
 
-    public ActivityModel(String activityType, String activityTypeImage, Timestamp activityDate, String activityDistance, String activityTime, String activityPace, String activityUser, String activityUserImage, List<Object> activityCoordinates) {
+    public ActivityModel(String activityType, String activityTypeImage, Timestamp activityDate, String activityDistance, String activityTime, String activityPace, String activityUser, String activityUserImage, List<Object> activityCoordinates, String activityID) {
         this.activityType = activityType;
         this.activityTypeImage = activityTypeImage;
         this.activityDate = activityDate;
@@ -25,6 +26,7 @@ public class ActivityModel {
         this.activityUser = activityUser;
         this.activityUserImage = activityUserImage;
         this.activityCoordinates = activityCoordinates;
+        ActivityID = activityID;
     }
 
     public String getActivityType() {
@@ -60,6 +62,14 @@ public class ActivityModel {
     }
     public List<Object> getActivityCoordinates() {
         return activityCoordinates;
+    }
+
+    public String getActivityID() {
+        return ActivityID;
+    }
+
+    public void setActivityID(String activityID) {
+        ActivityID = activityID;
     }
 
     @Override
