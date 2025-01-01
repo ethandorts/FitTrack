@@ -11,8 +11,8 @@
         android:id="@+id/btnSaveEvent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="282dp"
-        android:layout_marginEnd="155dp"
+        android:layout_marginTop="300dp"
+        android:layout_marginEnd="68dp"
         android:text="Save Event"
         app:layout_constraintEnd_toEndOf="@+id/enterDescription"
         app:layout_constraintTop_toTopOf="parent" />
@@ -21,20 +21,27 @@
         android:id="@+id/labelActivityType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="26dp"
+        android:layout_marginEnd="13dp"
         android:text="Activity Type"
         android:textSize="20sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/enterActivityType"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/enterActivityType"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/enterActivityType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="28dp"
+        android:layout_width="0dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="26dp"
+        android:layout_marginEnd="52dp"
+        android:layout_marginBottom="24dp"
         android:ems="10"
         android:inputType="text"
+        android:padding="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/labelEventName"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/labelActivityType"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -42,9 +49,9 @@
         android:id="@+id/enterDescription"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="7dp"
-        android:layout_marginEnd="3dp"
-        android:layout_marginBottom="18dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="44dp"
+        android:layout_marginBottom="14dp"
         android:ems="10"
         android:gravity="start|top"
         android:inputType="textMultiLine"
@@ -57,33 +64,40 @@
         android:id="@+id/labelEventName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="21dp"
-        android:layout_marginTop="21dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="89dp"
+        android:layout_marginEnd="18dp"
         android:text="Event Name"
         android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/enterEventName"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/enterActivityType" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/enterEventName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="13dp"
         android:ems="10"
         android:inputType="text"
-        app:layout_constraintStart_toStartOf="@+id/enterDescription"
-        app:layout_constraintTop_toTopOf="@+id/labelEventName" />
+        app:layout_constraintBottom_toTopOf="@+id/labelDescription"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/labelEventName"
+        app:layout_constraintTop_toBottomOf="@+id/enterActivityType" />
 
     <TextView
         android:id="@+id/labelDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="21dp"
-        android:layout_marginEnd="23dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="29dp"
+        android:layout_marginEnd="24dp"
         android:text="Description"
         android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/enterDescription"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/enterDescription" />
+        app:layout_constraintTop_toBottomOf="@+id/labelEventName" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

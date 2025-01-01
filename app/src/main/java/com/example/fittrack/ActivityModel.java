@@ -5,63 +5,104 @@ import com.google.firebase.Timestamp;
 import java.util.List;
 
 public class ActivityModel {
-    private String activityType;
+    private String type;
     private String activityTypeImage;
-    private Timestamp activityDate;
-    private String activityDistance;
-    private String activityTime;
-    private String activityPace;
-    private String activityUser;
+    private Timestamp date;
+    private String distance;
+    private double time;
+    private String pace;
+    private String UserID;
     private String activityUserImage;
     private List<Object> activityCoordinates;
     private String ActivityID;
 
-    public ActivityModel(String activityType, String activityTypeImage, Timestamp activityDate, String activityDistance, String activityTime, String activityPace, String activityUser, String activityUserImage, List<Object> activityCoordinates, String activityID) {
-        this.activityType = activityType;
+    public ActivityModel(String type, String activityTypeImage, Timestamp date, String distance, double time, String pace, String userID, String activityUserImage, List<Object> activityCoordinates, String activityID) {
+        this.type = type;
         this.activityTypeImage = activityTypeImage;
-        this.activityDate = activityDate;
-        this.activityDistance = activityDistance;
-        this.activityTime = activityTime;
-        this.activityPace = activityPace;
-        this.activityUser = activityUser;
+        this.date = date;
+        this.distance = distance;
+        this.time = time;
+        this.pace = pace;
+        UserID = userID;
         this.activityUserImage = activityUserImage;
         this.activityCoordinates = activityCoordinates;
         ActivityID = activityID;
     }
 
-    public String getActivityType() {
-        return activityType;
+    public ActivityModel() {
+
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getActivityTypeImage() {
         return activityTypeImage;
     }
 
-    public Timestamp getActivityDate() {
-        return activityDate;
+    public void setActivityTypeImage(String activityTypeImage) {
+        this.activityTypeImage = activityTypeImage;
     }
 
-    public String getActivityDistance() {
-        return activityDistance;
+    public Timestamp getDate() {
+        return date;
     }
 
-    public String getActivityTime() {
-        return activityTime;
+    public void setDate(Timestamp date) {
+        this.date = date;
     }
 
-    public String getActivityPace() {
-        return activityPace;
+    public String getDistance() {
+        return distance;
     }
 
-    public String getActivityUser() {
-        return activityUser;
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
+
+    public double getTime() {
+        return time;
+    }
+
+    public void setTime(double time) {
+        this.time = time;
+    }
+
+    public String getPace() {
+        return pace;
+    }
+
+    public void setPace(String pace) {
+        this.pace = pace;
+    }
+
+    public String getUserID() {
+        return UserID;
+    }
+
+    public void setUserID(String userID) {
+        UserID = userID;
     }
 
     public String getActivityUserImage() {
         return activityUserImage;
     }
+
+    public void setActivityUserImage(String activityUserImage) {
+        this.activityUserImage = activityUserImage;
+    }
+
     public List<Object> getActivityCoordinates() {
         return activityCoordinates;
+    }
+
+    public void setActivityCoordinates(List<Object> activityCoordinates) {
+        this.activityCoordinates = activityCoordinates;
     }
 
     public String getActivityID() {
@@ -79,18 +120,16 @@ public class ActivityModel {
 
         ActivityModel that = (ActivityModel) o;
 
-        return activityDate.equals(that.activityDate) &&
-                activityType.equals(that.activityType) &&
-                activityDistance.equals(that.activityDistance) &&
-                activityTime.equals(that.activityTime);
+        return date.equals(that.date) &&
+                type.equals(that.type) &&
+                distance.equals(that.distance);
     }
 
     @Override
     public int hashCode() {
-        int result = activityType.hashCode();
-        result = 31 * result + activityDate.hashCode();
-        result = 31 * result + activityDistance.hashCode();
-        result = 31 * result + activityTime.hashCode();
+        int result = type.hashCode();
+        result = 31 * result + date.hashCode();
+        result = 31 * result + distance.hashCode();
         return result;
     }
 

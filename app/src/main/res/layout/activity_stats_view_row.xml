@@ -63,7 +63,6 @@
                 android:id="@+id/txtUserNameValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Brendan Doherty"
                 app:layout_constraintBottom_toBottomOf="@id/profileImage"
                 app:layout_constraintEnd_toStartOf="@id/txtActivityDateValue"
                 app:layout_constraintHorizontal_bias="0.5"

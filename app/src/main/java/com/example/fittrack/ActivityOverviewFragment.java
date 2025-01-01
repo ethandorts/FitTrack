@@ -70,7 +70,7 @@ public class ActivityOverviewFragment extends Fragment {
                 txtTime.setText(String.valueOf(formatRunTime((Double) data.get("time"))));
                 txtDate.setText(String.valueOf(dateFormatter((Timestamp) data.get("date"))));
                 if (data.get("calories") != null) {
-                    txtCalories.setText(String.valueOf(data.get("calories")));txtCalories.setText("-");
+                    txtCalories.setText(String.valueOf(data.get("calories")));
                 } else {
                     txtCalories.setText("-");
                 }

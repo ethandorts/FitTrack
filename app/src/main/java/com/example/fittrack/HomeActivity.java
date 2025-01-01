@@ -2,6 +2,8 @@ package com.example.fittrack;
 
 import static android.content.ContentValues.TAG;
 
+import static java.security.AccessController.getContext;
+
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -38,6 +40,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -61,6 +64,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.auth.User;
@@ -85,9 +89,10 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
     private String UserID;
     private ProgressBar loadingActivities;
     private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
+    private ActivityLocationsDao activityLocationsDao;
 
     //private ArrayList<ActivityModel> UserActivities = new ArrayList<ActivityModel>();
-    private ActivityViewModel activityViewModel = new ActivityViewModel();
+//    private ActivityViewModel activityViewModel = new ActivityViewModel();
     private ActivitiesRecyclerViewAdapter activitiesAdapter;
     private WearableDataHandler wearableDataHandler = new WearableDataHandler();
     private DocumentSnapshot lastVisible = null;
@@ -95,10 +100,20 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
     private boolean isEndofArray = false;
     private Handler handler = new Handler();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        activityLocationsDao = ActivityLocationsDatabase.getActivityLocationsDatabase(this).activityLocationsDao();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                activityLocationsDao.deleteAllLocations();
+            }
+        }).start();
 
         UserName = findViewById(R.id.txtUserName);
         profileImage = findViewById(R.id.profile_image);
@@ -148,54 +163,90 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
             }
         });
 
-        RecyclerView activitiesRecyclerView = findViewById(R.id.activitiesRecyclerView);
-        activitiesAdapter = new ActivitiesRecyclerViewAdapter(this);
-        activitiesRecyclerView.setAdapter(activitiesAdapter);
-        activityViewModel = new ViewModelProvider(this).get(ActivityViewModel.class);
-        activityViewModel.getUserActivities().observe(this, new Observer<ArrayList<ActivityModel>>() {
+        Query query = db.collection("Activities")
+                .whereEqualTo("UserID", UserID)
+                .orderBy("date", Query.Direction.DESCENDING)
+                .limit(20);
 
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onChanged(ArrayList<ActivityModel> activityModels) {
-                loadingActivities.setVisibility(View.GONE);
-                activitiesAdapter.updateAdapter(activityModels);
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        // Verify the data of each document
+                        Timestamp activityDate = document.getTimestamp("date");
+                        String id = document.getId();
+
+                        // Perform assertions or checks here
+                        // For example:
+                        // 1. Check if activityName is as expected
+                        // 2. Check if activityDate is within an expected range
+                        // 3. Log the data for manual inspection
+
+                        Log.d("FirestoreQuery","Date: " + activityDate + " ID: " + id);
+                    }
+                } else {
+                    Log.w("FirestoreQuery", "Error getting documents.", task.getException());
+                }
             }
         });
+
+
+        FirestoreRecyclerOptions<ActivityModel> options = new FirestoreRecyclerOptions.Builder<ActivityModel>()
+                .setQuery(query, ActivityModel.class)
+                .setLifecycleOwner(this)
+                .build();
+
+        RecyclerView activitiesRecyclerView = findViewById(R.id.activitiesRecyclerView);
+        activitiesAdapter = new ActivitiesRecyclerViewAdapter(options,this);
+        activitiesRecyclerView.setAdapter(activitiesAdapter);
+//        activityViewModel = new ViewModelProvider(this).get(ActivityViewModel.class);
+//        activityViewModel.getUserActivities().observe(this, new Observer<ArrayList<ActivityModel>>() {
+//
+//            @Override
+//            public void onChanged(ArrayList<ActivityModel> activityModels) {
+//                loadingActivities.setVisibility(View.GONE);
+//                activitiesAdapter.updateAdapter(activityModels);
+//                activitiesAdapter.showAdapter();
+//            }
+//        });
         LinearLayoutManager layout = new LinearLayoutManager(this);
         activitiesRecyclerView.setLayoutManager(layout);
         activitiesRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
-        activityViewModel.getIsLoading().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                loadingActivities.setVisibility(View.GONE);
-            }
-        });
 
-        activitiesRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-
-                int onScreen = layoutManager.getChildCount();
-                int totalItems = layoutManager.getItemCount();
-                int firstItem = layoutManager.findFirstVisibleItemPosition();
-
-                if (!activityViewModel.getIsLoading().getValue() && !activityViewModel.getIsEndofArray().getValue()) {
-                    if ((onScreen + firstItem) >= totalItems - 5 && firstItem >= 0) {
-                        if (handler != null) {
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    loadingActivities.setVisibility(View.VISIBLE);
-                                    activityViewModel.loadUserActivities();
-                                }
-                            }, 2000);
-                        }
-                    }
-                }
-            }
-        });
+//        activityViewModel.getIsLoading().observe(this, new Observer<Boolean>() {
+//            @Override
+//            public void onChanged(Boolean aBoolean) {
+//                loadingActivities.setVisibility(View.GONE);
+//            }
+//        });
+//
+//        activitiesRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+//
+//                int onScreen = layoutManager.getChildCount();
+//                int totalItems = layoutManager.getItemCount();
+//                int firstItem = layoutManager.findFirstVisibleItemPosition();
+//
+//                if (!activityViewModel.getIsLoading().getValue() && !activityViewModel.getIsEndofArray().getValue()) {
+//                    if ((onScreen + firstItem) >= totalItems - 5 && firstItem >= 0) {
+//                        if (handler != null) {
+//                            handler.postDelayed(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    loadingActivities.setVisibility(View.VISIBLE);
+//                                    activityViewModel.loadUserActivities();
+//                                }
+//                            }, 2000);
+//                        }
+//                    }
+//                }
+//            }
+//        });
 
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
@@ -240,6 +291,7 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
     protected void onStart() {
         super.onStart();
         Wearable.getDataClient(this).addListener(this);
+        activitiesAdapter.startListening();
     }
 
     @Override
@@ -251,16 +303,18 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
     protected void onResume() {
         super.onResume();
         //UserActivities.clear();
+        //activityViewModel.loadUserActivities();
         activitiesAdapter.notifyDataSetChanged();
+        activitiesAdapter.startListening();
         isEndofArray = false;
         lastVisible = null;
-        //loadUserActivities();
     }
 
     protected void onStop() {
         super.onStop();
         Wearable.getDataClient(this).removeListener(this);
         System.out.println("listener stopped");
+        activitiesAdapter.stopListening();
     }
 
     private String formatRunTime(double timePassed) {

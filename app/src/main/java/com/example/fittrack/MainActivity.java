@@ -70,6 +70,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private int elapsedTime;
     private double milestoneTarget = 1000;
     private long previousTime = 0;
+    private boolean isEnd = false;
+    private long timeNow;
+    private long splitTime;
+    private long fullTime;
     private ArrayList<ActivityLocationsEntity> entities;
     private ActivityLocationsDao activityLocationsDao;
     private List<Long> kmSplits = new ArrayList<>();
@@ -145,10 +149,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onClick(View view) {
                 if(isTrackingRun == false) {
                     isTrackingRun = true;
+                    isEnd = false;
                     btnStopStart.setText("Stop Run");
                     btnStopStart.setBackgroundColor(getResources().getColor(R.color.red));
                 } else {
                     isTrackingRun = false;
+                    isEnd = true;
+                    kmSplit(true);
                     btnStopStart.setText("Resume Run");
                     btnStopStart.setBackgroundColor(getResources().getColor(R.color.green));
                     SaveActivityDialog saveActivityDialog = new SaveActivityDialog();
@@ -156,21 +163,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Bundle runningData = new Bundle();
                     runningData.putDouble("distance", distanceTravelled);
                     runningData.putDouble("time", elapsedTime);
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            List<ActivityLocationsEntity> entitiesList = activityLocationsDao.retrieveAllLocations();
-                            List<LatLng> locations = new ArrayList<>();
-                            for( ActivityLocationsEntity entity: entitiesList) {
-                                if(entitiesList != null) {
-                                    locations.add(new LatLng(entity.getLatitude(), entity.getLongitude()));
-                                } else {
-                                    System.out.println("No entities in activity database ");
-                                }
-                            }
-                            runningData.putParcelableArrayList("activityLocations", (ArrayList<? extends Parcelable>) locations);
-                        }
-                    }).start();
+//                    new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            List<ActivityLocationsEntity> entitiesList = activityLocationsDao.retrieveAllLocations();
+//                            List<LatLng> locations = new ArrayList<>();
+//                            for( ActivityLocationsEntity entity: entitiesList) {
+//                                if(entitiesList != null) {
+//                                    locations.add(new LatLng(entity.getLatitude(), entity.getLongitude()));
+//                                } else {
+//                                    System.out.println("No entities in activity database ");
+//                                }
+//                            }
+//                            runningData.putParcelableArrayList("activityLocations", (ArrayList<? extends Parcelable>) locations);
+//                        }
+//                    }).start();
                     long[] splits = new long[kmSplits.size()];
                     for(int i = 0; i < kmSplits.size(); i++) {
                         splits[i] = kmSplits.get(i);
@@ -216,8 +223,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             DrawRoute(location);
             DistanceSpeakerAssistant(distanceTravelled);
-            kmSplit();
+            kmSplit(false);
         } else {
+//            if (isEnd) {
+//                kmSplit(true);
+//                isEnd = false;
+//            }
             stopTimer();
         }
     }
@@ -264,7 +275,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         startForegroundService(locationTracker);
     }
 
-
     // Requests appropriate location permissions.
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -298,18 +308,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void kmSplit() {
-        if(distanceTravelled >= targetKM) {
-            long timeNow = System.currentTimeMillis();
-            System.out.println("TimeNow " + timeNow);
-            long splitTime = previousTime == 0 ? timeNow - startTime : timeNow - previousTime;
-            System.out.println("splitTime " + splitTime);
-            long fullTime = timeNow - startTime;
-            System.out.println("FullTime " + fullTime);
-            DisplaySplitFragment(targetKM, splitTime, fullTime);
-            kmSplits.add(splitTime);
-            targetKM += 1000;
-            previousTime = timeNow;
+    private void kmSplit(boolean isFinalSplit) {
+        if (isFinalSplit || distanceTravelled >= targetKM) {
+            while (distanceTravelled >= targetKM) {
+                timeNow = System.currentTimeMillis();
+                splitTime = previousTime == 0 ? timeNow - startTime : timeNow - previousTime;
+                fullTime = timeNow - startTime;
+
+                kmSplits.add(splitTime);
+                //DisplaySplitFragment(targetKM, splitTime, fullTime);
+
+                targetKM += 1000;
+                previousTime = timeNow;
+            }
+
+            if (isFinalSplit) {
+                double remainingDistance = distanceTravelled % 1000;
+                if (remainingDistance > 0) {
+                    timeNow = System.currentTimeMillis();
+                    splitTime = timeNow - previousTime;
+                    System.out.println("final Split Time:" + splitTime);
+                    fullTime = timeNow - startTime;
+                    kmSplits.add(splitTime);
+                }
+            }
         }
     }
 

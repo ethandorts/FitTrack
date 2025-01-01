@@ -37,6 +37,7 @@ public class FirebaseDatabaseHelper {
 
         Query query = db.collection("Activities")
                 .whereEqualTo("UserID", userID)
+                .orderBy("date", Query.Direction.DESCENDING)
                 .limit(5);
 
         if (lastVisible != null) {
@@ -52,6 +53,7 @@ public class FirebaseDatabaseHelper {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Map<String, Object > activityData = document.getData();
                                 activityData.put("ActivityID", document.getId());
+                                System.out.println(document.getId());
                                 data.add(activityData);
                                 lastVisible = document;
                             }

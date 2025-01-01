@@ -26,8 +26,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
 public class SettingsActivity extends AppCompatActivity {
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-    UserDeleter userDeleter = new UserDeleter(db);
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private FirebaseUser signedIn = mAuth.getCurrentUser();
+    private UserDeleter userDeleter = new UserDeleter(db);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,7 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         Button btnCalendar = findViewById(R.id.btnCalendar);
+        Button btnLogout = findViewById(R.id.btnLogOut);
         Button btnDeleteAccount = findViewById(R.id.btnDeleteAccount);
 
         btnCalendar.setOnClickListener(new View.OnClickListener() {
@@ -44,6 +47,16 @@ public class SettingsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAuth.signOut();
+                Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         btnDeleteAccount.setOnClickListener(new View.OnClickListener() {
             @Override

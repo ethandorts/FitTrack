@@ -10,13 +10,13 @@
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="335dp"
+        android:layout_height="136dp"
         android:layout_marginStart="44dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="17dp"
         android:layout_marginEnd="44dp"
-        android:layout_marginBottom="359dp"
-        app:layout_constraintBottom_toTopOf="@+id/txt_no_account"
+        android:layout_marginBottom="71dp"
+        app:layout_constraintBottom_toTopOf="@+id/txt_login_heading"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -26,7 +26,7 @@
         android:id="@+id/txt_login_heading"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginBottom="76dp"
+        android:layout_marginBottom="16dp"
         android:fontFamily="@font/alata"
         android:text="LOGIN"
         android:textAlignment="center"
@@ -70,15 +70,14 @@
 
     <Button
         android:id="@+id/btnLogin"
-        android:layout_width="170dp"
-        android:layout_height="0dp"
+        android:layout_width="173dp"
+        android:layout_height="58dp"
         android:layout_marginBottom="17dp"
         android:background="@drawable/rounded_button_background"
         android:text="Login"
         android:textColorLink="#000000"
         app:layout_constraintBottom_toTopOf="@+id/txt_no_account"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_text_password" />
 
@@ -87,37 +86,38 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="3dp"
-        android:layout_marginBottom="18dp"
+        android:layout_marginBottom="33dp"
         android:text="Don't have an account? "
         android:textColor="#000000"
         android:textSize="16sp"
         android:textStyle="bold|italic"
         app:layout_constraintBottom_toTopOf="@+id/btnRegister"
         app:layout_constraintStart_toStartOf="@+id/btnLogin"
-        app:layout_constraintTop_toBottomOf="@+id/logo" />
+        app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
 
     <Button
         android:id="@+id/btnRegister"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="31dp"
-        android:layout_marginBottom="184dp"
+        android:layout_width="183dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="12dp"
         android:background="@drawable/rounded_button_background"
         android:text="Register"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/txt_no_account"
+        app:layout_constraintBottom_toTopOf="@+id/btnGoogleLogin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_no_account" />
 
     <Button
         android:id="@+id/btnGoogleLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="48dp"
+        android:layout_width="174dp"
+        android:layout_height="61dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="43dp"
         android:backgroundTint="@color/white"
         android:text="Login with Google"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/txt_no_account" />
+        app:layout_constraintStart_toStartOf="@+id/btnRegister"
+        app:layout_constraintTop_toBottomOf="@+id/btnRegister" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

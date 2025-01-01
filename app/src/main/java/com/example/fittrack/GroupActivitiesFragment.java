@@ -37,52 +37,52 @@ public class GroupActivitiesFragment extends Fragment {
 
         RecyclerView recyclerView = view.findViewById(R.id.fragmentGroupActivitiesRecyclerView);
         loadingActivities = view.findViewById(R.id.groupsProgressBar);
-        groupActivitiesAdapter = new ActivitiesRecyclerViewAdapter(getActivity());
-        recyclerView.setAdapter(groupActivitiesAdapter);
-        groupActivityViewModel = new ViewModelProvider(this).get(GroupActivitiesViewModel.class);
-        groupActivityViewModel.loadGroupActivities("Sg8JLYf9lpE1akjQRHBv");
-        groupActivityViewModel.getGroupActivities().observe(getActivity(), new Observer<ArrayList<ActivityModel>>() {
-            @Override
-            public void onChanged(ArrayList<ActivityModel> activityModels) {
-                groupActivitiesAdapter.updateAdapter(activityModels);
-            }
-        });
-        LinearLayoutManager layout = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layout);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
-
-        groupActivityViewModel.getIsLoading().observe(getActivity(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                loadingActivities.setVisibility(View.GONE);
-            }
-        });
-
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if(layout != null) {
-                    int onScreen = layout.getChildCount();
-                    int totalItems = layout.getItemCount();
-                    int firstItem = layout.findFirstVisibleItemPosition();
-
-                    if(!groupActivityViewModel.getIsLoading().getValue() && !groupActivityViewModel.getIsEndofArray().getValue()) {
-                        if((onScreen + firstItem) >= totalItems - 1) {
-                            isLoading = true;
-                            loadingActivities.setVisibility(View.VISIBLE);
-
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    groupActivityViewModel.loadGroupActivities("Sg8JLYf9lpE1akjQRHBv");
-                                    isLoading = false;
-                                }
-                            }, 3000);
-                        }
-                    }
-                }
-            }
-        });
+//        groupActivitiesAdapter = new ActivitiesRecyclerViewAdapter(getActivity());
+//        recyclerView.setAdapter(groupActivitiesAdapter);
+//        groupActivityViewModel = new ViewModelProvider(this).get(GroupActivitiesViewModel.class);
+//        groupActivityViewModel.loadGroupActivities("Sg8JLYf9lpE1akjQRHBv");
+//        groupActivityViewModel.getGroupActivities().observe(getActivity(), new Observer<ArrayList<ActivityModel>>() {
+//            @Override
+//            public void onChanged(ArrayList<ActivityModel> activityModels) {
+//                groupActivitiesAdapter.updateAdapter(activityModels);
+//            }
+//        });
+//        LinearLayoutManager layout = new LinearLayoutManager(getActivity());
+//        recyclerView.setLayoutManager(layout);
+//        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+//
+//        groupActivityViewModel.getIsLoading().observe(getActivity(), new Observer<Boolean>() {
+//            @Override
+//            public void onChanged(Boolean aBoolean) {
+//                loadingActivities.setVisibility(View.GONE);
+//            }
+//        });
+//
+//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//                if(layout != null) {
+//                    int onScreen = layout.getChildCount();
+//                    int totalItems = layout.getItemCount();
+//                    int firstItem = layout.findFirstVisibleItemPosition();
+//
+//                    if(!groupActivityViewModel.getIsLoading().getValue() && !groupActivityViewModel.getIsEndofArray().getValue()) {
+//                        if((onScreen + firstItem) >= totalItems - 1) {
+//                            isLoading = true;
+//                            loadingActivities.setVisibility(View.VISIBLE);
+//
+//                            handler.postDelayed(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    groupActivityViewModel.loadGroupActivities("Sg8JLYf9lpE1akjQRHBv");
+//                                    isLoading = false;
+//                                }
+//                            }, 3000);
+//                        }
+//                    }
+//                }
+//            }
+//        });
     }
 }

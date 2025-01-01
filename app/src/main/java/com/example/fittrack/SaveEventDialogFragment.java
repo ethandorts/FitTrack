@@ -23,6 +23,12 @@ public class SaveEventDialogFragment extends DialogFragment {
     private EditText editActivityType, editEventName, editDescription;
     private Button btnSaveEvent;
     private EventUtil eventUtil = new EventUtil(db);
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {

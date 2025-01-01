@@ -17,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -33,13 +35,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class ActivitiesRecyclerViewAdapter extends RecyclerView.Adapter<ActivitiesRecyclerViewAdapter.MyViewHolder> {
+public class ActivitiesRecyclerViewAdapter extends FirestoreRecyclerAdapter<ActivityModel,ActivitiesRecyclerViewAdapter.MyViewHolder > {
     private Context context;
-    private ArrayList<ActivityModel> userActivities = new ArrayList<ActivityModel>();
+//    private ArrayList<ActivityModel> userActivities = new ArrayList<ActivityModel>();
 
-    public ActivitiesRecyclerViewAdapter(Context context) {
+    public ActivitiesRecyclerViewAdapter(@NonNull FirestoreRecyclerOptions<ActivityModel> options, Context context) {
+        super(options);
         this.context = context;
     }
+
 
     @NonNull
     @Override
@@ -48,17 +52,60 @@ public class ActivitiesRecyclerViewAdapter extends RecyclerView.Adapter<Activiti
         return new MyViewHolder(view);
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        ActivityModel activity = userActivities.get(position);
+//    @Override
+//    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+//        ActivityModel activity = userActivities.get(position);
+//
+//        holder.itemView.setTag(activity.getActivityID());
+//        holder.activityType.setText(activity.getActivityType());
+//        holder.activityDate.setText(dateFormatter(activity.getActivityDate()));
+//        holder.activityDistance.setText(activity.getActivityDistance() + " m");
+//        holder.activityTime.setText(activity.getActivityTime());
+//        holder.activityPace.setText(activity.getActivityPace() + " /km");
+//        holder.activityUser.setText(activity.getActivityUser());
+//        holder.activityMapContainer.onCreate(null);
+//        holder.activityMapContainer.onResume();
+//        holder.activityMapContainer.getMapAsync(new OnMapReadyCallback() {
+//            @Override
+//            public void onMapReady(@NonNull GoogleMap googleMap) {
+//                List<Object> geoData = activity.getActivityCoordinates();
+//                if (geoData != null) {
+//                    PolylineOptions polylineOptions = new PolylineOptions();
+//                    polylineOptions.color(Color.RED);
+//                    for (Object coordinates : geoData) {
+//                        Map<String, Double> activityRoutePoints = (Map<String, Double>) coordinates;
+//                        Double lat = activityRoutePoints.get("latitude");
+//                        Double lon = activityRoutePoints.get("longitude");
+//                        if (lat != null && lon != null) {
+//                            LatLng geoPoint = new LatLng(lat, lon);
+//                            polylineOptions.add(geoPoint);
+//                        }
+//                    }
+//                    if(!polylineOptions.getPoints().isEmpty()) {
+//                        googleMap.addPolyline(polylineOptions);
+//                        int middlePoint = geoData.size() / 2;
+//                        Map<String, Double> middleData = (Map<String, Double>) geoData.get(middlePoint);
+//                        LatLng middleLatLng = new LatLng(middleData.get("latitude"), middleData.get("longitude"));
+//                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(middleLatLng, 13));
+//                    } else {
+//                        Log.d("ActivitiesRecyclerViewAdapter", "No points to draw");
+//                    }
+//                    } else {
+//                    System.out.println("GeoData object is null");
+//                }
+//            }
+//        });
+//    }
 
+    @Override
+    protected void onBindViewHolder(@NonNull MyViewHolder holder, int i, @NonNull ActivityModel activity) {
         holder.itemView.setTag(activity.getActivityID());
-        holder.activityType.setText(activity.getActivityType());
-        holder.activityDate.setText(dateFormatter(activity.getActivityDate()));
-        holder.activityDistance.setText(activity.getActivityDistance() + " m");
-        holder.activityTime.setText(activity.getActivityTime());
-        holder.activityPace.setText(activity.getActivityPace() + " /km");
-        holder.activityUser.setText(activity.getActivityUser());
+        holder.activityType.setText(activity.getType());
+        holder.activityDate.setText(dateFormatter(activity.getDate()));
+        holder.activityDistance.setText(formatMetresToKM(activity.getDistance()) + " KM");
+        holder.activityTime.setText(formatRunTime(activity.getTime()));
+        holder.activityPace.setText(activity.getPace() + " /km");
+        //holder.activityUser.setText(activity.getUserID());
         holder.activityMapContainer.onCreate(null);
         holder.activityMapContainer.onResume();
         holder.activityMapContainer.getMapAsync(new OnMapReadyCallback() {
@@ -86,7 +133,7 @@ public class ActivitiesRecyclerViewAdapter extends RecyclerView.Adapter<Activiti
                     } else {
                         Log.d("ActivitiesRecyclerViewAdapter", "No points to draw");
                     }
-                    } else {
+                } else {
                     System.out.println("GeoData object is null");
                 }
             }
@@ -95,7 +142,7 @@ public class ActivitiesRecyclerViewAdapter extends RecyclerView.Adapter<Activiti
 
     @Override
     public int getItemCount() {
-        return userActivities.size();
+        return super.getItemCount();
     }
 
     private String dateFormatter(Timestamp timestamp) {
@@ -106,14 +153,36 @@ public class ActivitiesRecyclerViewAdapter extends RecyclerView.Adapter<Activiti
         return formattedDate;
     }
 
-    public void updateAdapter(ArrayList<ActivityModel> activities) {
-        int originalSize = userActivities.size();
-        for(ActivityModel activity : activities) {
-            if(!userActivities.contains(activity)) {
-                userActivities.add(activity);
-            }
-        }
-        notifyItemRangeInserted(originalSize, userActivities.size());
+//    public void updateAdapter(ArrayList<ActivityModel> activities) {
+//        int originalSize = userActivities.size();
+//        for(ActivityModel activity : activities) {
+//            if(!userActivities.contains(activity)) {
+//                userActivities.add(activity);
+//            }
+//        }
+//        notifyItemRangeInserted(originalSize, userActivities.size());
+//    }
+//
+//    public void showAdapter() {
+//        for(ActivityModel activity : userActivities) {
+//            System.out.println("Adapter Order:" + activity.getActivityID());
+//        }
+//    }
+
+    private String formatRunTime(double timePassed) {
+        int hours = (int) (timePassed / 3600);
+        int minutes = (int) ((timePassed % 3600) / 60);
+        int seconds = (int) (timePassed % 60);
+        String formattedRunTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+
+        return formattedRunTime;
+    }
+
+    private String formatMetresToKM(String distanceMetres) {
+        double convertedString = Double.valueOf(distanceMetres);
+        double distanceKM = convertedString / 1000;
+        String formattedValue = String.format("%.2f", distanceKM);
+        return formattedValue;
     }
 
 

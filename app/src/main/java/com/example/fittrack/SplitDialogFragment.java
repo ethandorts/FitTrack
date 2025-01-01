@@ -13,6 +13,14 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 public class SplitDialogFragment extends DialogFragment {
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (getDialog() != null && getDialog().getWindow() != null) {
+            getDialog().getWindow().setLayout(500, 800);
+        }
+    }
+
     TextView txtKm, txtKmPace, txtTotalTime;
     @Nullable
     @Override

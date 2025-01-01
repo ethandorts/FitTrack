@@ -18,15 +18,15 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 public class MessagingChatActivity extends AppCompatActivity {
-    ImageButton btnSendMessage;
-    EditText TypeBox;
-    FirebaseUser mAuth;
-    String currentUser, recipientUser, recipientName;
-    TextView txtRecipientUser;
-    MessagesRecyclerViewAdapter messagesAdapter;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-    DirectMessagingUtil MessagingUtil = new DirectMessagingUtil(db);
-    String messageDocumentID;
+    private ImageButton btnSendMessage;
+    private EditText TypeBox;
+    private FirebaseUser mAuth;
+    private String currentUser, recipientUser, recipientName;
+    private TextView txtRecipientUser;
+    private MessagesRecyclerViewAdapter messagesAdapter;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private DirectMessagingUtil MessagingUtil = new DirectMessagingUtil(db);
+    private String messageDocumentID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +60,19 @@ public class MessagingChatActivity extends AppCompatActivity {
         RecyclerView messagesRecyclerView = findViewById(R.id.MessagesRecyclerView);
         messagesAdapter = new MessagesRecyclerViewAdapter(options,this, currentUser);
         messagesRecyclerView.setAdapter(messagesAdapter);
-        messagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layout = new LinearLayoutManager(this);
+        layout.setStackFromEnd(true);
+        messagesRecyclerView.setLayoutManager(layout);
+        System.out.println("Item Count is " + messagesAdapter.getItemCount());
+
+
+        messagesAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                messagesRecyclerView.scrollToPosition(messagesAdapter.getItemCount() - 1);
+            }
+        });
 
         btnSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
