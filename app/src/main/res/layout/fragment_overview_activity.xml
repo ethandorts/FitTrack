@@ -163,7 +163,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/imageButton"
-        app:layout_constraintStart_toStartOf="@+id/imageButton3" />
+        app:layout_constraintStart_toStartOf="@+id/btnActivityComments" />
 
     <TextView
         android:id="@+id/txtActivityOverviewCalories"
@@ -202,14 +202,15 @@
         android:layout_height="0dp"
         android:layout_marginStart="2dp"
         android:layout_marginEnd="2dp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageButton3"
-        app:layout_constraintEnd_toStartOf="@+id/imageButton3"
+        app:layout_constraintBottom_toBottomOf="@+id/btnActivityComments"
+        app:layout_constraintEnd_toStartOf="@+id/btnActivityComments"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageButton3"
-        app:srcCompat="@drawable/baseline_settings_24" />
+        app:layout_constraintTop_toTopOf="@+id/btnActivityComments"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/like" />
 
     <ImageButton
-        android:id="@+id/imageButton3"
+        android:id="@+id/btnActivityComments"
         android:layout_width="0dp"
         android:layout_height="46dp"
         android:layout_marginEnd="7dp"
@@ -217,6 +218,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageButton2"
-        app:srcCompat="@drawable/baseline_send_24" />
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/comments" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

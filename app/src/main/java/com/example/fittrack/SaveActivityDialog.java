@@ -1,5 +1,6 @@
 package com.example.fittrack;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -123,17 +124,21 @@ public class SaveActivityDialog extends DialogFragment {
                     .setPositiveButton("Save Activity", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            String ActivityID = DocumentIDGenerator.GenerateActivityID();
+                            data.put("ActivityID", ActivityID);
+
                             db.collection("Activities")
-                                    .add(data)
-                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    .document(ActivityID)
+                                    .set(data)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
-                                        public void onSuccess(DocumentReference documentReference) {
-                                            Log.d("Successful Activity Write", "Activity Written");
+                                        public void onSuccess(Void unused) {
+                                            Log.d("Activity Successfully Written", "Activity Successfully Written");
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            Log.e("Error", "Error: " + e);
+                                            Log.d("Activity Write Failure", "Activity Write Failure");
                                         }
                                     });
                         }
@@ -153,8 +158,8 @@ public class SaveActivityDialog extends DialogFragment {
             double averagePace = Double.parseDouble(TwoDecimalRounder.format(60 / kilometresPerHour));
             int seconds = (int) (averagePace % 1 * 60);
             int minutes = (int) averagePace;
-            String formattedPace = minutes + ":" + seconds;
+            String formattedPace = String.format("%d:%02d", minutes, seconds);
 
-            return String.valueOf(formattedPace);
+            return formattedPace;
         }
 }

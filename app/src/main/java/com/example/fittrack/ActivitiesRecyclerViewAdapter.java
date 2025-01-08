@@ -35,7 +35,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class ActivitiesRecyclerViewAdapter extends FirestoreRecyclerAdapter<ActivityModel,ActivitiesRecyclerViewAdapter.MyViewHolder > {
+public class ActivitiesRecyclerViewAdapter extends FirestoreRecyclerAdapter<ActivityModel,ActivitiesRecyclerViewAdapter.MyViewHolder> {
     private Context context;
 //    private ArrayList<ActivityModel> userActivities = new ArrayList<ActivityModel>();
 

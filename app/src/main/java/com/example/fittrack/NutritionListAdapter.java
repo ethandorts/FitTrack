@@ -1,8 +1,6 @@
 package com.example.fittrack;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,8 +47,8 @@ public class NutritionListAdapter extends FirestoreRecyclerAdapter<FoodModel, Nu
         TextView foodName, calories;
         public NutritionItemHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
-            foodName = itemView.findViewById(R.id.txtFoodName);
-            calories = itemView.findViewById(R.id.txtCalories);
+            foodName = itemView.findViewById(R.id.txtCommentName);
+            calories = itemView.findViewById(R.id.txtComment);
 
         }
     }

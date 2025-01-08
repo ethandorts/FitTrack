@@ -157,9 +157,14 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
         DatabaseUtil.retrieveProfilePicture(UserID + ".jpeg", new FirebaseDatabaseHelper.ProfilePictureCallback() {
             @Override
             public void onCallback(Uri PicturePath) {
-                Glide.with(HomeActivity.this)
-                        .load(PicturePath)
-                        .into(profileImage);
+                if(PicturePath != null) {
+                    Glide.with(HomeActivity.this)
+                            .load(PicturePath)
+                            .into(profileImage);
+                } else {
+                    Log.e("No profile picture found", "No profile picture found.");
+                    profileImage.setImageResource(R.drawable.profile);
+                }
             }
         });
 
@@ -173,15 +178,8 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        // Verify the data of each document
                         Timestamp activityDate = document.getTimestamp("date");
                         String id = document.getId();
-
-                        // Perform assertions or checks here
-                        // For example:
-                        // 1. Check if activityName is as expected
-                        // 2. Check if activityDate is within an expected range
-                        // 3. Log the data for manual inspection
 
                         Log.d("FirestoreQuery","Date: " + activityDate + " ID: " + id);
                     }
@@ -304,6 +302,13 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
         super.onResume();
         //UserActivities.clear();
         //activityViewModel.loadUserActivities();
+        activityLocationsDao = ActivityLocationsDatabase.getActivityLocationsDatabase(this).activityLocationsDao();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                activityLocationsDao.deleteAllLocations();
+            }
+        }).start();
         activitiesAdapter.notifyDataSetChanged();
         activitiesAdapter.startListening();
         isEndofArray = false;

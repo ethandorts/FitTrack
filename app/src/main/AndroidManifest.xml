@@ -29,6 +29,9 @@
         android:theme="@style/Theme.FitTrack"
         tools:targetApi="31">
         <activity
+            android:name=".CommentsActivity"
+            android:exported="false" />
+        <activity
             android:name=".OverviewFitnessStats"
             android:exported="false" />
         <activity

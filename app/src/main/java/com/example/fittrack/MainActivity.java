@@ -3,6 +3,7 @@ package com.example.fittrack;
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -150,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if(isTrackingRun == false) {
                     isTrackingRun = true;
                     isEnd = false;
+                    startTimer();
                     btnStopStart.setText("Stop Run");
                     btnStopStart.setBackgroundColor(getResources().getColor(R.color.red));
                 } else {
@@ -218,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16));
         if(isTrackingRun) {
             if (!isTimerStarted) {
-                startTimer();
+                //startTimer();
                 DistanceTalker.speak("Activity Started", TextToSpeech.QUEUE_FLUSH, null);
             }
             DrawRoute(location);
@@ -369,6 +372,31 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.googleMap = googleMap;
         LatLng initialLocation = new LatLng(54.597, -5.930);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 12));
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(isTrackingRun) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Are you sure you want to exit recording this fitness activity?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            MainActivity.super.onBackPressed();
+                        }
+                    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    });
+
+            AlertDialog exitActivityTracking = builder.create();
+            exitActivityTracking.show();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     public class LocationUpdatesBroadcastReceiver extends BroadcastReceiver {

@@ -41,6 +41,7 @@ public class Calendar extends AppCompatActivity {
     private String UserID = mAuth.getUid();
     private EventUtil eventUtil = new EventUtil(db);
     private EventsRecyclerViewAdapter eventsAdapter;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,7 @@ public class Calendar extends AppCompatActivity {
         AndroidThreeTen.init(this);
 
         MaterialCalendarView calendarView = findViewById(R.id.calendarView);
-        RecyclerView recyclerView = findViewById(R.id.recyclerViewCalendarEvent);
+        recyclerView = findViewById(R.id.recyclerViewCalendarEvent);
         Button btnAddEvent = findViewById(R.id.btnAddEvent);
         calendarView.state().edit()
                 .setCalendarDisplayMode(CalendarMode.WEEKS)
@@ -59,6 +60,8 @@ public class Calendar extends AppCompatActivity {
         LocalDate today = LocalDate.now();
         CalendarDay currentDay = CalendarDay.from(today.getYear(), today.getMonthValue(), today.getDayOfMonth());
         calendarView.setSelectedDate(currentDay);
+
+        loadFitnessEvents(currentDay);
 
         calendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
@@ -75,36 +78,9 @@ public class Calendar extends AppCompatActivity {
                 });
 
                 System.out.println(date.getDate().toString());
-                Query query =  db.collection("Users")
-                        .document(UserID)
-                        .collection("Calendar")
-                        .whereEqualTo("DateTime", date.getDate().toString());
-
-                System.out.println("Size of recyc: "+ recyclerView.getChildCount());
-
-                FirestoreRecyclerOptions<EventModel> options =
-                        new FirestoreRecyclerOptions.Builder<EventModel>()
-                                .setQuery(query, EventModel.class)
-                                .build();
-                recyclerView.setAdapter(null);
-                eventsAdapter.updateOptions(options);
-                recyclerView.setAdapter(eventsAdapter);
+                loadFitnessEvents(date);
             }
         });
-        Query query =  db.collection("Users")
-                .document(UserID)
-                .collection("Calendar")
-                .whereEqualTo("DateTime", currentDay);
-
-        FirestoreRecyclerOptions<EventModel> options =
-                new FirestoreRecyclerOptions.Builder<EventModel>()
-                        .setQuery(query, EventModel.class)
-                        .build();
-
-        eventsAdapter = new EventsRecyclerViewAdapter(options, getApplicationContext());
-        recyclerView.setAdapter(eventsAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         btnAddEvent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,6 +91,30 @@ public class Calendar extends AppCompatActivity {
         });
 
 
+    }
+
+    public void loadFitnessEvents(CalendarDay date) {
+        Query query = db.collection("Users")
+                .document(UserID)
+                .collection("Calendar")
+                .whereEqualTo("DateTime", date.getDate().toString());
+
+        System.out.println("Size of recyc: " + recyclerView.getChildCount());
+
+        FirestoreRecyclerOptions<EventModel> options =
+                new FirestoreRecyclerOptions.Builder<EventModel>()
+                        .setQuery(query, EventModel.class)
+                        .build();
+
+        if (eventsAdapter == null) {
+            eventsAdapter = new EventsRecyclerViewAdapter(options, getApplicationContext());
+            recyclerView.setAdapter(eventsAdapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        } else {
+            eventsAdapter.notifyDataSetChanged();
+            eventsAdapter.updateOptions(options);
+        }
     }
 
     @Override

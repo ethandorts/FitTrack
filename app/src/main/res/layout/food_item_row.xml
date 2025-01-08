@@ -18,7 +18,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/txtFoodName"
+                android:id="@+id/txtCommentName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -29,7 +29,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/txtCalories"
+                android:id="@+id/txtComment"
                 android:layout_width="133dp"
                 android:layout_height="26dp"
                 android:text="Calories"
@@ -37,7 +37,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.884"
-                app:layout_constraintStart_toEndOf="@+id/txtFoodName"
+                app:layout_constraintStart_toEndOf="@+id/txtCommentName"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.541" />
 
