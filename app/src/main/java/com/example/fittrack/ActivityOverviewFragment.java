@@ -163,7 +163,7 @@ public class ActivityOverviewFragment extends Fragment {
 //        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 //        JsonObjectRequest teamRequest = new JsonObjectRequest(
 //                Request.Method.GET,
-//                "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + location.latitude + "," + location.longitude + "&result_type=locality&key=AIzaSyBpAD_WhJNYjpzvB4gvp0z6CgWzFB8HEtA",
+//                "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + location.latitude + "," + location.longitude + "&result_type=locality&key=",
 //                null,
 //                new Response.Listener<JSONObject>() {
 //                    @Override
