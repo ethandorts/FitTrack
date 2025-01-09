@@ -197,7 +197,7 @@
         app:srcCompat="@drawable/baseline_add_24" />
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/btnActivityLike"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="2dp"
@@ -217,7 +217,7 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageButton2"
+        app:layout_constraintStart_toEndOf="@+id/btnActivityLike"
         android:scaleType="centerInside"
         app:srcCompat="@drawable/comments" />
 

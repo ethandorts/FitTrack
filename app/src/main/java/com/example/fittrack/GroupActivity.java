@@ -36,9 +36,9 @@ public class GroupActivity extends AppCompatActivity {
 
         pager = findViewById(R.id.viewPager3);
         GroupActivitiesFragmentStateAdapter adapter = new GroupActivitiesFragmentStateAdapter(this);
-        adapter.addFragment(new GroupActivitiesFragment());
-        adapter.addFragment(new GroupPostsFragment());
-        adapter.addFragment(new GroupMeetupsFragment());
+        adapter.addFragment(new GroupActivitiesFragment(GroupID));
+        adapter.addFragment(new GroupPostsFragment(GroupID));
+        adapter.addFragment(new GroupMeetupsFragment(GroupID));
         pager.setAdapter(adapter);
 
         new TabLayoutMediator(tabs, pager,

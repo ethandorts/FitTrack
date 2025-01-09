@@ -30,6 +30,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONArray;
@@ -44,10 +45,14 @@ import java.util.Map;
 
 public class ActivityOverviewFragment extends Fragment {
     private TextView txtTitle,txtDistance, txtPace, txtHeartRate, txtTime, txtDate, txtCalories;
-    private ImageButton btnComments;
+    private ImageButton btnLike, btnComments;
     private MapView mapView;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
+    private CommentUtil commentUtil = new CommentUtil(db);
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private String currentUser = mAuth.getCurrentUser().getUid();
+    private boolean isLiked = false;
     private String ActivityID;
     private String location;
 
@@ -69,6 +74,19 @@ public class ActivityOverviewFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        commentUtil.checkLike(ActivityID, currentUser, new CommentUtil.LikeCheckCallback() {
+            @Override
+            public void onCallback(boolean hasLiked) {
+                if(hasLiked) {
+                    isLiked = true;
+                    btnLike.setImageResource(R.drawable.liked);
+                } else {
+                    isLiked = false;
+                    btnLike.setImageResource(R.drawable.like);
+                }
+            }
+        });
+
         txtDistance = view.findViewById(R.id.txtActivityOverviewDistanceValue);
         txtPace = view.findViewById(R.id.txtActivityOverviewPaceValue);
         txtHeartRate = view.findViewById(R.id.txtActivityOverviewHeartRateValue);
@@ -76,7 +94,12 @@ public class ActivityOverviewFragment extends Fragment {
         txtDate = view.findViewById(R.id.txtOverviewActivityDate);
         txtCalories = view.findViewById(R.id.txtActivityOverviewCalories);
         mapView = view.findViewById(R.id.OverviewMapView);
+        btnLike = view.findViewById(R.id.btnActivityLike);
         btnComments = view.findViewById(R.id.btnActivityComments);
+
+        if(isLiked) {
+            btnLike.setImageResource(R.drawable.liked);
+        }
 
         btnComments.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,6 +107,21 @@ public class ActivityOverviewFragment extends Fragment {
                 Intent intent = new Intent(getContext(), CommentsActivity.class);
                 intent.putExtra("ActivityID", ActivityID);
                 startActivity(intent);
+            }
+        });
+
+        btnLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isLiked) {
+                    commentUtil.removeLike(ActivityID, currentUser);
+                    btnLike.setImageResource(R.drawable.like);
+                    isLiked = false;
+                } else {
+                    commentUtil.addLike(ActivityID, currentUser);
+                    btnLike.setImageResource(R.drawable.liked);
+                    isLiked = true;
+                }
             }
         });
 

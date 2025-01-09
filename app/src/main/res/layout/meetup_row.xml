@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#FFFFFF"
-    android:backgroundTint="#03A9F4">
+    android:backgroundTint="#FFFFFF">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/UserCardView"
@@ -111,8 +111,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/btnAccept"
                 app:layout_constraintEnd_toEndOf="@+id/btnReject"
                 app:layout_constraintStart_toStartOf="@+id/btnAccept"
-                app:layout_constraintTop_toBottomOf="@+id/txtMeetupDetails"
-                app:srcCompat="@drawable/baseline_settings_24" />
+                app:layout_constraintTop_toBottomOf="@+id/txtMeetupDetails" />
 
             <TextView
                 android:id="@+id/txtMeetupLocation"

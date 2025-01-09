@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,17 +14,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
 public class MeetupsRecyclerViewAdapter extends FirestoreRecyclerAdapter<MeetupModel, MeetupsRecyclerViewAdapter.MeetupsViewHolder> {
     private Context context;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CommentUtil commentUtil = new CommentUtil(db);
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private String currentUser = mAuth.getCurrentUser().getUid();
+    private String GroupID;
 
-    public MeetupsRecyclerViewAdapter(@NonNull FirestoreRecyclerOptions<MeetupModel> options, Context context) {
+    public MeetupsRecyclerViewAdapter(@NonNull FirestoreRecyclerOptions<MeetupModel> options, Context context, String GroupID) {
         super(options);
         this.context = context;
+        this.GroupID = GroupID;
     }
-
 
     @NonNull
     @Override
@@ -38,10 +47,27 @@ public class MeetupsRecyclerViewAdapter extends FirestoreRecyclerAdapter<MeetupM
         holder.Username.setText(meetup.getUser());
         holder.Details.setText(meetup.getDetails());
         holder.Location.setText(meetup.getLocation());
+        System.out.println("MeetupID is " + meetup.getMeetupID());
+
+        holder.btnAccept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                holder.Status.setImageResource(R.drawable.green_accept);
+                commentUtil.acceptMeetup(GroupID, meetup.getMeetupID(), currentUser);
+            }
+        });
+        holder.btnReject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                holder.Status.setImageResource(R.drawable.red_reject);
+                commentUtil.rejectMeetup(GroupID, meetup.getMeetupID(), currentUser);
+            }
+        });
     }
 
     public static class MeetupsViewHolder extends RecyclerView.ViewHolder {
         TextView Title, Username, Location, Details;
+        Button btnAccept, btnReject;
         ImageView Status;
 
         public MeetupsViewHolder(@NonNull View itemView) {
@@ -51,6 +77,8 @@ public class MeetupsRecyclerViewAdapter extends FirestoreRecyclerAdapter<MeetupM
             Location = itemView.findViewById(R.id.txtMeetupLocation);
             Details = itemView.findViewById(R.id.txtMeetupDetails);
             Status = itemView.findViewById(R.id.imgStatus);
+            btnAccept = itemView.findViewById(R.id.btnAccept);
+            btnReject = itemView.findViewById(R.id.btnReject);
         }
     }
 }

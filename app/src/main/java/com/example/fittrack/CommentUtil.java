@@ -1,36 +1,81 @@
 package com.example.fittrack;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CommentUtil {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private boolean hasLiked = false;
 
     public CommentUtil(FirebaseFirestore db) {
         this.db = db;
     }
 
-    public void addLike(String ActivityID) {
-        CollectionReference reference = db.collection("Activities").document(ActivityID).collection("Likes");
-        reference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+    public void checkLike(String ActivityID, String UserID, LikeCheckCallback callback) {
+        DocumentReference document = db.collection("Activities").document(ActivityID);
+        document.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onSuccess(QuerySnapshot querySnapshot) {
-
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                List<String> likes = (List<String>) documentSnapshot.get("likes");
+                System.out.println(likes);
+                if(likes.contains(UserID)) {
+                    callback.onCallback(true);
+                } else {
+                    callback.onCallback(false);
+                }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-
+                Log.d("Like Check Failure", "Failed to check like: " + e);
             }
         });
+    }
+
+    public void addLike(String ActivityID, String UserID) {
+        db.collection("Activities").document(ActivityID)
+                .update("likes", FieldValue.arrayUnion(UserID))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("Like Added", "Like from user was added to this activity: " + ActivityID);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Like Failure", "Failure to add like to: " + ActivityID);
+                    }
+                });
+    }
+
+    public void removeLike(String ActivityID, String UserID) {
+        db.collection("Activities").document(ActivityID)
+                .update("likes", FieldValue.arrayRemove(UserID))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("Like Removed", "Like was removed from this activity: " + ActivityID);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Like Failure", "Failure to remove like from: " + ActivityID);
+                    }
+                });
     }
 
     public void saveComment(String ActivityID, CommentModel comment) {
@@ -52,5 +97,75 @@ public class CommentUtil {
                         System.out.println("Failure saving comment: " + e);
                     }
                 });
+    }
+
+    public void acceptMeetup(String GroupID, String Meetup, String UserID) {
+        DocumentReference documentReference = db.collection("Groups")
+                .document(GroupID)
+                .collection("Meetups")
+                .document(Meetup);
+
+        documentReference.update("Accepted", FieldValue.arrayUnion(UserID))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("Meetup Accepted", UserID + " accepted this meetup: " + Meetup);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Meetup Accept Failure", "Failure: " + e);
+                    }
+                });
+        documentReference.update("Rejected", FieldValue.arrayRemove(UserID))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("Reverse Meetup Accepted", UserID + " accepted this meetup: " + Meetup);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Reverse Meetup Accepted Failure", "Failure: " + e);
+                    }
+                });
+    }
+
+    public void rejectMeetup(String GroupID, String Meetup, String UserID) {
+        DocumentReference documentReference = db.collection("Groups")
+                .document(GroupID)
+                .collection("Meetups")
+                .document(Meetup);
+
+        documentReference.update("Rejected", FieldValue.arrayUnion(UserID))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("Reverse Meetup Rejected", UserID + " rejected this meetup: " + Meetup);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Reserve Meetup Rejection Failure", "Failure: " + e);
+                    }
+                });
+
+        documentReference.update("Accepted", FieldValue.arrayRemove(UserID))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("Meetup Rejected", UserID + " rejected this meetup: " + Meetup);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Meetup Rejection Failure", "Failure: " + e);
+                    }
+                });
+
+    }
+
+    public interface LikeCheckCallback {
+        void onCallback(boolean hasLiked);
     }
 }

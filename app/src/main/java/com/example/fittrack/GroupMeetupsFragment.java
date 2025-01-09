@@ -22,9 +22,14 @@ import com.google.firebase.firestore.Query;
 import java.util.ArrayList;
 
 public class GroupMeetupsFragment extends Fragment {
-    MeetupsRecyclerViewAdapter meetupsAdapter;
-    GroupMeetupsViewModel meetupsViewModel;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private MeetupsRecyclerViewAdapter meetupsAdapter;
+    private GroupMeetupsViewModel meetupsViewModel;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String GroupID;
+
+    public GroupMeetupsFragment(String groupID) {
+        GroupID = groupID;
+    }
 
     @Nullable
     @Override
@@ -39,7 +44,7 @@ public class GroupMeetupsFragment extends Fragment {
         ProgressBar loadingActivities = view.findViewById(R.id.meetupsProgressBar);
 
         Query query = db.collection("Groups")
-                .document("Sg8JLYf9lpE1akjQRHBv")
+                .document(GroupID)
                 .collection("Meetups");
 
         FirestoreRecyclerOptions<MeetupModel> options =
@@ -47,7 +52,7 @@ public class GroupMeetupsFragment extends Fragment {
                         .setQuery(query, MeetupModel.class)
                         .build();
 
-        meetupsAdapter = new MeetupsRecyclerViewAdapter(options, getActivity());
+        meetupsAdapter = new MeetupsRecyclerViewAdapter(options, getActivity(), GroupID);
         meetupsRecyclerView.setAdapter(meetupsAdapter);
 //        meetupsViewModel = new ViewModelProvider(this).get(GroupMeetupsViewModel.class);
 //        meetupsViewModel.loadGroupMeetups("Sg8JLYf9lpE1akjQRHBv");
@@ -91,6 +96,13 @@ public class GroupMeetupsFragment extends Fragment {
     public void onStart() {
         super.onStart();
         meetupsAdapter.startListening();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        meetupsAdapter.startListening();
+        meetupsAdapter.notifyDataSetChanged();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.example.fittrack;
 
 public class MeetupModel {
+    private String MeetupID;
     private String Title;
     private String User;
     private String Date;
@@ -8,7 +9,8 @@ public class MeetupModel {
     private String Details;
     private String Status;
 
-    public MeetupModel(String title, String user, String date, String location, String details, String status) {
+    public MeetupModel(String MeetupID, String title, String user, String date, String location, String details, String status) {
+        MeetupID = MeetupID;
         Title = title;
         User = user;
         Date = date;
@@ -67,5 +69,13 @@ public class MeetupModel {
 
     public void setStatus(String status) {
         Status = status;
+    }
+
+    public String getMeetupID() {
+        return MeetupID;
+    }
+
+    public void setMeetupID(String meetupID) {
+        this.MeetupID = meetupID;
     }
 }

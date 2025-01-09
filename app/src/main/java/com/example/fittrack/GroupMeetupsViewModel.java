@@ -36,31 +36,31 @@ public class GroupMeetupsViewModel extends ViewModel {
         return meetupsList;
     }
 
-    public void loadGroupMeetups(String GroupID) {
-        if (Boolean.TRUE.equals(isLoading.getValue()) || Boolean.TRUE.equals(isEndofArray.getValue())) {
-            return;
-        }
-        ArrayList<MeetupModel> meetupCollection = new ArrayList<>();
-        isLoading.setValue(true);
-
-        GroupsUtil.retrieveGroupMeetups(GroupID, new GroupsDatabaseUtil.MeetupsCallback() {
-            @Override
-            public void onCallback(List<Map<String, Object>> meetups, DocumentSnapshot lastVisible) {
-                List<Map<String, Object>> data = new ArrayList<>();
-                for(Map<String, Object> singleMeetup : meetups) {
-                    MeetupModel meetup = new MeetupModel(
-                            (String) singleMeetup.get("Title"),
-                            (String) singleMeetup.get("User"),
-                            (String) singleMeetup.get("Date"),
-                            (String) singleMeetup.get("Location"),
-                            (String) singleMeetup.get("Details"),
-                            (String) singleMeetup.get("Status")
-                    );
-                    meetupCollection.add(meetup);
-                }
-                isLoading.setValue(false);
-                meetupsList.setValue(meetupCollection);
-            }
-        }, lastVisible);
-    }
+//    public void loadGroupMeetups(String GroupID) {
+//        if (Boolean.TRUE.equals(isLoading.getValue()) || Boolean.TRUE.equals(isEndofArray.getValue())) {
+//            return;
+//        }
+//        ArrayList<MeetupModel> meetupCollection = new ArrayList<>();
+//        isLoading.setValue(true);
+//
+//        GroupsUtil.retrieveGroupMeetups(GroupID, new GroupsDatabaseUtil.MeetupsCallback() {
+//            @Override
+//            public void onCallback(List<Map<String, Object>> meetups, DocumentSnapshot lastVisible) {
+//                List<Map<String, Object>> data = new ArrayList<>();
+//                for(Map<String, Object> singleMeetup : meetups) {
+//                    MeetupModel meetup = new MeetupModel(
+//                            (String) singleMeetup.get("Title"),
+//                            (String) singleMeetup.get("User"),
+//                            (String) singleMeetup.get("Date"),
+//                            (String) singleMeetup.get("Location"),
+//                            (String) singleMeetup.get("Details"),
+//                            (String) singleMeetup.get("Status")
+//                    );
+//                    meetupCollection.add(meetup);
+//                }
+//                isLoading.setValue(false);
+//                meetupsList.setValue(meetupCollection);
+//            }
+//        }, lastVisible);
+//    }
 }

@@ -25,6 +25,11 @@ public class GroupPostsFragment extends Fragment {
     GroupPostsViewModel groupPostsViewModel;
     PostsRecyclerViewAdapter postsAdapter;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String GroupID;
+
+    public GroupPostsFragment(String groupID) {
+        GroupID = groupID;
+    }
 
     @Nullable
     @Override
@@ -39,7 +44,7 @@ public class GroupPostsFragment extends Fragment {
         ProgressBar loadingActivities = view.findViewById(R.id.postProgressBar);
 
         Query query = db.collection("Groups")
-                .document("Sg8JLYf9lpE1akjQRHBv")
+                .document(GroupID)
                 .collection("Posts");
 
         FirestoreRecyclerOptions<PostModel> options =
@@ -92,6 +97,13 @@ public class GroupPostsFragment extends Fragment {
     public void onStart() {
         super.onStart();
         postsAdapter.startListening();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        postsAdapter.startListening();
+        postsAdapter.notifyDataSetChanged();
     }
 
     @Override
