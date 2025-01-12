@@ -1,21 +1,23 @@
 package com.example.fittrack;
 
+import com.google.firebase.Timestamp;
+
 public class MeetupModel {
     private String MeetupID;
     private String Title;
     private String User;
-    private String Date;
+    private Timestamp Date;
     private String Location;
-    private String Details;
+    private String Description;
     private String Status;
 
-    public MeetupModel(String MeetupID, String title, String user, String date, String location, String details, String status) {
-        MeetupID = MeetupID;
+    public MeetupModel(String meetupID, String title, String user, Timestamp date, String location, String description, String status) {
+        MeetupID = meetupID;
         Title = title;
         User = user;
         Date = date;
         Location = location;
-        Details = details;
+        Description = description;
         Status = status;
     }
 
@@ -39,11 +41,11 @@ public class MeetupModel {
         User = user;
     }
 
-    public String getDate() {
+    public Timestamp getDate() {
         return Date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Timestamp date) {
         Date = date;
     }
 
@@ -55,12 +57,12 @@ public class MeetupModel {
         Location = location;
     }
 
-    public String getDetails() {
-        return Details;
+    public String getDescription() {
+        return Description;
     }
 
-    public void setDetails(String details) {
-        Details = details;
+    public void setDescription(String description) {
+        Description = description;
     }
 
     public String getStatus() {

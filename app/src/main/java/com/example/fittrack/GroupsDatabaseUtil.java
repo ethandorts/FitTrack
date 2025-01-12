@@ -1,6 +1,7 @@
 package com.example.fittrack;
 
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -75,7 +76,7 @@ public class GroupsDatabaseUtil {
         });
     }
 
-    public void createNewMeetup(String GroupID, String UserID, String title, String date, String location, String description) {
+    public void createNewMeetup(String GroupID, String UserID, String title, Timestamp date, String location, String description) {
         CollectionReference groupReference = db.collection("Groups").document(GroupID).collection("Meetups");
         Map<String, Object> meetupFields = new HashMap<>();
         meetupFields.put("Title", title);
@@ -87,6 +88,18 @@ public class GroupsDatabaseUtil {
         groupReference.add(meetupFields).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
+                documentReference.update("MeetupID", documentReference.getId())
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        Log.d("Added MeetupID", "ID added for Meetup");
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d("Failure to Add MeetupID", "ID failed to be added for Meetup");
+                            }
+                        });
                 System.out.println("Meetup added for group " + GroupID);
             }
         }).addOnFailureListener(new OnFailureListener() {

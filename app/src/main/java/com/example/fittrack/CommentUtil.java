@@ -12,6 +12,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.auth.User;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,10 +33,12 @@ public class CommentUtil {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 List<String> likes = (List<String>) documentSnapshot.get("likes");
                 System.out.println(likes);
-                if(likes.contains(UserID)) {
-                    callback.onCallback(true);
-                } else {
-                    callback.onCallback(false);
+                if (likes != null) {
+                    if (likes.contains(UserID)) {
+                        callback.onCallback(true);
+                    } else {
+                        callback.onCallback(false);
+                    }
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -162,10 +165,40 @@ public class CommentUtil {
                         Log.d("Meetup Rejection Failure", "Failure: " + e);
                     }
                 });
+    }
 
+    public void checkMeetupStatus(String GroupID, String UserID, String MeetupID, StatusCheckCallback callback) {
+
+        DocumentReference documentReference = db.collection("Groups")
+                .document(GroupID)
+                .collection("Meetups")
+                .document(MeetupID);
+
+        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                List<String> acceptedList = (List<String>) documentSnapshot.get("Accepted");
+                List<String> rejectedList = (List<String>) documentSnapshot.get("Rejected");
+
+                if(acceptedList.contains(UserID)) {
+                    callback.onCallback(true);
+                } else if (rejectedList.contains(UserID)) {
+                    callback.onCallback(false);
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Meetup Status Failure", "Could not retrieve meetup status due to " + e);
+            }
+        });
     }
 
     public interface LikeCheckCallback {
         void onCallback(boolean hasLiked);
+    }
+
+    public interface StatusCheckCallback {
+        void onCallback(boolean statusCheck);
     }
 }

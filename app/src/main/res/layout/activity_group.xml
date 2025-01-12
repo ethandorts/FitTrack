@@ -9,7 +9,7 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/ActivityOverviewToolbar"
-        android:layout_width="411dp"
+        android:layout_width="match_parent"
         android:layout_height="91dp"
         android:layout_marginBottom="3dp"
         android:background="@color/button_blue"
@@ -24,35 +24,40 @@
             android:id="@+id/txtGroupName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
+            android:layout_gravity="start|center_vertical"
             android:gravity="center"
             android:text="Group Name"
             android:textColor="@color/white"
             android:textSize="16sp" />
 
-        <ImageButton
-            android:id="@+id/btnGroupMessageFriends"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="16dp"
-            android:background="@color/button_blue"
-            android:scaleType="fitXY"
-            android:src="@drawable/baseline_message_24"
-            tools:layout_editor_absoluteX="12dp" />
+            android:orientation="horizontal"
+            android:paddingEnd="16dp">
 
-        <ImageButton
-            android:id="@+id/btnGroupAddActivity"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="16dp"
-            android:background="@color/button_blue"
-            android:scaleType="fitXY"
-            android:src="@drawable/baseline_add_24"
-            tools:layout_editor_absoluteX="16dp" />
+            <ImageButton
+                android:id="@+id/btnGamification"
+                android:layout_width="39dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="12dp"
+                android:background="@color/button_blue"
+                android:scaleType="fitXY"
+                android:src="@drawable/gamification_icon" />
+
+            <ImageButton
+                android:id="@+id/btnGroupMessage"
+                android:layout_width="37dp"
+                android:layout_height="35dp"
+                android:background="@color/button_blue"
+                android:scaleType="fitXY"
+                android:src="@drawable/baseline_message_24" />
+
+        </LinearLayout>
 
     </androidx.appcompat.widget.Toolbar>
+
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager3"

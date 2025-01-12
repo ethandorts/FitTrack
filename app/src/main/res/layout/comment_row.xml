@@ -33,7 +33,7 @@
                 app:srcCompat="@drawable/profile" />
 
             <TextView
-                android:id="@+id/txtCommentName"
+                android:id="@+id/txtLeaderboardStatName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -45,7 +45,7 @@
                 app:layout_constraintEnd_toEndOf="parent" />
 
             <TextView
-                android:id="@+id/txtComment"
+                android:id="@+id/txtDistanceStat"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -53,7 +53,7 @@
                 android:text="Hello, how are you?"
                 android:textSize="12sp"
                 app:layout_constraintStart_toEndOf="@id/user_comment_icon"
-                app:layout_constraintTop_toBottomOf="@id/txtCommentName"
+                app:layout_constraintTop_toBottomOf="@id/txtLeaderboardStatName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 

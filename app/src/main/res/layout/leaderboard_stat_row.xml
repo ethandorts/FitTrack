@@ -7,41 +7,59 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/LeaderboardCardView"
-        android:layout_width="0dp"
-        android:layout_height="98dp"
+        android:layout_width="414dp"
+        android:layout_height="68dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+            android:layout_width="411dp"
             android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/txtLeaderboardStatName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Food Name"
+                android:layout_marginStart="76dp"
+                android:text="Ethan Doherty"
                 android:textSize="24sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.454" />
 
             <TextView
                 android:id="@+id/txtDistanceStat"
-                android:layout_width="133dp"
-                android:layout_height="26dp"
-                android:text="Calories"
+                android:layout_width="103dp"
+                android:layout_height="34dp"
+                android:layout_marginEnd="7dp"
+                android:text="23 KM "
+                android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.884"
-                app:layout_constraintStart_toEndOf="@+id/txtLeaderboardStatName"
+                app:layout_constraintHorizontal_bias="0.924"
+                app:layout_constraintStart_toEndOf="@+id/leaderboard_number"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.541" />
+                app:layout_constraintVertical_bias="0.422" />
+
+            <TextView
+                android:id="@+id/leaderboard_number"
+                android:layout_width="30dp"
+                android:layout_height="37dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="261dp"
+                android:text="1. "
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/txtDistanceStat"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.483" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

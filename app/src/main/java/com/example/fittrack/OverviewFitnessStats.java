@@ -29,6 +29,7 @@ public class OverviewFitnessStats extends AppCompatActivity {
         OverviewActivityFragmentStateAdapter adapter = new OverviewActivityFragmentStateAdapter(this);
         adapter.addFragment(new ActivityOverviewFragment(ActivityID));
         adapter.addFragment(new ActivitySplitsFragment(ActivityID));
+        adapter.addFragment(new ActivityGraphs(ActivityID));
         pager.setAdapter(adapter);
 
         new TabLayoutMediator(tabs, pager,
@@ -43,9 +44,6 @@ public class OverviewFitnessStats extends AppCompatActivity {
                                 tab.setText("Splits");
                                 break;
                             case 2:
-                                tab.setText("Stats");
-                                break;
-                            case 3:
                                 tab.setText("Graphs");
                                 break;
                         }

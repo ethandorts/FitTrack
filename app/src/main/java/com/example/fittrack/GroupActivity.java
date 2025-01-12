@@ -2,6 +2,9 @@ package com.example.fittrack;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -28,6 +31,8 @@ public class GroupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group);
 
         txtGroupName = findViewById(R.id.txtGroupName);
+        ImageButton btnGamification = findViewById(R.id.btnGamification);
+        ImageButton btnGroupMessage = findViewById(R.id.btnGroupMessage);
         TabLayout tabs = findViewById(R.id.activityTabLayout);
         Intent intent = getIntent();
         String GroupID = intent.getStringExtra("GroupID");
@@ -58,5 +63,22 @@ public class GroupActivity extends AppCompatActivity {
                         }
                     }
                 }).attach();
+
+        btnGroupMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(GroupActivity.this, DirectMessagingMenu.class);
+                startActivity(intent);
+            }
+        });
+        btnGamification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(GroupActivity.this, GamificationGraph.class);
+                intent.putExtra("GroupID", GroupID);
+                startActivity(intent);
+            }
+        });
     }
+
 }

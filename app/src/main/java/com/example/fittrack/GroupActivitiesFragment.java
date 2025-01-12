@@ -42,6 +42,9 @@ public class GroupActivitiesFragment extends Fragment {
         this.GroupID = GroupID;
     }
 
+    public GroupActivitiesFragment() {
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

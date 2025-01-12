@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -24,7 +26,10 @@ import java.util.ArrayList;
 public class GroupMeetupsFragment extends Fragment {
     private MeetupsRecyclerViewAdapter meetupsAdapter;
     private GroupMeetupsViewModel meetupsViewModel;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private String currentUser = mAuth.getCurrentUser().getUid();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private GroupsDatabaseUtil groupsUtil = new GroupsDatabaseUtil(db);
     private String GroupID;
 
     public GroupMeetupsFragment(String groupID) {
@@ -40,8 +45,22 @@ public class GroupMeetupsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Button btnCreateMeetup = view.findViewById(R.id.btnCreateMeetup);
         RecyclerView meetupsRecyclerView = view.findViewById(R.id.meetupsRecyclerView);
         ProgressBar loadingActivities = view.findViewById(R.id.meetupsProgressBar);
+
+        btnCreateMeetup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle arguments = new Bundle();
+                arguments.putString("GroupID", GroupID);
+
+                CreateMeetupDialogFragment dialog = new CreateMeetupDialogFragment();
+                dialog.setArguments(arguments);
+                dialog.show(getActivity().getSupportFragmentManager(), "CreateMeetup");
+                //groupsUtil.createNewMeetup(GroupID, currentUser, " ", " ", " ", " ");
+            }
+        });
 
         Query query = db.collection("Groups")
                 .document(GroupID)

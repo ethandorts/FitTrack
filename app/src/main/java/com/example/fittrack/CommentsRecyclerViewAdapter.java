@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -39,8 +38,8 @@ public class CommentsRecyclerViewAdapter extends FirestoreRecyclerAdapter<Commen
         TextView txtUser, txtComment;
         public CommentHolder (@NonNull View itemView) {
             super(itemView);
-            txtUser = itemView.findViewById(R.id.txtCommentName);
-            txtComment = itemView.findViewById(R.id.txtComment);
+            txtUser = itemView.findViewById(R.id.txtLeaderboardStatName);
+            txtComment = itemView.findViewById(R.id.txtDistanceStat);
         }
     }
 

@@ -47,8 +47,8 @@ public class NutritionListAdapter extends FirestoreRecyclerAdapter<FoodModel, Nu
         TextView foodName, calories;
         public NutritionItemHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
-            foodName = itemView.findViewById(R.id.txtCommentName);
-            calories = itemView.findViewById(R.id.txtComment);
+            foodName = itemView.findViewById(R.id.txtLeaderboardStatName);
+            calories = itemView.findViewById(R.id.txtDistanceStat);
 
         }
     }
