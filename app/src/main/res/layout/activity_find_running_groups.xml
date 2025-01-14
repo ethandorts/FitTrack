@@ -2,20 +2,21 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/txt_ai_response"
+    android:id="@+id/txtClubLocationValue"
+    android:background="@drawable/running_club_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center"
-    android:background="@drawable/running_club_background"
-    tools:context=".GroupsMenu">
+    tools:context=".FindRunningGroupsActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/GroupsMenuToolbar"
-        android:layout_width="0dp"
-        android:layout_height="64dp"
+        android:layout_width="415dp"
+        android:layout_height="72dp"
+        android:layout_marginBottom="1dp"
         android:background="@color/button_blue"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toTopOf="@+id/frameLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -26,9 +27,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="Groups"
+            android:text="Find Fitness Groups"
             android:textColor="@color/white"
-            android:textSize="40sp"
+            android:textSize="34sp"
             app:layout_constraintBottom_toTopOf="@+id/txtBuildRunningCommunity"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -36,41 +37,16 @@
     </androidx.appcompat.widget.Toolbar>
 
     <FrameLayout
-        android:id="@+id/GroupsFrameLayout"
+        android:id="@+id/frameLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnCreateGroup">
+        app:layout_constraintTop_toBottomOf="@+id/GroupsMenuToolbar">
 
     </FrameLayout>
-
-    <ImageButton
-        android:id="@+id/btnCreateGroup"
-        android:layout_width="50dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="9dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="7dp"
-        app:layout_constraintBottom_toTopOf="@+id/GroupsFrameLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btnSearchGroups"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/baseline_add_24" />
-
-    <ImageButton
-        android:id="@+id/btnSearchGroups"
-        android:layout_width="48dp"
-        android:layout_height="46dp"
-        android:layout_marginStart="303dp"
-        android:layout_marginEnd="4dp"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="@+id/btnCreateGroup"
-        app:layout_constraintEnd_toStartOf="@+id/btnCreateGroup"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btnCreateGroup"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/search" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

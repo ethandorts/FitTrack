@@ -31,17 +31,22 @@ public class GroupsDatabaseUtil {
         this.db = db;
     }
 
-    public void createNewGroup(String UserID, String GroupName, String GroupDescription) {
+    public void createNewGroup(String UserID, String GroupName, String Activity, String Location, String Motto, String GroupDescription) {
         DocumentReference groupReference = db.collection("Groups").document();
         String documentID = groupReference.getId();
         Map<String, Object> groupMap = new HashMap<>();
         groupMap.put("GroupID", documentID);
+        groupMap.put("Activity", Activity);
         groupMap.put("Description", GroupDescription);
         groupMap.put("Name", GroupName);
+        groupMap.put("Location", Location);
+        groupMap.put("shortDescription", Motto);
+
         ArrayList<String> users = new ArrayList<>();
         users.add(UserID);
         groupMap.put("Admins", users);
         groupMap.put("Runners", users);
+        groupMap.put("JoinRequests", new ArrayList<>());
 
         groupReference.set(groupMap).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -124,6 +129,35 @@ public class GroupsDatabaseUtil {
                         System.out.println("Failed to update runner list for: " + GroupID);
                     }
                 });
+
+        groupReference.update("JoinRequests", FieldValue.arrayRemove(UserID))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        System.out.println("Rejected request successful");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        System.out.println("Failed to rejected request " + GroupID);
+                    }
+                });
+    }
+
+    public void removeRequested(String GroupID, String UserID) {
+        DocumentReference groupReference = db.collection("Groups").document(GroupID);
+        groupReference.update("JoinRequests", FieldValue.arrayRemove(UserID))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        System.out.println("Rejected request successful");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        System.out.println("Failed to rejected request " + GroupID);
+                    }
+                });
     }
 
     public void retrieveGroupPosts(String GroupID, PostsCallback callback, DocumentSnapshot lastVisible) {
@@ -175,6 +209,22 @@ public class GroupsDatabaseUtil {
                             System.out.println("Error getting data: " + task.getException());
                             callback.onCallback(null, null);
                         }
+                    }
+                });
+    }
+
+    public void retrieveSpecificGroup(String GroupID, GroupInformationCallback callback) {
+        db.collection("Groups")
+                .document(GroupID)
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        callback.onCallback(documentSnapshot);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Group Document Retrieval Failure", "Failure to retrieve Group document: " + e);
                     }
                 });
     }
@@ -246,6 +296,118 @@ public class GroupsDatabaseUtil {
                 });
     }
 
+    public void retrieveUserRoles(String GroupID, UserRolesCallback callback) {
+        db.collection("Groups")
+                .document(GroupID)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        ArrayList<String> runners = (ArrayList<String>) documentSnapshot.get("Runners");
+                        ArrayList<String> admins = (ArrayList<String>) documentSnapshot.get("Admins");
+                        callback.onCallback(runners, admins);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        System.out.println("Failure getting roles of a group");
+                        callback.onCallback(null, null);
+                    }
+                });
+    }
+
+    public void addAdmin(String GroupID, String UserID) {
+        db.collection("Groups")
+                .document(GroupID).update("Admins", FieldValue.arrayUnion(UserID))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("Add Admin Request", "Request to Add Admin Successful");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Add Admin Request Failure", "Request to Add Admin Failure: " + e);
+                    }
+                });
+    }
+
+    public void removeAdmin(String GroupID, String UserID) {
+        db.collection("Groups")
+                .document(GroupID).update("Admins", FieldValue.arrayRemove(UserID))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("Remove Admin Request", "Request to Remove Admin Successful");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Remove Admin Request Failure", "Request to Remove Admin Failure: " + e);
+                    }
+                });
+    }
+
+    public void retrieveGroupRequests(String GroupID, GroupRequestsCallback callback) {
+        db.collection("Groups")
+                .document(GroupID)
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        List<String> requests = (List<String>) documentSnapshot.get("JoinRequests");
+                        if(requests != null) {
+                            callback.onCallback(requests);
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Group Requests Failure", "Failure to retrieve group requests: " + e);
+                    }
+                });
+    }
+
+    public void addGroupRequest(String GroupID, String currentUser) {
+        db.collection("Groups")
+                .document(GroupID).update("JoinRequests", FieldValue.arrayUnion(currentUser))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("Join Group Request", "Request to Join Group Successful");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Join Group Request Failure ", "Request to Join Group Failure: " + e);
+                    }
+                });
+    }
+
+    public void checkUserStatusinGroup(String GroupID, String currentUser, RequestsCallback callback) {
+        db.collection("Groups")
+                .document(GroupID)
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        ArrayList<String> requests = (ArrayList<String>) documentSnapshot.get("JoinRequests");
+                        if(requests != null) {
+                            if (requests.contains(currentUser)) {
+                                callback.onCallback(true);
+                            } else {
+                                callback.onCallback(false);
+                            }
+                        } else {
+                            callback.onCallback(false);
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Request check failed", "Failure to check request status: " + e);
+                    }
+                });
+    }
+
     public interface AllGroupsCallback {
         void onCallback(List<Map<String, Object>> groupsData);
     }
@@ -258,11 +420,27 @@ public class GroupsDatabaseUtil {
         void onCallback(ArrayList<String> runners);
     }
 
+    public interface UserRolesCallback {
+        void onCallback(ArrayList<String> runners, ArrayList<String> admins);
+    }
+
+    public interface GroupRequestsCallback {
+        void onCallback(List<String> requests);
+    }
+
+    public interface GroupInformationCallback {
+        void onCallback(DocumentSnapshot documentSnapshot);
+    }
+
     public interface PostsCallback {
         void onCallback(List<Map<String, Object>> posts, DocumentSnapshot lastVisible);
     }
 
     public interface MeetupsCallback {
         void onCallback(List<Map<String, Object>> meetups, DocumentSnapshot lastVisible);
+    }
+
+    public interface RequestsCallback{
+        void onCallback(boolean RequestStatus);
     }
 }

@@ -18,9 +18,11 @@ import java.util.ArrayList;
 public class GroupsRecyclerViewAdapter extends RecyclerView.Adapter<GroupsRecyclerViewAdapter.GroupsViewHolder> {
     private Context context;
     private ArrayList<GroupModel> groupsList = new ArrayList<>();
+    private boolean isFinding;
 
-    public GroupsRecyclerViewAdapter(Context context) {
+    public GroupsRecyclerViewAdapter(Context context, boolean isFinding) {
         this.context = context;
+        this.isFinding = isFinding;
     }
 
     @NonNull
@@ -35,16 +37,35 @@ public class GroupsRecyclerViewAdapter extends RecyclerView.Adapter<GroupsRecycl
         GroupModel group = groupsList.get(position);
 
         holder.GroupName.setText(group.getGroupName());
-        holder.GroupDescription.setText(group.getGroupDescription());
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(holder.itemView.getContext(), GroupActivity.class);
-                intent.putExtra("GroupName", group.getGroupName());
-                intent.putExtra("GroupID", group.getGroupID());
-                context.startActivity(intent);
-            }
-        });
+        holder.GroupDescription.setText(group.getShortDescription());
+        if(isFinding) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(holder.itemView.getContext(), GroupInformationActivity.class);
+                    intent.putExtra("GroupName", group.getGroupName());
+                    intent.putExtra("GroupID", group.getGroupID());
+                    intent.putExtra("GroupShortDescription", group.getShortDescription());
+                    intent.putExtra("GroupDescription", group.getGroupDescription());
+                    intent.putExtra("Location", group.getGroupLocation());
+                    intent.putExtra("MembersValue", group.getMembersNumber().size());
+                    intent.putExtra("ActivityType", group.getActivity());
+                    context.startActivity(intent);
+                }
+            });
+        } else {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(holder.itemView.getContext(), GroupActivity.class);
+                    intent.putExtra("GroupName", group.getGroupName());
+                    intent.putExtra("GroupID", group.getGroupID());
+                    intent.putExtra("GroupSize", group.getMembersNumber().size());
+                    intent.putExtra("GroupActivity", group.getActivity());
+                    context.startActivity(intent);
+                }
+            });
+        }
     }
 
     @Override

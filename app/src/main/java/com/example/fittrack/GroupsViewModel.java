@@ -1,5 +1,7 @@
 package com.example.fittrack;
 
+import android.widget.ImageView;
+
 import androidx.constraintlayout.widget.Group;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -20,27 +22,40 @@ public class GroupsViewModel extends ViewModel {
     private String UserID = mAuth.getUid();
 
     public GroupsViewModel () {
-        loadGroups();
+        loadGroups(UserID);
     }
 
     public MutableLiveData<ArrayList<GroupModel>> getGroupsList() {
         return groupsList;
     }
 
-    private void loadGroups() {
+    private void loadGroups(String UserID) {
         groupsDatabaseUtil.retrieveAllGroups(new GroupsDatabaseUtil.AllGroupsCallback() {
             @Override
             public void onCallback(List<Map<String, Object>> groupsData) {
+                List<GroupModel> availableGroups = new ArrayList<>();
                 for(Map<String, Object> data : groupsData) {
-                    GroupModel group = new GroupModel(
-                            (String) data.get("GroupID"),
-                            (String) data.get("Name"),
-                            (String) data.get("Description"),
-                            null
-                    );
-                    groups.add(group);
-                    groupsList.setValue(groups);
+                    ArrayList<String> runners = (ArrayList<String>) data.get("Runners");
+                    System.out.println("Runners in group: " + runners);
+                    if (runners == null || !runners.contains(UserID)) {
+                        GroupModel group = new GroupModel(
+                                (String) data.get("GroupID"),
+                                (String) data.get("Name"),
+                                (String) data.get("shortDescription"),
+                                (String) data.get("Description"),
+                                (String) data.get("Location"),
+                                null,
+                                (ArrayList<String>) data.get("Runners"),
+                                (String) data.get("Activity")
+                        );
+                        availableGroups.add(group);
+                    }
                 }
+                System.out.println("Available Groups To Show: " + availableGroups.size());
+                groups.clear();
+                groups.addAll(availableGroups);
+                System.out.println("Groups Value Display:" + groups.size());
+                groupsList.postValue(groups);
             }
         });
     }
@@ -53,8 +68,12 @@ public class GroupsViewModel extends ViewModel {
                     GroupModel group = new GroupModel(
                             (String) data.get("GroupID"),
                             (String) data.get("Name"),
+                            (String) data.get("shortDescription"),
                             (String) data.get("Description"),
-                            null
+                            (String) data.get("Location"),
+                            null,
+                            (ArrayList<String>) data.get("Runners"),
+                            (String) data.get("Activity")
                     );
                     groups.add(group);
                     groupsList.setValue(groups);

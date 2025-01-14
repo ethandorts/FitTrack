@@ -1,5 +1,7 @@
 package com.example.fittrack;
 
+import android.widget.ImageView;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -32,10 +34,14 @@ public class UserGroupsViewModel extends ViewModel {
             public void onCallback(List<Map<String, Object>> groupsData) {
                 for(Map<String, Object> data : groupsData) {
                     GroupModel group = new GroupModel(
+                            (String) data.get("GroupID"),
                             (String) data.get("Name"),
+                            (String) data.get("shortDescription"),
                             (String) data.get("Description"),
+                            (String) data.get("Location"),
                             null,
-                            null
+                            (ArrayList<String>) data.get("Runners"),
+                            (String) data.get("Activity")
                     );
                     groups.add(group);
                     groupsList.setValue(groups);

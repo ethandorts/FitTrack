@@ -17,12 +17,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class FindRunningGroupsFragment extends Fragment {
-    View view;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private View view;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private GroupsViewModel groupsViewModel = new GroupsViewModel();
     private GroupsRecyclerViewAdapter groupsAdapter;
 
@@ -46,14 +44,18 @@ public class FindRunningGroupsFragment extends Fragment {
 //            }
 //        });
 
-        RecyclerView groupsRecyclerView = view.findViewById(R.id.groupsRecyclerView);
-        groupsAdapter = new GroupsRecyclerViewAdapter(getContext());
+        RecyclerView groupsRecyclerView = view.findViewById(R.id.GroupsRecyclerView);
+        groupsAdapter = new GroupsRecyclerViewAdapter(getContext(), true);
         groupsViewModel = new ViewModelProvider(this).get(GroupsViewModel.class);
         groupsRecyclerView.setAdapter(groupsAdapter);
         groupsViewModel.getGroupsList().observe(getViewLifecycleOwner(), new Observer<ArrayList<GroupModel>>() {
             @Override
             public void onChanged(ArrayList<GroupModel> groupModels) {
+                System.out.println("Group Models: " + groupModels);
                 groupsAdapter.updateGroups(groupModels);
+                for(GroupModel group : groupModels) {
+                    System.out.println(group.getGroupID() + " " + group.getGroupName());
+                }
             }
         });
         LinearLayoutManager layout = new LinearLayoutManager(getContext());

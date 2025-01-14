@@ -54,6 +54,15 @@
                 android:scaleType="fitXY"
                 android:src="@drawable/baseline_message_24" />
 
+            <ImageButton
+                android:id="@+id/btnGroupInfo"
+                android:layout_width="37dp"
+                android:layout_height="35dp"
+                android:layout_marginStart="12dp"
+                android:background="@color/button_blue"
+                android:scaleType="fitXY"
+                android:src="@drawable/info" />
+
         </LinearLayout>
 
     </androidx.appcompat.widget.Toolbar>

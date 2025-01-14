@@ -8,4 +8,37 @@
         <item>By Week</item>
         <item>By Month</item>
     </string-array>
+
+    <string-array name="fitness_activities">
+        <item>Running</item>
+        <item>Cycling</item>
+        <item>Jump Rope</item>
+        <item>Dancing</item>
+        <item>Swimming</item>
+        <item>Rowing</item>
+        <item>Stair Climbing</item>
+        <item>HIIT (High-Intensity Interval Training)</item>
+        <item>Bodyweight Exercises</item>
+        <item>Weightlifting</item>
+        <item>Resistance Bands</item>
+        <item>Kettlebell Exercises</item>
+        <item>Yoga</item>
+        <item>Pilates</item>
+        <item>Stretching Routines</item>
+        <item>Tai Chi</item>
+        <item>Hiking</item>
+        <item>Kayaking or Paddleboarding</item>
+        <item>Rock Climbing</item>
+        <item>Sports (Soccer, Basketball, Tennis, Volleyball)</item>
+        <item>Zumba</item>
+        <item>Spin Class</item>
+        <item>Boot Camp</item>
+        <item>Barre</item>
+        <item>Martial Arts (Karate, Jiu-Jitsu, Kickboxing)</item>
+        <item>Skating or Rollerblading</item>
+        <item>Trampolining</item>
+        <item>Online Workout Videos</item>
+        <item>Fitness Apps</item>
+        <item>Mini Workouts</item>
+    </string-array>
 </resources>

@@ -17,8 +17,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class MyRunningGroupsFragment extends Fragment {
     View view;
@@ -33,10 +31,10 @@ public class MyRunningGroupsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.find_running_groups_fragment, container, false);
+        view = inflater.inflate(R.layout.fragment_my_running_groups, container, false);
 
-        RecyclerView groupsRecyclerView = view.findViewById(R.id.groupsRecyclerView);
-        groupsAdapter = new GroupsRecyclerViewAdapter(getContext());
+        RecyclerView groupsRecyclerView = view.findViewById(R.id.recyclerView);
+        groupsAdapter = new GroupsRecyclerViewAdapter(getContext(), false);
         groupsRecyclerView.setAdapter(groupsAdapter);
         groupsViewModel.getGroupsList().observe(getViewLifecycleOwner(), new Observer<ArrayList<GroupModel>>() {
             @Override

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".GroupOverviewActivity">
+
+    <!-- Toolbar for Group Overview -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/GroupsMenuToolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/button_blue"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toTopOf="@+id/membersListLogo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/txtGroupOverview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Group Overview"
+            android:textColor="@color/white"
+            android:textSize="24sp" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- Image for Group -->
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/membersListLogo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="3dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/fit_track_background"
+        app:layout_constraintBottom_toTopOf="@+id/btnAdminRequests"
+        app:layout_constraintEnd_toStartOf="@+id/txtClubNameOverview"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/GroupsMenuToolbar" />
+
+    <!-- Group Name -->
+
+    <!-- Button for Join Requests -->
+
+    <!-- Members Label -->
+    <TextView
+        android:id="@+id/txtClubNameOverview"
+        android:layout_width="252dp"
+        android:layout_height="203dp"
+        android:layout_marginEnd="1dp"
+        android:paddingLeft="10dp"
+        android:text="Derry Running Club"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btnAdminRequests"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/membersListLogo"
+        app:layout_constraintTop_toBottomOf="@+id/GroupsMenuToolbar"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/btnAdminRequests"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="118dp"
+        android:layout_marginEnd="118dp"
+        android:layout_marginBottom="10dp"
+        android:text="View Join Requests"
+        app:layout_constraintBottom_toTopOf="@+id/txtMembersOverview"
+        app:layout_constraintEnd_toEndOf="@+id/txtClubNameOverview"
+        app:layout_constraintStart_toStartOf="@+id/membersListLogo"
+        app:layout_constraintTop_toBottomOf="@+id/membersListLogo" />
+
+    <!-- RecyclerView for Group Members -->
+
+    <TextView
+        android:id="@+id/txtMembersOverview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginBottom="4dp"
+        android:text="Members"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/membersRecyclerView"
+        app:layout_constraintStart_toStartOf="@+id/btnAdminRequests"
+        app:layout_constraintTop_toBottomOf="@+id/btnAdminRequests" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/membersRecyclerView"
+        android:layout_width="415dp"
+        android:layout_height="362dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtMembersOverview" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,8 +1,11 @@
 package com.example.fittrack;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,28 +17,30 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 public class GroupsMenu extends AppCompatActivity {
-    Button btnFindRunningGroups, btnYourRunningGroups;
+    ImageButton btnFindRunningGroups, btnCreateRunningGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups_menu);
 
-        btnFindRunningGroups = findViewById(R.id.btnFindRunningGroups);
-        btnYourRunningGroups = findViewById(R.id.btnYourRunningGroups);
+        btnFindRunningGroups = findViewById(R.id.btnSearchGroups);
+        btnCreateRunningGroup = findViewById(R.id.btnCreateGroup);
 
-        loadFragment(new FindRunningGroupsFragment());
+        loadFragment(new MyRunningGroupsFragment());
 
         btnFindRunningGroups.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadFragment(new FindRunningGroupsFragment());
+                Intent intent = new Intent(GroupsMenu.this, FindRunningGroupsActivity.class);
+                startActivity(intent);
             }
         });
-        btnYourRunningGroups.setOnClickListener(new View.OnClickListener() {
+        btnCreateRunningGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadFragment(new MyRunningGroupsFragment());
+                Intent intent = new Intent(GroupsMenu.this, CreateRunningGroupActivity.class);
+                startActivity(intent);
             }
         });
     }

@@ -8,7 +8,7 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/txtInviteTitle"
+        android:id="@+id/txtCreateGroupName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Title"
@@ -18,18 +18,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editTextTitle"
+        android:id="@+id/editCreateGroupName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:hint="Enter Title"
-        app:layout_constraintBaseline_toBaselineOf="@id/txtInviteTitle"
+        app:layout_constraintBaseline_toBaselineOf="@id/txtCreateGroupName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/txtInviteTitle" />
+        app:layout_constraintStart_toEndOf="@id/txtCreateGroupName" />
 
     <!-- Date -->
     <TextView
-        android:id="@+id/txtInviteDate"
+        android:id="@+id/txtFitnessActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -37,22 +37,22 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTextTitle" />
+        app:layout_constraintTop_toBottomOf="@id/editCreateGroupName" />
 
     <EditText
-        android:id="@+id/editTextDate"
+        android:id="@+id/editFitnessActivity"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:focusable="false"
         android:hint="Select Date"
         android:inputType="none"
-        app:layout_constraintBaseline_toBaselineOf="@id/txtInviteDate"
+        app:layout_constraintBaseline_toBaselineOf="@id/txtFitnessActivity"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/txtInviteDate" />
+        app:layout_constraintStart_toEndOf="@id/txtFitnessActivity" />
 
     <TextView
-        android:id="@+id/txtInviteTime"
+        android:id="@+id/txtGroupLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -60,22 +60,22 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTextDate" />
+        app:layout_constraintTop_toBottomOf="@id/editFitnessActivity" />
 
     <EditText
-        android:id="@+id/editTextTime"
+        android:id="@+id/editGroupLocation"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:focusable="false"
         android:hint="Select Time"
         android:inputType="datetime"
-        app:layout_constraintBaseline_toBaselineOf="@id/txtInviteTime"
+        app:layout_constraintBaseline_toBaselineOf="@id/txtGroupLocation"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/txtInviteTime" />
+        app:layout_constraintStart_toEndOf="@id/txtGroupLocation" />
 
     <TextView
-        android:id="@+id/txtInviteLocation"
+        android:id="@+id/txtMotto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -83,7 +83,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTextTime" />
+        app:layout_constraintTop_toBottomOf="@id/editGroupLocation" />
 
     <EditText
         android:id="@+id/editTextLocation"
@@ -91,12 +91,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:hint="Enter Location"
-        app:layout_constraintBaseline_toBaselineOf="@id/txtInviteLocation"
+        app:layout_constraintBaseline_toBaselineOf="@id/txtMotto"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/txtInviteLocation" />
+        app:layout_constraintStart_toEndOf="@id/txtMotto" />
 
     <TextView
-        android:id="@+id/txtInviteDescription"
+        android:id="@+id/txtCreateGroupDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -107,7 +107,7 @@
         app:layout_constraintTop_toBottomOf="@id/editTextLocation" />
 
     <EditText
-        android:id="@+id/editInviteDescription"
+        android:id="@+id/editCreateGroupDescription"
         android:layout_width="0dp"
         android:layout_height="150dp"
         android:layout_marginTop="8dp"
@@ -116,17 +116,17 @@
         android:inputType="textMultiLine"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtInviteDescription" />
+        app:layout_constraintTop_toBottomOf="@id/txtCreateGroupDescription" />
 
 
     <Button
-        android:id="@+id/buttonCreateMeetup"
+        android:id="@+id/btnCreateFitnessGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Create Meetup"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editInviteDescription" />
+        app:layout_constraintTop_toBottomOf="@id/editCreateGroupDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

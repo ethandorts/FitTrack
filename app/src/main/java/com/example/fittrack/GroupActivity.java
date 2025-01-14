@@ -33,10 +33,14 @@ public class GroupActivity extends AppCompatActivity {
         txtGroupName = findViewById(R.id.txtGroupName);
         ImageButton btnGamification = findViewById(R.id.btnGamification);
         ImageButton btnGroupMessage = findViewById(R.id.btnGroupMessage);
+        ImageButton btnGroupInformation = findViewById(R.id.btnGroupInfo);
         TabLayout tabs = findViewById(R.id.activityTabLayout);
         Intent intent = getIntent();
         String GroupID = intent.getStringExtra("GroupID");
         String groupName = intent.getStringExtra("GroupName");
+        int GroupSize = intent.getIntExtra("GroupSize", 0);
+        System.out.println("Buzz Lightyear: " + GroupSize);
+        String GroupActivity = intent.getStringExtra("GroupActivity");
         txtGroupName.setText(groupName);
 
         pager = findViewById(R.id.viewPager3);
@@ -76,6 +80,18 @@ public class GroupActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(GroupActivity.this, GamificationGraph.class);
                 intent.putExtra("GroupID", GroupID);
+                startActivity(intent);
+            }
+        });
+
+        btnGroupInformation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(GroupActivity.this, GroupOverviewActivity.class);
+                intent.putExtra("GroupID", GroupID);
+                intent.putExtra("GroupSize", GroupSize);
+                intent.putExtra("GroupName", groupName);
+                intent.putExtra("GroupActivity", GroupActivity);
                 startActivity(intent);
             }
         });

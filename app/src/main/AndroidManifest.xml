@@ -29,6 +29,24 @@
         android:theme="@style/Theme.FitTrack"
         tools:targetApi="31">
         <activity
+            android:name=".GoalSettingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminGroupRequestsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GroupOverviewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GroupInformationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreateRunningGroupActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FindRunningGroupsActivity"
+            android:exported="false" />
+        <activity
             android:name=".GamificationGraph"
             android:exported="false" />
         <activity

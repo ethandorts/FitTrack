@@ -18,7 +18,6 @@ import androidx.fragment.app.DialogFragment;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.LocalDateTime;
@@ -43,12 +42,12 @@ public class CreateMeetupDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.save_meetup_dialog, null);
 
-        btnSaveMeetup = view.findViewById(R.id.buttonCreateMeetup);
-        editTitle = view.findViewById(R.id.editTextTitle);
-        editDate = view.findViewById(R.id.editTextDate);
-        editTime = view.findViewById(R.id.editTextTime);
+        btnSaveMeetup = view.findViewById(R.id.btnCreateFitnessGroup);
+        editTitle = view.findViewById(R.id.editCreateGroupName);
+        editDate = view.findViewById(R.id.editFitnessActivity);
+        editTime = view.findViewById(R.id.editGroupLocation);
         editLocation = view.findViewById(R.id.editTextLocation);
-        editDescription = view.findViewById(R.id.editInviteDescription);
+        editDescription = view.findViewById(R.id.editCreateGroupDescription);
 
         editDate.setOnClickListener(new View.OnClickListener() {
             @Override

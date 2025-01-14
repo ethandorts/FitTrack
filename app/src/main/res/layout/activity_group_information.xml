@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/txtClubLocationValue"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".GroupInformationActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/GroupsMenuToolbar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/button_blue"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toTopOf="@+id/membersListLogo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtGroupOverview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:layout_marginBottom="14dp"
+        android:gravity="center"
+        android:text="Group Overview"
+        android:textColor="@color/white"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toTopOf="@+id/membersListLogo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/membersListLogo"
+        android:layout_width="126dp"
+        android:layout_height="122dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="528dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/fit_track_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/txtClubNameOverview"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtGroupOverview" />
+
+    <TextView
+        android:id="@+id/txtClubNameOverview"
+        android:layout_width="257dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:text="Derry Running Club"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/membersListLogo"
+        app:layout_constraintTop_toBottomOf="@+id/GroupsMenuToolbar" />
+
+    <TextView
+        android:id="@+id/txtMembersNoValue"
+        android:layout_width="264dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="8dp"
+        android:text="21 Members"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/membersListLogo"
+        app:layout_constraintEnd_toEndOf="@+id/txtLocationOverviewValue" />
+
+    <TextView
+        android:id="@+id/txtClubLocationLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginBottom="7dp"
+        android:text="Location"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/txtLocationOverviewValue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/membersListLogo"
+        />
+
+    <TextView
+        android:id="@+id/txtLocationOverviewValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="7dp"
+        android:text="Derry, Ireland"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/txtGroupDescriptionOverview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtClubLocationLabel" />
+
+    <TextView
+        android:id="@+id/txtGroupDescriptionOverview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginBottom="9dp"
+        android:text="Group Description"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/txtGroupDescriptionValue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtLocationOverviewValue" />
+
+    <TextView
+        android:id="@+id/txtGroupDescriptionValue"
+        android:layout_width="383dp"
+        android:layout_height="215dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="20dp"
+        android:text="The Derry Running Club is a vibrant and inclusive community for runners..."
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/btnJoinClub"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtGroupDescriptionOverview" />
+
+    <Button
+        android:id="@+id/btnJoinClub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Join Club"
+        app:layout_constraintBottom_toTopOf="@+id/txtRequestSent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtGroupDescriptionValue" />
+
+    <TextView
+        android:id="@+id/txtRequestSent"
+        android:layout_width="374dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnJoinClub" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
