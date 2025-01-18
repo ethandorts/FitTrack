@@ -312,6 +312,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void kmSplit(boolean isFinalSplit) {
+        if(distanceTravelled < 1000 && isFinalSplit) {
+            long timeNow = System.currentTimeMillis();
+            splitTime = previousTime == 0 ? timeNow - startTime : timeNow - previousTime;
+            fullTime = timeNow - startTime;
+            kmSplits.add(splitTime);
+
+            // Log the final split for debugging
+            Log.d("kmSplit", "Final split (short activity): " + splitTime + " ms for " + distanceTravelled + " meters");
+            return;
+        }
+
         if (isFinalSplit || distanceTravelled >= targetKM) {
             while (distanceTravelled >= targetKM) {
                 timeNow = System.currentTimeMillis();

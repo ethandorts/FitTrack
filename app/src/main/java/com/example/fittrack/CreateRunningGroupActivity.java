@@ -7,11 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -29,12 +25,12 @@ public class CreateRunningGroupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_running_group);
 
-        Spinner activitySpinner = findViewById(R.id.editFitnessActivity);
-        editGroupName = findViewById(R.id.editCreateGroupName);
+        Spinner activitySpinner = findViewById(R.id.editTargetTimeForm);
+        editGroupName = findViewById(R.id.editTargetDistance);
         editLocation = findViewById(R.id.editGroupLocation);
         editMotto = findViewById(R.id.editTextLocation);
-        editDescription = findViewById(R.id.editCreateGroupDescription);
-        btnCreateFitnessGroup = findViewById(R.id.btnCreateFitnessGroup);
+        editDescription = findViewById(R.id.editDistanceGoalDescription);
+        btnCreateFitnessGroup = findViewById(R.id.btnCreateDistanceGoal);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter
                 .createFromResource(this, R.array.fitness_activities, android.R.layout.simple_spinner_item);

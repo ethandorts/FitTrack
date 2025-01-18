@@ -36,9 +36,18 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        Button btnGoals = findViewById(R.id.btnGoals);
         Button btnCalendar = findViewById(R.id.btnCalendar);
         Button btnLogout = findViewById(R.id.btnLogOut);
         Button btnDeleteAccount = findViewById(R.id.btnDeleteAccount);
+
+        btnGoals.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SettingsActivity.this, GoalSettingActivity.class);
+                startActivity(intent);
+            }
+        });
 
         btnCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +65,6 @@ public class SettingsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
 
         btnDeleteAccount.setOnClickListener(new View.OnClickListener() {
             @Override

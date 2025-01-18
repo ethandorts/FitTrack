@@ -24,7 +24,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
-import com.parse.ParseUser;
 
 import java.sql.Time;
 import java.text.DateFormat;

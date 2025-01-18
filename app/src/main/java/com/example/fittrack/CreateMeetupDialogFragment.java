@@ -42,12 +42,12 @@ public class CreateMeetupDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.save_meetup_dialog, null);
 
-        btnSaveMeetup = view.findViewById(R.id.btnCreateFitnessGroup);
-        editTitle = view.findViewById(R.id.editCreateGroupName);
-        editDate = view.findViewById(R.id.editFitnessActivity);
+        btnSaveMeetup = view.findViewById(R.id.btnCreateDistanceGoal);
+        editTitle = view.findViewById(R.id.editTargetDistance);
+        editDate = view.findViewById(R.id.editTargetTimeForm);
         editTime = view.findViewById(R.id.editGroupLocation);
         editLocation = view.findViewById(R.id.editTextLocation);
-        editDescription = view.findViewById(R.id.editCreateGroupDescription);
+        editDescription = view.findViewById(R.id.editDistanceGoalDescription);
 
         editDate.setOnClickListener(new View.OnClickListener() {
             @Override

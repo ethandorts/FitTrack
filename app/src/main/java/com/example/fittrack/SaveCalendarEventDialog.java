@@ -59,6 +59,7 @@ public class SaveCalendarEventDialog extends DialogFragment {
                 String date = editDate.getText().toString();
                 String activityType = editActivityType.getText().toString();
 
+
                 Map<String, Object> data = new HashMap<>();
                 data.put("EventName", eventName);
                 data.put("DateTime", date);

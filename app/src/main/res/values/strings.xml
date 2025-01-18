@@ -41,4 +41,11 @@
         <item>Fitness Apps</item>
         <item>Mini Workouts</item>
     </string-array>
+
+    <string-array name="goal_types">
+        <item>Distance Goal</item>
+        <item>Time Goal</item>
+        <item>Calorie Goal</item>
+    </string-array>
+
 </resources>

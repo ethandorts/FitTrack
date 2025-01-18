@@ -16,10 +16,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/HomeToolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/GoalSettingToolbar" />
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/HomeToolbar"
+        android:id="@+id/GoalSettingToolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/button_blue"
@@ -58,7 +58,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/txtGroupRequests"
+            android:id="@+id/txtGoalSetting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -99,7 +99,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/HomeToolbar"
+        app:layout_constraintTop_toBottomOf="@+id/GoalSettingToolbar"
         app:layout_constraintVertical_bias="0.0" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

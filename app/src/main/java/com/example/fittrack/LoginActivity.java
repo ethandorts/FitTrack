@@ -17,18 +17,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
 import com.google.android.gms.auth.api.identity.Identity;
 import com.google.android.gms.auth.api.identity.SignInClient;
@@ -47,9 +39,6 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.parse.ParseException;
-import com.parse.ParseUser;
-import com.parse.facebook.ParseFacebookUtils;
 import org.json.JSONException;
 
 public class LoginActivity extends AppCompatActivity {
@@ -58,7 +47,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private GoogleSignInClient mGoogleSignInClient;
     private final int RC_SIGN_IN = 3;
-    private CallbackManager mCallbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
         Button btnGoogleLogin = findViewById(R.id.btnGoogleLogin);
 
         mAuth = FirebaseAuth.getInstance();
-        mCallbackManager = CallbackManager.Factory.create();
+//        mCallbackManager = CallbackManager.Factory.create();
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -153,22 +141,22 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    private void FacebookAccessTokenHandler(AccessToken token) {
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()) {
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                            startActivity(intent);
-                        } else {
-                            Toast.makeText(LoginActivity.this, "Facebook Login Unsuccessful", Toast.LENGTH_SHORT);
-                        }
-                    }
-                });
-    }
+//    private void FacebookAccessTokenHandler(AccessToken token) {
+//        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+//        mAuth.signInWithCredential(credential)
+//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        if(task.isSuccessful()) {
+//                            FirebaseUser user = mAuth.getCurrentUser();
+//                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+//                            startActivity(intent);
+//                        } else {
+//                            Toast.makeText(LoginActivity.this, "Facebook Login Unsuccessful", Toast.LENGTH_SHORT);
+//                        }
+//                    }
+//                });
+//    }
 
     private void GoogleLogin() {
         Intent googleSignIn = GoogleSignIn.getClient(this,
@@ -192,13 +180,13 @@ public class LoginActivity extends AppCompatActivity {
         GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this,
                 new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build());
         googleSignInClient.signOut();
-        LoginManager.getInstance().logOut();
+//        LoginManager.getInstance().logOut();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+//        mCallbackManager.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -231,6 +219,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void Logout() {
         mAuth.signOut();
-        LoginManager.getInstance().logOut();
+//        LoginManager.getInstance().logOut();
     }
 }

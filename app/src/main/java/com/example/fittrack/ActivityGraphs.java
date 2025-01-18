@@ -3,6 +3,7 @@ package com.example.fittrack;
 import static kotlin.jvm.internal.Reflection.function;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.anychart.APIlib;
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.CategoryValueDataEntry;
@@ -52,6 +54,8 @@ public class ActivityGraphs extends Fragment {
             @Override
             public void onCallback(List<String> splits) {
                 AnyChartView paceGraph = view.findViewById(R.id.paceGraph);
+
+                APIlib.getInstance().setActiveAnyChartView(paceGraph);
 
                 Cartesian cartesian = AnyChart.line();
                 cartesian.animation(true);

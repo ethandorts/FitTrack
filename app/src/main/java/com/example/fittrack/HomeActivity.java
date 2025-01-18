@@ -38,6 +38,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -78,6 +81,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class HomeActivity extends AppCompatActivity implements DataClient.OnDataChangedListener {
 
@@ -105,6 +109,16 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+//        PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest.Builder(
+//                ActivityCompletedChecker.class, 1, TimeUnit.MINUTES).build();
+
+        OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(ActivityCompletedChecker.class)
+                .build();
+
+        WorkManager.getInstance(this).enqueue(oneTimeWorkRequest);
+
+//        WorkManager.getInstance(this).enqueue(periodicWorkRequest);
 
         activityLocationsDao = ActivityLocationsDatabase.getActivityLocationsDatabase(this).activityLocationsDao();
 

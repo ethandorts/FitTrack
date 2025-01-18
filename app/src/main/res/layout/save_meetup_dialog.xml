@@ -8,7 +8,7 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/txtCreateGroupName"
+        android:id="@+id/txtTargetDistanceForm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Title"
@@ -18,18 +18,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editCreateGroupName"
+        android:id="@+id/editTargetDistance"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:hint="Enter Title"
-        app:layout_constraintBaseline_toBaselineOf="@id/txtCreateGroupName"
+        app:layout_constraintBaseline_toBaselineOf="@id/txtTargetDistanceForm"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/txtCreateGroupName" />
+        app:layout_constraintStart_toEndOf="@id/txtTargetDistanceForm" />
 
     <!-- Date -->
     <TextView
-        android:id="@+id/txtFitnessActivity"
+        android:id="@+id/txtTargetDistanceTimeForm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -37,19 +37,19 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editCreateGroupName" />
+        app:layout_constraintTop_toBottomOf="@id/editTargetDistance" />
 
     <EditText
-        android:id="@+id/editFitnessActivity"
+        android:id="@+id/editTargetTimeForm"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:focusable="false"
         android:hint="Select Date"
         android:inputType="none"
-        app:layout_constraintBaseline_toBaselineOf="@id/txtFitnessActivity"
+        app:layout_constraintBaseline_toBaselineOf="@id/txtTargetDistanceTimeForm"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/txtFitnessActivity" />
+        app:layout_constraintStart_toEndOf="@id/txtTargetDistanceTimeForm" />
 
     <TextView
         android:id="@+id/txtGroupLocation"
@@ -60,7 +60,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editFitnessActivity" />
+        app:layout_constraintTop_toBottomOf="@id/editTargetTimeForm" />
 
     <EditText
         android:id="@+id/editGroupLocation"
@@ -107,7 +107,7 @@
         app:layout_constraintTop_toBottomOf="@id/editTextLocation" />
 
     <EditText
-        android:id="@+id/editCreateGroupDescription"
+        android:id="@+id/editDistanceGoalDescription"
         android:layout_width="0dp"
         android:layout_height="150dp"
         android:layout_marginTop="8dp"
@@ -120,13 +120,13 @@
 
 
     <Button
-        android:id="@+id/btnCreateFitnessGroup"
+        android:id="@+id/btnCreateDistanceGoal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Create Meetup"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editCreateGroupDescription" />
+        app:layout_constraintTop_toBottomOf="@id/editDistanceGoalDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

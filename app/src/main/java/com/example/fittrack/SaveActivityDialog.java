@@ -3,6 +3,7 @@ package com.example.fittrack;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -34,7 +35,6 @@ public class SaveActivityDialog extends DialogFragment {
     private FirebaseFirestore db;
     private static final DecimalFormat TwoDecimalRounder = new DecimalFormat("0.00");
     private CaloriesCalculator caloriesCalculator = new CaloriesCalculator();
-
     private double distance;
     private double time;
     private List<Long> splits = new ArrayList<>();
@@ -46,9 +46,13 @@ public class SaveActivityDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle SavedInstanceState) {
+        Activity activity = getActivity();
+        System.out.println("Activity: " + activity);
         mAuth = FirebaseAuth.getInstance().getCurrentUser();
         UserID = mAuth.getUid();
         db = FirebaseFirestore.getInstance();
+
+        NotificationUtil.createSavedWorkoutNotificationChannel(activity);
 
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                 .setPersistenceEnabled(true)
@@ -133,6 +137,7 @@ public class SaveActivityDialog extends DialogFragment {
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void unused) {
+                                            NotificationUtil.showSavedActivityNotification(activity);
                                             Log.d("Activity Successfully Written", "Activity Successfully Written");
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {

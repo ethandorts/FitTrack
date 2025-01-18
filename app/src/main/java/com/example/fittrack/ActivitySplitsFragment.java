@@ -43,16 +43,29 @@ public class ActivitySplitsFragment extends Fragment {
         DatabaseUtil.retrieveSpecificActivity(ActivityID, new FirebaseDatabaseHelper.SpecificActivityCallback() {
             @Override
             public void onCallback(Map<String, Object> data) {
+                String returnedDistance = (String) data.get("distance");
+                double formattedDistance = Double.parseDouble(returnedDistance);
+                double overDistance = formattedDistance % 1000;
                 List<Long> splits = (List<Long>) data.get("splits");
                 System.out.println(splits);
                     for (int i = 0; i < splits.size(); i++) {
-                        TableRow row = new TableRow(getContext());
-                        addInfo(row, String.valueOf(i + 1));
-                        addInfo(row, longToTimeConversion(splits.get(i)));
-                        String distance = String.format("%.2f", (float) (i + 1));
-                        addInfo(row, distance);
-                        addInfo(row, longToTimeConversion(splits.get(i)));
-                        splitsTable.addView(row);
+                        if(i == splits.size() - 1) {
+                            TableRow row = new TableRow(getContext());
+                            addInfo(row, String.valueOf(i + 1));
+                            addInfo(row, longToTimeConversion(splits.get(i)));
+                            String distance = String.format("%.2f", overDistance / 1000);
+                            addInfo(row, distance);
+                            addInfo(row, longToTimeConversion(splits.get(i)));
+                            splitsTable.addView(row);
+                        } else {
+                            TableRow row = new TableRow(getContext());
+                            addInfo(row, String.valueOf(i + 1));
+                            addInfo(row, longToTimeConversion(splits.get(i)));
+                            String distance = String.format("%.2f", (float) (i + 1));
+                            addInfo(row, distance);
+                            addInfo(row, longToTimeConversion(splits.get(i)));
+                            splitsTable.addView(row);
+                        }
                     }
             }
         });
