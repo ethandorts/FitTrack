@@ -18,6 +18,7 @@ public class NotificationUtil {
     private static final String SAVED_ACTIVITY_ID = "save_activity_channel";
     private static final String PROGRESS_TRACKING_ID = "progress_tracking_channel";
     private static final String WORKOUT_REMINDER_ID = "workout_reminder_channel";
+    private static final String LOG_FOOD_REMINDER_ID = "log_food_remainder_channel";
     public static void createSavedWorkoutNotificationChannel(Context context) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence channelName = "Saved Activity Notifications";
@@ -108,6 +109,38 @@ public class NotificationUtil {
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle("Workout Reminder")
                 .setContentText("Workout Reminder Content")
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(1, builder.build());
+    }
+
+    public static void createLogFoodNotificationChannel(Context context) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence channelName = "Log Food Reminder";
+            String description = "You haven't logged any food for your Breakfast";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(WORKOUT_REMINDER_ID, channelName, importance);
+            channel.setDescription(description);
+
+            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    public static void showLogFoodNotification(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (ContextCompat.checkSelfPermission(context, "android.permission.POST_NOTIFICATIONS")
+                    != PackageManager.PERMISSION_GRANTED) {
+                Log.w("Notification Permission Not Granted", "POST_NOTIFICATIONS permission was not granted");
+                return;
+            }
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, LOG_FOOD_REMINDER_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("Log Food Reminder")
+                .setContentText("You haven't logged any food for your Breakfast")
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);

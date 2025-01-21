@@ -78,7 +78,6 @@ public class ActivityCompletedChecker extends Worker {
         return Result.success();
     }
 
-
     private String dateFormatter(Timestamp timestamp) {
         Date date = timestamp.toDate();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");

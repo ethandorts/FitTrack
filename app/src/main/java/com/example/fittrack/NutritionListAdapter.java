@@ -44,7 +44,7 @@ public class NutritionListAdapter extends FirestoreRecyclerAdapter<FoodModel, Nu
     }
 
     public static class NutritionItemHolder extends RecyclerView.ViewHolder {
-        TextView foodName, calories;
+        TextView foodName, calories, moreDetails;
         public NutritionItemHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
             foodName = itemView.findViewById(R.id.txtLeaderboardStatName);

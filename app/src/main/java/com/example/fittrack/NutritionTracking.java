@@ -1,5 +1,6 @@
 package com.example.fittrack;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -46,24 +47,23 @@ public class NutritionTracking extends AppCompatActivity {
     private FoodDatabaseUtil foodDatabaseUtil = new FoodDatabaseUtil(db);
     private FirebaseUser mAuth = FirebaseAuth.getInstance().getCurrentUser();
     private String UserID = mAuth.getUid();
-    private NutritionListAdapter foodAdapter;
+    private NutritionSearchRecyclerViewAdapter foodAdapter;
     private TextView txtCalorieCount;
     private double dailyCalories = 0;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
     private Date today = new Date();
     private String date = dateFormat.format(today);
+    private ArrayList<SearchFoodModel> foodlist = new ArrayList<>();
 
     @Override
     protected void onStart() {
         super.onStart();
-        foodAdapter.startListening();
         System.out.println("FoodAdapter Listening...");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        foodAdapter.stopListening();
         System.out.println("FoodAdapter Listening...");
     }
 
@@ -71,50 +71,61 @@ public class NutritionTracking extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nutrition_tracking);
+        Intent intent = getIntent();
 
         EditText editFood = findViewById(R.id.editFood);
-        Button btnAddFood = findViewById(R.id.btnAddFood);
-        txtCalorieCount = findViewById(R.id.txtCalorieCount);
+        Button btnSearchFood = findViewById(R.id.btnSearchFood);
+        //txtCalorieCount = findViewById(R.id.txtCalorieCount);
         RecyclerView recyclerNutrition = findViewById(R.id.recyclerViewnutrition);
 
-        Query query = db.collection("Users")
-                .document(UserID)
-                .collection("Nutrition")
-                .document(date)
-                .collection("Meals");
-
-        FirestoreRecyclerOptions<FoodModel> options =
-                new FirestoreRecyclerOptions.Builder<FoodModel>()
-                        .setQuery(query, FoodModel.class)
-                        .build();
-
-        foodAdapter = new NutritionListAdapter(options, this);
+        foodAdapter = new NutritionSearchRecyclerViewAdapter(getApplicationContext(), foodlist);
         recyclerNutrition.setAdapter(foodAdapter);
-        recyclerNutrition.setLayoutManager(new LinearLayoutManager(this));
-        getCalorieCount();
+        recyclerNutrition.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
-        btnAddFood.setOnClickListener(new View.OnClickListener() {
+//        Query query = db.collection("Users")
+//                .document(UserID)
+//                .collection("Nutrition")
+//                .document(date)
+//                .collection("Meals");
+//
+//        FirestoreRecyclerOptions<FoodModel> options =
+//                new FirestoreRecyclerOptions.Builder<FoodModel>()
+//                        .setQuery(query, FoodModel.class)
+//                        .build();
+
+//        foodAdapter = new NutritionListAdapter(options, this);
+//        recyclerNutrition.setAdapter(foodAdapter);
+//        recyclerNutrition.setLayoutManager(new LinearLayoutManager(this));
+//        getCalorieCount();
+
+        btnSearchFood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String food = editFood.getText().toString();
-                foodRequest(food, new FoodResponse() {
+                String mealType = intent.getStringExtra("mealType");
+                foodRequest(food, mealType, new FoodResponse() {
                     @Override
-                    public void onFoodResponse(String name, double calories, int quantity, String mealType) {
-                        FoodModel food = new FoodModel(name, calories, mealType, quantity);
-                        foodDatabaseUtil.saveFood(food);
-                        new android.os.Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                getCalorieCount();
-                            }
-                        }, 2000);
+                    public void onFoodResponse(String name, double calories, double fat, double saturated_fat, double protein, double sodium, double potassium, double carbs, double fiber, double sugar, int quantity, String mealTime) {
+                        SearchFoodModel model = new SearchFoodModel(ConversionUtil.capitaliseFoodName(name), calories, fat, saturated_fat, protein, sodium, potassium, carbs, fiber, sugar, quantity, mealType);
+                        System.out.println(model.getCalories());
+                        foodlist.add(model);
+                        foodAdapter.notifyDataSetChanged();
+                        System.out.println("Count: " + foodAdapter.getItemCount());
+//                        FoodModel food = new FoodModel(name, calories, mealType, quantity);
+//                        foodDatabaseUtil.saveFood(food);
+//                        new android.os.Handler().postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                getCalorieCount();
+//                            }
+//                        }, 2000);
                     }
                 });
             }
         });
     }
 
-    private void foodRequest(String food, FoodResponse response) {
+    private void foodRequest(String food, String mealType, FoodResponse response) {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonObjectRequest request = new JsonObjectRequest(
@@ -129,9 +140,17 @@ public class NutritionTracking extends AppCompatActivity {
                             JSONObject foodObject = itemsArray.getJSONObject(0);
                             String name = foodObject.getString("name");
                             double calories = foodObject.getDouble("calories");
+                            double fat = foodObject.getDouble("fat_total_g");
+                            double saturated_fat = foodObject.getDouble("fat_saturated_g");
+                            double protein = foodObject.getDouble("protein_g");
+                            double sodium = foodObject.getDouble("sodium_mg");
+                            double potassium = foodObject.getDouble("potassium_mg");
+                            double carbs = foodObject.getDouble("carbohydrates_total_g");
+                            double fiber = foodObject.getDouble("fiber_g");
+                            double sugar = foodObject.getDouble("sugar_g");
                             int quantity = 1;
                             String mealType = "Dinner";
-                            response.onFoodResponse(name, calories, quantity, mealType);
+                            response.onFoodResponse(name, calories, fat, saturated_fat, protein, sodium, potassium, carbs, fiber, sugar, quantity, mealType);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -147,7 +166,7 @@ public class NutritionTracking extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headersMap = new HashMap<>();
-                //headersMap.put("X-Api-Key", ); // insert API KEY HERE
+                headersMap.put("X-Api-Key", ""); // insert API KEY HERE
 
                 return headersMap;
             }
@@ -155,7 +174,7 @@ public class NutritionTracking extends AppCompatActivity {
         requestQueue.add(request);
     }
     public interface FoodResponse {
-        void onFoodResponse(String name, double calories, int quantity, String mealType);
+        void onFoodResponse(String name, double calories,  double fat, double saturated_fat, double protein, double sodium, double potassium, double carbs, double fiber, double sugar, int quantity, String mealType);
     }
 
     private void getCalorieCount() {

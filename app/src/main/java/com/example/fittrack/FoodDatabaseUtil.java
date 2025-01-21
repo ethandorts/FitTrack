@@ -38,9 +38,7 @@ public class FoodDatabaseUtil {
         FoodMap.put("foodName", food.getFoodName());
         FoodMap.put("calories", food.getCalories());
         FoodMap.put("quantity", 1);
-        FoodMap.put("mealType", "Dinner");
-
-
+        FoodMap.put("mealType", food.getMealType());
 
         CollectionReference collectionRef = db.collection("Users")
                 .document(UserID)

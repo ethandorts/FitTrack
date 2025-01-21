@@ -2,7 +2,7 @@ package com.example.fittrack;
 
 import com.google.firebase.firestore.PropertyName;
 
-public class FoodModel {
+public class SearchFoodModel {
     @PropertyName("foodName")
     private String foodName;
     @PropertyName("calories")
@@ -28,8 +28,8 @@ public class FoodModel {
     @PropertyName("sugar")
     private double sugar;
 
-    public FoodModel(String foodName, double calories, String mealType, int quantity, double fat, double saturated_fat, double protein, double sodium, double potassium, double carbs, double fiber, double sugar) {
-        this.foodName = foodName;
+    public SearchFoodModel(String name, double calories, double fat, double saturated_fat, double protein, double sodium, double potassium, double carbs, double fiber, double sugar, int quantity, String mealType) {
+        this.foodName = name;
         this.calories = calories;
         this.mealType = mealType;
         this.quantity = quantity;
@@ -42,8 +42,6 @@ public class FoodModel {
         this.fiber = fiber;
         this.sugar = sugar;
     }
-
-    public FoodModel () {}
 
     public String getFoodName() {
         return foodName;
