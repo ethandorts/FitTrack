@@ -23,8 +23,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +39,7 @@ public class SaveActivityDialog extends DialogFragment {
     private CaloriesCalculator caloriesCalculator = new CaloriesCalculator();
     private double distance;
     private double time;
+    private String type;
     private List<Long> splits = new ArrayList<>();
     private LocalDate date;
     Map<String, Object> data;
@@ -65,6 +68,7 @@ public class SaveActivityDialog extends DialogFragment {
         if (getArguments() != null) {
             distance = getArguments().getDouble("distance");
             time = getArguments().getDouble("time");
+            type = getArguments().getString("type");
             //activityLocations = getArguments().getParcelableArrayList("activityLocations");
             long[] splitsArray = getArguments().getLongArray("splits");
 
@@ -90,15 +94,18 @@ public class SaveActivityDialog extends DialogFragment {
 //        } else {
 //            Log.e("Activity Coordinates Empty", "No coordinates to show");
 //        }
-
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        Date today = new Date();
+        String shortDate = dateFormat.format(today);
 
             data = new HashMap<>();
             data.put("distance", TwoDecimalRounder.format(distance));
             data.put("time", time);
             data.put("UserID", UserID);
             data.put("date", Timestamp.now());
+            data.put("shortDate", shortDate);
             data.put("pace", (calculateAveragePace(distance, time)));
-            data.put("type", "Running");
+            data.put("type", type);
             data.put("activityCoordinates", locations);
             data.put("splits", splits);
             data.put("caloriesBurned", caloriesCalculator.calculateCalories(time, (calculateAveragePace(distance, time)), 64));

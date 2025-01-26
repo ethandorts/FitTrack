@@ -76,8 +76,8 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
 
         public RequestsViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtRequestUsername = itemView.findViewById(R.id.txtRequestName);
-            UserImage = itemView.findViewById(R.id.imgRequestProfile);
+            txtRequestUsername = itemView.findViewById(R.id.txtLikeName);
+            UserImage = itemView.findViewById(R.id.imgLikeProfile);
             btnAccept = itemView.findViewById(R.id.btnRequestAccept);
             btnReject = itemView.findViewById(R.id.btnRequestReject);
             RequestMessage = itemView.findViewById(R.id.txtRequestMessage);

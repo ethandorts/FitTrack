@@ -101,6 +101,7 @@ public class NutritionTracking extends AppCompatActivity {
         btnSearchFood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                foodlist.clear();
                 String food = editFood.getText().toString();
                 String mealType = intent.getStringExtra("mealType");
                 foodRequest(food, mealType, new FoodResponse() {
@@ -166,7 +167,7 @@ public class NutritionTracking extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headersMap = new HashMap<>();
-                headersMap.put("X-Api-Key", ""); // insert API KEY HERE
+                headersMap.put("X-Api-Key", "3T9QzDFbiwikUXS4RMQsKg==DeZjUwaU7l1WgRkm"); // insert API KEY HERE
 
                 return headersMap;
             }

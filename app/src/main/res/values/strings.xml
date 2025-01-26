@@ -17,7 +17,8 @@
         <item>Swimming</item>
         <item>Rowing</item>
         <item>Stair Climbing</item>
-        <item>HIIT (High-Intensity Interval Training)</item>
+        <item>HIIT (High-Intensity Intervgym workout icon
+            al Training)</item>
         <item>Bodyweight Exercises</item>
         <item>Weightlifting</item>
         <item>Resistance Bands</item>
@@ -46,6 +47,13 @@
         <item>Distance Goal</item>
         <item>Time Goal</item>
         <item>Calorie Goal</item>
+    </string-array>
+
+    <string-array name="meal_types">
+        <item>Breakfast</item>
+        <item>Lunch</item>
+        <item>Dinner</item>
+        <item>Snacks</item>
     </string-array>
 
 </resources>

@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/UserCardView"
+        android:id="@+id/LikesCardView"
         android:layout_width="409dp"
         android:layout_height="137dp"
         tools:layout_editor_absoluteX="1dp">
@@ -16,7 +16,7 @@
             android:layout_height="137dp">
 
             <ImageView
-                android:id="@+id/imgRequestProfile"
+                android:id="@+id/imgLikeProfile"
                 android:layout_width="80dp"
                 android:layout_height="136dp"
                 android:layout_marginEnd="6dp"
@@ -26,14 +26,14 @@
                 app:srcCompat="@drawable/profile" />
 
             <TextView
-                android:id="@+id/txtRequestName"
+                android:id="@+id/txtLikeName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="28dp"
                 android:text="Ethan Doherty"
                 android:textSize="24sp"
-                app:layout_constraintStart_toEndOf="@id/imgRequestProfile"
+                app:layout_constraintStart_toEndOf="@id/imgLikeProfile"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
@@ -68,8 +68,8 @@
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imgRequestProfile"
-                app:layout_constraintTop_toBottomOf="@+id/txtRequestName" />
+                app:layout_constraintStart_toEndOf="@+id/imgLikeProfile"
+                app:layout_constraintTop_toBottomOf="@+id/txtLikeName" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

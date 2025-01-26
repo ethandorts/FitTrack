@@ -44,7 +44,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ActivityOverviewFragment extends Fragment {
-    private TextView txtTitle,txtDistance, txtPace, txtHeartRate, txtTime, txtDate, txtCalories;
+    private TextView txtTitle,txtDistance, txtPace, txtHeartRate, txtTime, txtDate, txtCalories, txtLikeStat;
     private ImageButton btnLike, btnComments;
     private MapView mapView;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -62,6 +62,38 @@ public class ActivityOverviewFragment extends Fragment {
     }
 
     public ActivityOverviewFragment() {
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        commentUtil.checkLike(ActivityID, currentUser, new CommentUtil.LikeCheckCallback() {
+            @Override
+            public void onCallback(boolean hasLiked) {
+                if(hasLiked) {
+                    isLiked = true;
+                    btnLike.setImageResource(R.drawable.liked);
+                } else {
+                    isLiked = false;
+                    btnLike.setImageResource(R.drawable.like);
+                }
+            }
+        });
+
+        commentUtil.retrieveLikeCount(ActivityID, new CommentUtil.LikeNumberCallback() {
+            @Override
+            public void onCallback(int likesNumber) {
+                if(likesNumber == 0) {
+                    txtLikeStat.setText("Be First To Like!");
+                } else if(likesNumber == 1) {
+                    txtLikeStat.setText(likesNumber + " Like");
+                } else {
+                    txtLikeStat.setText(likesNumber + " Likes");
+                }
+
+            }
+        });
     }
 
     @Nullable
@@ -96,6 +128,30 @@ public class ActivityOverviewFragment extends Fragment {
         mapView = view.findViewById(R.id.OverviewMapView);
         btnLike = view.findViewById(R.id.btnActivityLike);
         btnComments = view.findViewById(R.id.btnActivityComments);
+        txtLikeStat = view.findViewById(R.id.txtLikes);
+
+        commentUtil.retrieveLikeCount(ActivityID, new CommentUtil.LikeNumberCallback() {
+            @Override
+            public void onCallback(int likesNumber) {
+                if(likesNumber == 0) {
+                    txtLikeStat.setText("Be First To Like!");
+                } else if(likesNumber == 1) {
+                    txtLikeStat.setText(likesNumber + " Like");
+                } else {
+                    txtLikeStat.setText(likesNumber + " Likes");
+                }
+
+            }
+        });
+
+        txtLikeStat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), LikesRecyclerActivity.class);
+                intent.putExtra("ActivityID", ActivityID);
+                startActivity(intent);
+            }
+        });
 
         if(isLiked) {
             btnLike.setImageResource(R.drawable.liked);

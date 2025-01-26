@@ -96,6 +96,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        Intent intent = getIntent();
+        String type = intent.getStringExtra("Type");
+
         txtDistanceTravelled = findViewById(R.id.txtDistanceTravelled);
         Button btnClear = findViewById(R.id.btnClearMap);
         Button btnStopStart = findViewById(R.id.stopStartBtn);
@@ -166,6 +169,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Bundle runningData = new Bundle();
                     runningData.putDouble("distance", distanceTravelled);
                     runningData.putDouble("time", elapsedTime);
+                    runningData.putString("type", type);
 //                    new Thread(new Runnable() {
 //                        @Override
 //                        public void run() {

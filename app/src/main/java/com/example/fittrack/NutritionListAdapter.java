@@ -34,8 +34,31 @@ public class NutritionListAdapter extends FirestoreRecyclerAdapter<FoodModel, Nu
 
     @Override
     public void onBindViewHolder(@NonNull NutritionItemHolder holder, int position, @NonNull FoodModel food) {
+        System.out.println(food.getCalories());
         holder.foodName.setText(food.getFoodName());
         holder.calories.setText(String.valueOf(food.getCalories() + " Calories"));
+        holder.moreDetails.setText(
+                "Fat: " + String.format("%.2f", food.getFat()) + " g" +  "\n" +
+                "Saturated Fat: " + String.format("%.2f", food.getSaturated_fat()) + " g" + "\n" +
+                "Protein: " + String.format("%.2f", food.getProtein()) + " g" + "\n" +
+                "Sodium: " + String.format("%.2f", food.getPotassium()) + " g" + "\n" +
+                "Potassium: " + String.format("%.2f", food.getPotassium()) + " g" + "\n" +
+                "Carbohydrates: " + String.format("%.2f", food.getCarbs()) + " g" + "\n" +
+                "Fiber: " + String.format("%.2f", food.getFiber()) + " g" + "\n" +
+                "Sugar: " + String.format("%.2f", food.getSugar()) + " g");
+        if(food.isDetailsShown()) {
+            holder.moreDetails.setVisibility(View.VISIBLE);
+        } else {
+            holder.moreDetails.setVisibility(View.GONE);
+        }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                food.setDetailsShown(!food.isDetailsShown());
+                notifyItemChanged(holder.getAdapterPosition());
+            }
+        });
     }
 
     @Override
@@ -47,9 +70,9 @@ public class NutritionListAdapter extends FirestoreRecyclerAdapter<FoodModel, Nu
         TextView foodName, calories, moreDetails;
         public NutritionItemHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
-            foodName = itemView.findViewById(R.id.txtLeaderboardStatName);
-            calories = itemView.findViewById(R.id.txtDistanceStat);
-
+            foodName = itemView.findViewById(R.id.txtNutrientNameLabel);
+            calories = itemView.findViewById(R.id.txtNutrientValueLabel);
+            moreDetails = itemView.findViewById(R.id.txtFoodFurtherDetails);
         }
     }
 }

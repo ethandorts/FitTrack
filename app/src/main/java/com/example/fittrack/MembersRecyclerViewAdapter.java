@@ -83,7 +83,7 @@ public class MembersRecyclerViewAdapter extends RecyclerView.Adapter<MembersRecy
 
         public MembersViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtMemberName = itemView.findViewById(R.id.txtRequestName);
+            txtMemberName = itemView.findViewById(R.id.txtLikeName);
             AdminImage = itemView.findViewById(R.id.imgAdmin);
         }
     }

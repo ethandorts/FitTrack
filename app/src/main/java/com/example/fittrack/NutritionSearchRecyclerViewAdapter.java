@@ -48,6 +48,7 @@ public class NutritionSearchRecyclerViewAdapter extends RecyclerView.Adapter<Nut
                         ConversionUtil.capitaliseFoodName(model.getFoodName()),
                         model.getCalories(),
                         model.getMealType(),
+                        100,
                         1,
                         model.getFat(),
                         model.getSaturated_fat(),
@@ -56,7 +57,8 @@ public class NutritionSearchRecyclerViewAdapter extends RecyclerView.Adapter<Nut
                         model.getPotassium(),
                         model.getCarbs(),
                         model.getFiber(),
-                        model.getSugar()
+                        model.getSugar(),
+                        false
                 );
                 System.out.println(model.getMealType());
                 foodUtil.saveFood(food);
@@ -66,18 +68,20 @@ public class NutritionSearchRecyclerViewAdapter extends RecyclerView.Adapter<Nut
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                System.out.println("Passing: " + model.getMealType());
+                System.out.println("Passing: " + model.getCalories());
                 Intent intent = new Intent(context, FoodInformationActivity.class);
-                intent.putExtra("FoodName", String.valueOf(model.getFoodName()));
-                intent.putExtra("Calories", String.valueOf(model.getCalories()));
-                intent.putExtra("MealType", String.valueOf(model.getMealType()));
-                intent.putExtra("Fat", String.valueOf(model.getFat()));
-                intent.putExtra("Saturated Fat", String.valueOf(model.getSaturated_fat()));
-                intent.putExtra("Protein", String.valueOf(model.getProtein()));
-                intent.putExtra("Sodium", String.valueOf(model.getSodium()));
-                intent.putExtra("Potassium", String.valueOf(model.getPotassium()));
-                intent.putExtra("Carbs", String.valueOf(model.getCarbs()));
-                intent.putExtra("Fiber", String.valueOf(model.getFiber()));
-                intent.putExtra("Sugar", String.valueOf(model.getSugar()));
+                intent.putExtra("FoodName", model.getFoodName());
+                intent.putExtra("Calories", model.getCalories());
+                intent.putExtra("MealType", model.getMealType());
+                intent.putExtra("Fat", model.getFat());
+                intent.putExtra("Saturated Fat", model.getSaturated_fat());
+                intent.putExtra("Protein", model.getProtein());
+                intent.putExtra("Sodium", model.getSodium());
+                intent.putExtra("Potassium", model.getPotassium());
+                intent.putExtra("Carbs", model.getCarbs());
+                intent.putExtra("Fiber", model.getFiber());
+                intent.putExtra("Sugar", model.getSugar());
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }

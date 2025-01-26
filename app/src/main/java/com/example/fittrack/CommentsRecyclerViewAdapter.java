@@ -38,8 +38,8 @@ public class CommentsRecyclerViewAdapter extends FirestoreRecyclerAdapter<Commen
         TextView txtUser, txtComment;
         public CommentHolder (@NonNull View itemView) {
             super(itemView);
-            txtUser = itemView.findViewById(R.id.txtLeaderboardStatName);
-            txtComment = itemView.findViewById(R.id.txtDistanceStat);
+            txtUser = itemView.findViewById(R.id.txtNutrientNameLabel);
+            txtComment = itemView.findViewById(R.id.txtNutrientValueLabel);
         }
     }
 

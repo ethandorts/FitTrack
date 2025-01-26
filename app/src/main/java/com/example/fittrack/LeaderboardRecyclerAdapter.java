@@ -4,16 +4,19 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 
 public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<LeaderboardRecyclerAdapter.LeaderboardViewHolder>{
     private Context context;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseDatabaseHelper userUtil = new FirebaseDatabaseHelper(db);
     private ArrayList<LeaderboardModel> leaderboardList = new ArrayList<>();
 
     public LeaderboardRecyclerAdapter(Context context, ArrayList<LeaderboardModel> leaderboardList) {
@@ -31,10 +34,14 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
     @Override
     public void onBindViewHolder(@NonNull LeaderboardViewHolder holder, int position) {
         LeaderboardModel leaderboardModel = leaderboardList.get(position);
-
         holder.Number.setText(String.valueOf(position + 1));
-        holder.UserName.setText("Ethan Doherty");
-        holder.DistanceValue.setText(String.valueOf(leaderboardModel.getDistance()));
+        holder.DistanceValue.setText(String.valueOf(String.format("%.2f KM", leaderboardModel.getDistance() / 1000)));
+        userUtil.retrieveUserName(leaderboardModel.getUsername(), new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
+            @Override
+            public void onCallback(String FullName) {
+                holder.UserName.setText(FullName);
+            }
+        });
     }
 
 
@@ -48,9 +55,9 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
 
         public LeaderboardViewHolder(@NonNull View itemView) {
             super(itemView);
-            UserName = itemView.findViewById(R.id.txtLeaderboardStatName);
             Number = itemView.findViewById(R.id.leaderboard_number);
-            DistanceValue = itemView.findViewById(R.id.txtDistanceStat);
+            DistanceValue = itemView.findViewById(R.id.txtNutrientValueLabel);
+            UserName = itemView.findViewById(R.id.txtNutrientNameLabel);
         }
     }
 }

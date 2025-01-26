@@ -268,7 +268,7 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
                 if(menuItem.getItemId() == R.id.home_bottom) {
                     // for future button
                 } else if (menuItem.getItemId() == R.id.record_bottom) {
-                    Intent intent = new Intent(HomeActivity.this, MainActivity.class);
+                    Intent intent = new Intent(HomeActivity.this, SelectExerciseTypeActivity.class);
                     startActivity(intent);
                 } else if (menuItem.getItemId() == R.id.group_bottom) {
                     Intent intent = new Intent(HomeActivity.this, GroupsMenu.class);

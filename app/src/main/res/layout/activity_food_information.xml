@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/NutritionToolbar"
+        android:id="@+id/ActivityLikesToolbar"
         android:layout_width="0dp"
         android:layout_height="69dp"
         android:background="@color/button_blue"
@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/txtSearchForFood"
+            android:id="@+id/txtActivityLikes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -35,7 +35,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@id/NutritionToolbar"
+        app:layout_constraintTop_toBottomOf="@id/ActivityLikesToolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -117,7 +117,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/editNoServings" />
 
-    <EditText
+    <Spinner
         android:id="@+id/editMealType"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

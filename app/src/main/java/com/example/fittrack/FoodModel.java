@@ -9,8 +9,10 @@ public class FoodModel {
     private double calories;
     @PropertyName("mealType")
     private String mealType;
-    @PropertyName("quantity")
-    private int quantity;
+    @PropertyName("servingSize")
+    private double servingSize;
+    @PropertyName("servingQuantity")
+    private double servingQuantity;
     @PropertyName("fat")
     private double fat;
     @PropertyName("saturated_fat")
@@ -27,12 +29,14 @@ public class FoodModel {
     private double fiber;
     @PropertyName("sugar")
     private double sugar;
+    private boolean isDetailsShown;
 
-    public FoodModel(String foodName, double calories, String mealType, int quantity, double fat, double saturated_fat, double protein, double sodium, double potassium, double carbs, double fiber, double sugar) {
+    public FoodModel(String foodName, double calories, String mealType, double servingSize, double servingQuantity, double fat, double saturated_fat, double protein, double sodium, double potassium, double carbs, double fiber, double sugar, boolean isDetailsShown) {
         this.foodName = foodName;
         this.calories = calories;
         this.mealType = mealType;
-        this.quantity = quantity;
+        this.servingSize = servingSize;
+        this.servingQuantity = servingQuantity;
         this.fat = fat;
         this.saturated_fat = saturated_fat;
         this.protein = protein;
@@ -41,6 +45,7 @@ public class FoodModel {
         this.carbs = carbs;
         this.fiber = fiber;
         this.sugar = sugar;
+        this.isDetailsShown = isDetailsShown;
     }
 
     public FoodModel () {}
@@ -67,14 +72,6 @@ public class FoodModel {
 
     public void setMealType(String mealType) {
         this.mealType = mealType;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 
     public double getFat() {
@@ -139,5 +136,29 @@ public class FoodModel {
 
     public void setSugar(double sugar) {
         this.sugar = sugar;
+    }
+
+    public double getServingSize() {
+        return servingSize;
+    }
+
+    public void setServingSize(double servingSize) {
+        this.servingSize = servingSize;
+    }
+
+    public double getServingQuantity() {
+        return servingQuantity;
+    }
+
+    public void setServingQuantity(double servingQuantity) {
+        this.servingQuantity = servingQuantity;
+    }
+
+    public boolean isDetailsShown() {
+        return isDetailsShown;
+    }
+
+    public void setDetailsShown(boolean detailsShown) {
+        isDetailsShown = detailsShown;
     }
 }

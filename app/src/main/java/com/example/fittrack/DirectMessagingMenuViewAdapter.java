@@ -59,8 +59,8 @@ public class DirectMessagingMenuViewAdapter extends RecyclerView.Adapter<DirectM
 
         public ChatUsersViewHolder(@NonNull View itemView, RecyclerViewInterface recyclerViewInterface) {
             super(itemView);
-            UserName = itemView.findViewById(R.id.txtLeaderboardStatName);
-            LastMessage = itemView.findViewById(R.id.txtDistanceStat);
+            UserName = itemView.findViewById(R.id.txtNutrientNameLabel);
+            LastMessage = itemView.findViewById(R.id.txtNutrientValueLabel);
             UserProfileImage = itemView.findViewById(R.id.user_comment_icon);
         }
     }

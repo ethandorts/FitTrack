@@ -81,6 +81,42 @@ public class CommentUtil {
                 });
     }
 
+    public void retrieveLikes(String ActivityID, LikesListCallback callback) {
+        db.collection("Activities").document(ActivityID)
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        List<String> likesList = (List<String>) documentSnapshot.get("likes");
+                        if(likesList != null) {
+                            callback.onCallback(likesList);
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Likes Retrieval Failure", "Failure to retrieve likes from: " + ActivityID);
+                    }
+                });
+    }
+
+    public void retrieveLikeCount(String ActivityID, LikeNumberCallback callback) {
+        db.collection("Activities").document(ActivityID)
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        List<String> likesSize = (List<String>) documentSnapshot.get("likes");
+                        if(likesSize != null) {
+                            callback.onCallback(likesSize.size());
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Likes Size Retrieval Failure", "Failure to retrieve likes size from: " + ActivityID);
+                    }
+                });
+    }
+
     public void saveComment(String ActivityID, CommentModel comment) {
         Map<String, Object> commentMap = new HashMap<>();
         commentMap.put("UserID", comment.getUserID());
@@ -196,6 +232,14 @@ public class CommentUtil {
 
     public interface LikeCheckCallback {
         void onCallback(boolean hasLiked);
+    }
+
+    public interface LikeNumberCallback {
+        void onCallback(int likesNumber);
+    }
+
+    public interface LikesListCallback {
+        void onCallback(List<String> likesList);
     }
 
     public interface StatusCheckCallback {

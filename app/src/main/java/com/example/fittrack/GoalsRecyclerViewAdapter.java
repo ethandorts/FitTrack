@@ -1,5 +1,7 @@
 package com.example.fittrack;
 
+import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -10,7 +12,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 public class GoalsRecyclerViewAdapter extends FirestoreRecyclerAdapter<GoalModel, GoalsRecyclerViewAdapter.GoalsViewHolder> {
-
+    private Context context;
 
     public GoalsRecyclerViewAdapter(@NonNull FirestoreRecyclerOptions<GoalModel> options) {
         super(options);
@@ -24,7 +26,8 @@ public class GoalsRecyclerViewAdapter extends FirestoreRecyclerAdapter<GoalModel
     @NonNull
     @Override
     public GoalsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        View view = LayoutInflater.from(context).inflate(R.layout.activity_stats_view_row, parent, false);
+        return new GoalsRecyclerViewAdapter.GoalsViewHolder(view);
     }
 
     public class GoalsViewHolder extends RecyclerView.ViewHolder {

@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/LeaderboardCardView"
+        android:id="@+id/NutrientCardView"
         android:layout_width="414dp"
         android:layout_height="68dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -18,11 +18,10 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/txtLeaderboardStatName"
+                android:id="@+id/txtNutrientNameLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="76dp"
-                android:text="Ethan Doherty"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -31,12 +30,12 @@
                 app:layout_constraintVertical_bias="0.454" />
 
             <TextView
-                android:id="@+id/txtDistanceStat"
+                android:id="@+id/txtNutrientValueLabel"
                 android:layout_width="103dp"
                 android:layout_height="34dp"
                 android:layout_marginEnd="7dp"
                 android:text="23 KM "
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -55,7 +54,7 @@
                 android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/txtDistanceStat"
+                app:layout_constraintEnd_toStartOf="@+id/txtNutrientValueLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.483" />

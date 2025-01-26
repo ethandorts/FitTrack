@@ -16,10 +16,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/NutritionToolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/ActivityLikesToolbar" />
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/NutritionToolbar"
+        android:id="@+id/ActivityLikesToolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/button_blue"
@@ -58,7 +58,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/txtSearchForFood"
+            android:id="@+id/txtActivityLikes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -99,7 +99,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/NutritionToolbar"
+        app:layout_constraintTop_toBottomOf="@+id/ActivityLikesToolbar"
         app:layout_constraintVertical_bias="0.0" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

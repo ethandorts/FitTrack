@@ -45,7 +45,7 @@ public class NutritionTrackingOverview extends AppCompatActivity {
                                 editSelectedDate.setText(selectedDate);
 
                                 MealTypesFragmentStateAdapter adapter = new MealTypesFragmentStateAdapter(NutritionTrackingOverview.this);
-
+                                adapter.addFragment(new NutritionStatsFragment(editSelectedDate.getText().toString()));
                                 adapter.addFragment(new MealsScrollerFragment("Breakfast", editSelectedDate.getText().toString()));
                                 adapter.addFragment(new MealsScrollerFragment("Lunch", editSelectedDate.getText().toString()));
                                 adapter.addFragment(new MealsScrollerFragment("Dinner", editSelectedDate.getText().toString()));
@@ -61,7 +61,7 @@ public class NutritionTrackingOverview extends AppCompatActivity {
         });
 
         MealTypesFragmentStateAdapter adapter = new MealTypesFragmentStateAdapter(this);
-
+        adapter.addFragment(new NutritionStatsFragment(editSelectedDate.getText().toString()));
         adapter.addFragment(new MealsScrollerFragment("Breakfast", editSelectedDate.getText().toString()));
         adapter.addFragment(new MealsScrollerFragment("Lunch", editSelectedDate.getText().toString()));
         adapter.addFragment(new MealsScrollerFragment("Dinner", editSelectedDate.getText().toString()));
@@ -74,15 +74,18 @@ public class NutritionTrackingOverview extends AppCompatActivity {
                     public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
                         switch (position) {
                             case 0:
-                                tab.setText("Breakfast");
+                                tab.setText("Overview");
                                 break;
                             case 1:
-                                tab.setText("Lunch");
+                                tab.setText("Breakfast");
                                 break;
                             case 2:
-                                tab.setText("Dinner");
+                                tab.setText("Lunch");
                                 break;
                             case 3:
+                                tab.setText("Dinner");
+                                break;
+                            case 4:
                                 tab.setText("Snacks");
                                 break;
                         }

@@ -28,6 +28,7 @@ public class SearchFoodModel {
     @PropertyName("sugar")
     private double sugar;
 
+
     public SearchFoodModel(String name, double calories, double fat, double saturated_fat, double protein, double sodium, double potassium, double carbs, double fiber, double sugar, int quantity, String mealType) {
         this.foodName = name;
         this.calories = calories;

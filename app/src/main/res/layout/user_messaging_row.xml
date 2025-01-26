@@ -5,7 +5,7 @@
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/UserCardView"
+        android:id="@+id/LikesCardView"
         android:layout_width="411dp"
         android:layout_height="98dp">
 
@@ -26,7 +26,7 @@
                 app:srcCompat="@drawable/profile" />
 
             <TextView
-                android:id="@+id/txtLeaderboardStatName"
+                android:id="@+id/txtNutrientNameLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -40,7 +40,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/txtDistanceStat"
+                android:id="@+id/txtNutrientValueLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -50,7 +50,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.016"
                 app:layout_constraintStart_toEndOf="@id/user_comment_icon"
-                app:layout_constraintTop_toBottomOf="@id/txtLeaderboardStatName" />
+                app:layout_constraintTop_toBottomOf="@id/txtNutrientNameLabel" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

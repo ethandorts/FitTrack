@@ -27,6 +27,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
@@ -37,6 +38,8 @@ import java.util.Map;
 
 public class ActivitiesRecyclerViewAdapter extends FirestoreRecyclerAdapter<ActivityModel,ActivitiesRecyclerViewAdapter.MyViewHolder> {
     private Context context;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseDatabaseHelper userUtil = new FirebaseDatabaseHelper(db);
 //    private ArrayList<ActivityModel> userActivities = new ArrayList<ActivityModel>();
 
     public ActivitiesRecyclerViewAdapter(@NonNull FirestoreRecyclerOptions<ActivityModel> options, Context context) {
@@ -105,7 +108,12 @@ public class ActivitiesRecyclerViewAdapter extends FirestoreRecyclerAdapter<Acti
         holder.activityDistance.setText(formatMetresToKM(activity.getDistance()) + " KM");
         holder.activityTime.setText(formatRunTime(activity.getTime()));
         holder.activityPace.setText(activity.getPace() + " /km");
-        //holder.activityUser.setText(activity.getUserID());
+        userUtil.retrieveUserName(activity.getUserID(), new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
+            @Override
+            public void onCallback(String FullName) {
+                holder.activityUser.setText(FullName);
+            }
+        });
         holder.activityMapContainer.onCreate(null);
         holder.activityMapContainer.onResume();
         holder.activityMapContainer.getMapAsync(new OnMapReadyCallback() {

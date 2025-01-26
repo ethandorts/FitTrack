@@ -29,6 +29,12 @@
         android:theme="@style/Theme.FitTrack"
         tools:targetApi="31">
         <activity
+            android:name=".LikesRecyclerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SelectExerciseTypeActivity"
+            android:exported="false" />
+        <activity
             android:name=".FoodInformationActivity"
             android:exported="false" />
         <activity

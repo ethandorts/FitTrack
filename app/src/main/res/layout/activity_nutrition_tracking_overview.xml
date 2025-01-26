@@ -8,7 +8,7 @@
     tools:context=".NutritionTrackingOverview">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/NutritionToolbar"
+        android:id="@+id/ActivityLikesToolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="18dp"
@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/txtSearchForFood"
+            android:id="@+id/txtActivityLikes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -64,7 +64,7 @@
         app:layout_constraintBottom_toTopOf="@+id/tabLayoutMealTypes"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/txtSelectDateLabel"
-        app:layout_constraintTop_toBottomOf="@+id/NutritionToolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/ActivityLikesToolbar" />
 
     <TextView
         android:id="@+id/txtSelectDateLabel"
@@ -79,5 +79,5 @@
         app:layout_constraintBottom_toTopOf="@+id/pagerFoods"
         app:layout_constraintEnd_toStartOf="@+id/editSelectedDate"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/NutritionToolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/ActivityLikesToolbar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

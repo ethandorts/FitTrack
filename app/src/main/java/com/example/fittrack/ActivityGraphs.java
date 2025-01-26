@@ -1,9 +1,6 @@
 package com.example.fittrack;
 
-import static kotlin.jvm.internal.Reflection.function;
-
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,23 +12,15 @@ import androidx.fragment.app.Fragment;
 import com.anychart.APIlib;
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
-import com.anychart.chart.common.dataentry.CategoryValueDataEntry;
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.chart.common.dataentry.ValueDataEntry;
-import com.anychart.chart.common.listener.Event;
-import com.anychart.chart.common.listener.ListenersInterface;
 import com.anychart.charts.Cartesian;
 import com.anychart.core.axes.Linear;
-import com.anychart.core.cartesian.series.Line;
-import com.anychart.data.Mapping;
 import com.anychart.enums.Anchor;
-import com.anychart.enums.MarkerType;
 import com.anychart.enums.TooltipPositionMode;
-import com.anychart.graphics.vector.Stroke;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class ActivityGraphs extends Fragment {
     private String ActivityID;
@@ -53,7 +42,7 @@ public class ActivityGraphs extends Fragment {
         gamificationUtil.retrieveActivitySplits(ActivityID, new GamificationUtil.ActivitySplitsCallback() {
             @Override
             public void onCallback(List<String> splits) {
-                AnyChartView paceGraph = view.findViewById(R.id.paceGraph);
+                AnyChartView paceGraph = view.findViewById(R.id.mealGraph);
 
                 APIlib.getInstance().setActiveAnyChartView(paceGraph);
 

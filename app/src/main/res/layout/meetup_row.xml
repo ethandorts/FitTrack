@@ -8,7 +8,7 @@
     android:backgroundTint="#FFFFFF">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/UserCardView"
+        android:id="@+id/LikesCardView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="1dp"
