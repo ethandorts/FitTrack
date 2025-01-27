@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.BIND_NETWORK_TASK_SERVICE" />
 
     <application
@@ -28,6 +29,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FitTrack"
         tools:targetApi="31">
+        <receiver
+            android:name=".LogFoodNotificationReceiver"
+            android:exported="false" />
+        <activity
+            android:name=".ChallengeInviteActivity"
+            android:exported="false" />
         <activity
             android:name=".LikesRecyclerActivity"
             android:exported="false" />

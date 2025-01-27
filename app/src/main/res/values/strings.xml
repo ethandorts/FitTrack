@@ -56,4 +56,10 @@
         <item>Snacks</item>
     </string-array>
 
+    <string-array name="challenge_types">
+        <item>Time Challenge</item>
+        <item>Distance Challenge</item>
+        <item>Collaborative Challenges</item>
+    </string-array>
+
 </resources>

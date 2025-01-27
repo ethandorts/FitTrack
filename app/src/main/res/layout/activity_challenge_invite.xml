@@ -5,17 +5,15 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SelectExerciseTypeActivity">
+    tools:context=".ChallengeInviteActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/ActivityLikesToolbar"
-        android:layout_width="411dp"
-        android:layout_height="67dp"
-        android:layout_marginBottom="1dp"
+        android:id="@+id/activityLikesToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
         android:background="@color/button_blue"
         android:elevation="4dp"
         android:theme="?attr/actionBarTheme"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerViewExerciseType"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -26,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="Select Exercise Type"
+            android:text="Create Fitness Challenge "
             android:textColor="@color/white"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -34,16 +32,4 @@
             tools:layout_editor_absoluteY="16dp" />
 
     </androidx.appcompat.widget.Toolbar>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewExerciseType"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="1dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ActivityLikesToolbar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,9 +5,11 @@ import static android.content.ContentValues.TAG;
 import static java.security.AccessController.getContext;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -77,6 +80,7 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -110,15 +114,30 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-//        PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest.Builder(
-//                ActivityCompletedChecker.class, 1, TimeUnit.MINUTES).build();
+        WorkManager.getInstance(this).cancelAllWork();
 
         OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(ActivityCompletedChecker.class)
                 .build();
 
-        WorkManager.getInstance(this).enqueue(oneTimeWorkRequest);
+        PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest.Builder(
+                ActivityCompletedChecker.class, 3, TimeUnit.HOURS).build();
 
-//        WorkManager.getInstance(this).enqueue(periodicWorkRequest);
+        OneTimeWorkRequest checkGoalsRequest = new OneTimeWorkRequest.Builder(GoalCompletedChecker.class)
+                .setInitialDelay(30, TimeUnit.SECONDS)
+                .build();
+
+        PeriodicWorkRequest periodicCheckGoalsRequest = new PeriodicWorkRequest.Builder(
+                ActivityCompletedChecker.class, 30, TimeUnit.MINUTES).build();
+
+
+        WorkManager.getInstance(this).enqueue(oneTimeWorkRequest);
+        WorkManager.getInstance(this).enqueue(periodicWorkRequest);
+        WorkManager.getInstance(this).enqueue(checkGoalsRequest);
+        WorkManager.getInstance(this).enqueue(periodicCheckGoalsRequest);
+
+        logFoodNotifications(10, 00, "Breakfast");
+        logFoodNotifications(15, 10, "Lunch");
+        logFoodNotifications(20, 00, "Dinner");
 
         activityLocationsDao = ActivityLocationsDatabase.getActivityLocationsDatabase(this).activityLocationsDao();
 
@@ -345,6 +364,40 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
         return formattedRunTime;
     }
 
+    private void logFoodNotifications(int hour, int minute, String mealType) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, 0);
+
+        if(calendar.getTimeInMillis() < System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, LogFoodNotificationReceiver.class);
+        intent.putExtra("mealType", mealType);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                this,
+                hour * 60 + minute,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if(alarmManager != null && alarmManager.canScheduleExactAlarms()) {
+                alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.getTimeInMillis(),
+                        pendingIntent
+                );
+            } else {
+                Intent permissionsIntent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                intent.setData(Uri.parse("package: " + getPackageName()));
+                startActivity(permissionsIntent);
+            }
+        }
+    }
 //    private void loadUserActivities() {
 //        if( isLoading || isEndofArray) {
 //            return;

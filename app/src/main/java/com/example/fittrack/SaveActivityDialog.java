@@ -11,6 +11,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -81,19 +83,6 @@ public class SaveActivityDialog extends DialogFragment {
             Log.d("getArguments", "Arguments are null");
         }
 
-//        if(activityLocations != null) {
-//            for(Parcelable location : activityLocations) {
-//                if(location instanceof com.google.android.gms.maps.model.LatLng) {
-//                    com.google.android.gms.maps.model.LatLng latLng = (com.google.android.gms.maps.model.LatLng) location;
-//                    Map<String, Object> coordinates = new HashMap<>();
-//                    coordinates.put("latitude", latLng.latitude);
-//                    coordinates.put("longitude", latLng.longitude);
-//                    activityCoordinates.add(coordinates);
-//                }
-//            }
-//        } else {
-//            Log.e("Activity Coordinates Empty", "No coordinates to show");
-//        }
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         Date today = new Date();
         String shortDate = dateFormat.format(today);
@@ -145,6 +134,9 @@ public class SaveActivityDialog extends DialogFragment {
                                         @Override
                                         public void onSuccess(Void unused) {
                                             NotificationUtil.showSavedActivityNotification(activity);
+                                            OneTimeWorkRequest checkGoalsRequest = new OneTimeWorkRequest.Builder(GoalCompletedChecker.class)
+                                                    .build();
+                                            WorkManager.getInstance(getContext()).enqueue(checkGoalsRequest);
                                             Log.d("Activity Successfully Written", "Activity Successfully Written");
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {

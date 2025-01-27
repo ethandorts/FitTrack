@@ -19,131 +19,107 @@ public class NotificationUtil {
     private static final String PROGRESS_TRACKING_ID = "progress_tracking_channel";
     private static final String WORKOUT_REMINDER_ID = "workout_reminder_channel";
     private static final String LOG_FOOD_REMINDER_ID = "log_food_remainder_channel";
-    public static void createSavedWorkoutNotificationChannel(Context context) {
+    private static final String CALORIE_GOAL_SUCCESSFUL_ID = "calorie_goal_successful_channel";
+    private static final String DISTANCE_GOAL_SUCCESSFUL_ID ="distance_goal_successful_channel";
+    private static final String TIME_GOAL_SUCCESSFUL_ID ="time_goal_successful_channel";
+
+    public static void createNotificationChannel(Context context, String channelID, String name, String channelDescription, int importanceLevel) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence channelName = "Saved Activity Notifications";
-            String description = "Notifications for saving fitness activities";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel(SAVED_ACTIVITY_ID, channelName, importance);
+            CharSequence channelName = name;
+            String description = channelDescription;
+            int importance = importanceLevel;
+            NotificationChannel channel = new NotificationChannel(channelID, channelName, importance);
             channel.setDescription(description);
 
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    public static void showNotification(Context context, String channelID, String contentTitle, String contentMessage, int priorityLevel) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (ContextCompat.checkSelfPermission(context, "android.permission.POST_NOTIFICATIONS")
+                    != PackageManager.PERMISSION_GRANTED) {
+                Log.w("Notification Permission Not Granted", "POST_NOTIFICATIONS permission was not granted");
+                return;
+            }
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle(contentTitle)
+                .setContentText(contentMessage)
+                .setPriority(priorityLevel);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(1, builder.build());
+    }
+
+
+    public static void createSavedWorkoutNotificationChannel(Context context) {
+        createNotificationChannel(context,
+                SAVED_ACTIVITY_ID,
+                "Saved Activity Notifications",
+                "Notifications for saving fitness activities",
+                NotificationManager.IMPORTANCE_HIGH);
     }
 
     public static void showSavedActivityNotification(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (ContextCompat.checkSelfPermission(context, "android.permission.POST_NOTIFICATIONS")
-                    != PackageManager.PERMISSION_GRANTED) {
-                Log.w("Notification Permission Not Granted", "POST_NOTIFICATIONS permission was not granted");
-                return;
-            }
-        }
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, SAVED_ACTIVITY_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle("Fitness Activity Saved")
-                .setContentText("Your fitness activity has been successfully saved!")
-                .setPriority(NotificationCompat.PRIORITY_HIGH);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.notify(1, builder.build());
+        showNotification(context,SAVED_ACTIVITY_ID, "Fitness Activity Saved","Your fitness activity has been successfully saved!", NotificationCompat.PRIORITY_HIGH);
     }
 
     public static void createProgressNotificationChannel(Context context) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence channelName = "Progress Tracking Notifications";
-            String description = "Notifications for Progress Tracking";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel(PROGRESS_TRACKING_ID, channelName, importance);
-            channel.setDescription(description);
-
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
+        createNotificationChannel(context,
+                PROGRESS_TRACKING_ID,
+                "Progress Tracking Notifications",
+                "Notifications for Progress Tracking",
+                NotificationManager.IMPORTANCE_HIGH);
     }
 
     public static void showProgressTrackingNotification(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (ContextCompat.checkSelfPermission(context, "android.permission.POST_NOTIFICATIONS")
-                    != PackageManager.PERMISSION_GRANTED) {
-                Log.w("Notification Permission Not Granted", "POST_NOTIFICATIONS permission was not granted");
-                return;
-            }
-        }
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, PROGRESS_TRACKING_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle("Progress Tracking")
-                .setContentText("Progress Update Alert")
-                .setPriority(NotificationCompat.PRIORITY_HIGH);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.notify(1, builder.build());
+        showNotification(context,PROGRESS_TRACKING_ID, "Progress Tracking","Progress Update Alert", NotificationCompat.PRIORITY_HIGH);
     }
 
     public static void createWorkoutReminderNotificationChannel(Context context) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence channelName = "Workout Reminder Notifications";
-            String description = "Notifications for Workout Reminders";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel(WORKOUT_REMINDER_ID, channelName, importance);
-            channel.setDescription(description);
-
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
+        createNotificationChannel(context, WORKOUT_REMINDER_ID,
+                "Workout Reminder Notifications",
+                "Notifications for Workout Reminders",
+                NotificationManager.IMPORTANCE_HIGH);
     }
 
     public static void showWorkoutReminderNotification(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (ContextCompat.checkSelfPermission(context, "android.permission.POST_NOTIFICATIONS")
-                    != PackageManager.PERMISSION_GRANTED) {
-                Log.w("Notification Permission Not Granted", "POST_NOTIFICATIONS permission was not granted");
-                return;
-            }
-        }
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, WORKOUT_REMINDER_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle("Workout Reminder")
-                .setContentText("Workout Reminder Content")
-                .setPriority(NotificationCompat.PRIORITY_HIGH);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.notify(1, builder.build());
+        showNotification(context, WORKOUT_REMINDER_ID, "Workout Reminder","Workout Reminder Content", NotificationCompat.PRIORITY_HIGH);
     }
 
     public static void createLogFoodNotificationChannel(Context context) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence channelName = "Log Food Reminder";
-            String description = "You haven't logged any food for your Breakfast";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel(WORKOUT_REMINDER_ID, channelName, importance);
-            channel.setDescription(description);
-
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
+        createNotificationChannel(context, LOG_FOOD_REMINDER_ID,"Log Food Reminder","You haven't logged any food for your Breakfast", NotificationManager.IMPORTANCE_HIGH);
     }
 
-    public static void showLogFoodNotification(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (ContextCompat.checkSelfPermission(context, "android.permission.POST_NOTIFICATIONS")
-                    != PackageManager.PERMISSION_GRANTED) {
-                Log.w("Notification Permission Not Granted", "POST_NOTIFICATIONS permission was not granted");
-                return;
-            }
-        }
+    public static void showLogFoodNotification(Context context, String mealType) {
+        showNotification(context,LOG_FOOD_REMINDER_ID, "Log Food for " + mealType+ " Reminder", "You haven't logged any food for your " + mealType, NotificationCompat.PRIORITY_HIGH);
+    }
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, LOG_FOOD_REMINDER_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle("Log Food Reminder")
-                .setContentText("You haven't logged any food for your Breakfast")
-                .setPriority(NotificationCompat.PRIORITY_HIGH);
+    public static void createCalorieGoalSuccessfulNotificationChannel(Context context) {
+        createNotificationChannel(context, CALORIE_GOAL_SUCCESSFUL_ID, "Calorie Goal Successfully Completed", "Calorie Goal Successfully Completed", NotificationManager.IMPORTANCE_HIGH);
+    }
 
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.notify(1, builder.build());
+    public static void showCalorieGoalSuccessfulNotification(Context context) {
+        showNotification(context, CALORIE_GOAL_SUCCESSFUL_ID, "Calorie Goal Successfully Completed", "Calorie Goal Successfully Completed", NotificationCompat.PRIORITY_HIGH);
+    }
+
+    public static void createDistanceGoalSuccessfulNotificationChannel(Context context) {
+        createNotificationChannel(context, DISTANCE_GOAL_SUCCESSFUL_ID, "Distance Goal Successfully Completed", "Distance Goal Successfully Completed", NotificationManager.IMPORTANCE_HIGH);
+    }
+
+    public static void showDistanceGoalSuccessfulNotification(Context context) {
+        showNotification(context, DISTANCE_GOAL_SUCCESSFUL_ID, "Distance Goal Successfully Completed", "Distance Goal Successfully Completed", NotificationCompat.PRIORITY_HIGH);
+    }
+
+    public static void createTimeGoalSuccessfulNotificationChannel(Context context) {
+        createNotificationChannel(context, TIME_GOAL_SUCCESSFUL_ID, "Time Goal Successfully Completed", "Time Goal Successfully Completed", NotificationManager.IMPORTANCE_HIGH);
+    }
+
+    public static void showTimeGoalSuccessfulNotification(Context context) {
+        showNotification(context, TIME_GOAL_SUCCESSFUL_ID, "Time Goal Successfully Completed", "Time Goal Successfully Completed", NotificationCompat.PRIORITY_HIGH);
     }
 }

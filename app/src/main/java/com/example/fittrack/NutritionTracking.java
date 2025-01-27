@@ -167,7 +167,7 @@ public class NutritionTracking extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headersMap = new HashMap<>();
-                headersMap.put("X-Api-Key", "3T9QzDFbiwikUXS4RMQsKg==DeZjUwaU7l1WgRkm"); // insert API KEY HERE
+                headersMap.put("X-Api-Key", ""); // insert API KEY HERE
 
                 return headersMap;
             }

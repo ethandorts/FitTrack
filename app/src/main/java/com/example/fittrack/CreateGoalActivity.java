@@ -35,7 +35,7 @@ public class CreateGoalActivity extends AppCompatActivity {
         Spinner spinnerGoalTypes = findViewById(R.id.spinnerGoalType);
         FrameLayout formDisplay = findViewById(R.id.goalFormFrame);
 
-        goalCheckerUtil.checkDistanceGoalIsAchieved(UserID);
+        //goalCheckerUtil.checkDistanceGoalIsAchieved(UserID);
 
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter
