@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp">
+        android:layout_margin="4dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="4dp">
 
-            <!-- Goal Title -->
             <TextView
                 android:id="@+id/goal_title"
                 android:layout_width="wrap_content"
@@ -24,24 +24,21 @@
                 android:textColor="#000000"
                 android:textSize="18sp" />
 
-            <!-- Goal Description (Optional) -->
             <TextView
                 android:id="@+id/goal_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:text="Short goal description here"
-                android:textColor="#777777"
+                android:textColor="#000000"
                 android:textSize="14sp" />
 
-            <!-- Progress or Status Indicator -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start|center_vertical"
                 android:orientation="horizontal">
 
-                <!-- Status Text -->
                 <TextView
                     android:id="@+id/goal_status"
                     android:layout_width="wrap_content"
@@ -51,17 +48,15 @@
                     android:textColor="#FF9800"
                     android:textSize="14sp" />
 
-                <!-- Deadline -->
                 <TextView
                     android:id="@+id/goal_deadline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Due: 2025-12-31"
-                    android:textColor="#AAAAAA"
-                    android:textSize="12sp" />
+                    android:textColor="#000000"
+                    android:textSize="14sp" />
             </LinearLayout>
 
-            <!-- Progress Bar (optional) -->
             <ProgressBar
                 android:id="@+id/progress_bar"
                 android:layout_width="match_parent"

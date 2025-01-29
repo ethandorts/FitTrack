@@ -107,6 +107,7 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
     private boolean isLoading = false;
     private boolean isEndofArray = false;
     private Handler handler = new Handler();
+    private PersonalBestUtil util = new PersonalBestUtil();
 
 
     @Override
@@ -174,6 +175,8 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
 
         mAuth = FirebaseAuth.getInstance().getCurrentUser();
         UserID = mAuth.getUid();
+
+        //util.findFastest5K(UserID, 5000, "Running");
 
         DatabaseUtil.retrieveUserName(UserID, new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
             @Override

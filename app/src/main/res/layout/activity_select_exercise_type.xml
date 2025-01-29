@@ -8,7 +8,7 @@
     tools:context=".SelectExerciseTypeActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/ActivityLikesToolbar"
+        android:id="@+id/BadgesToolbar"
         android:layout_width="411dp"
         android:layout_height="67dp"
         android:layout_marginBottom="1dp"
@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/txtCreateChallenge"
+            android:id="@+id/txtBadgesTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -45,5 +45,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ActivityLikesToolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/BadgesToolbar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

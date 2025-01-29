@@ -29,9 +29,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FitTrack"
         tools:targetApi="31">
+        <activity
+            android:name=".MyBadgesActivity"
+            android:exported="false" />
+
         <receiver
             android:name=".LogFoodNotificationReceiver"
             android:exported="false" />
+
         <activity
             android:name=".ChallengeInviteActivity"
             android:exported="false" />
