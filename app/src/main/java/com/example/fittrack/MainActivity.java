@@ -161,14 +161,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 } else {
                     isTrackingRun = false;
                     isEnd = true;
-                    kmSplit(true);
+                    Location nowLocation = new Location("nowLocation");
+                    nowLocation.setLatitude(currentLocation.latitude);
+                    nowLocation.setLongitude(currentLocation.longitude);
+                    kmSplit(previousLocation, nowLocation,true);
                     btnStopStart.setText("Resume Run");
                     btnStopStart.setBackgroundColor(getResources().getColor(R.color.green));
                     SaveActivityDialog saveActivityDialog = new SaveActivityDialog();
+                    long runTime = 0;
+
+                    for(long split : kmSplits) {
+                        runTime = runTime + split;
+                    }
+                    int activityTime = (int) runTime / 1000;
 
                     Bundle runningData = new Bundle();
                     runningData.putDouble("distance", distanceTravelled);
-                    runningData.putDouble("time", elapsedTime);
+                    runningData.putDouble("time", activityTime);
                     runningData.putString("type", type);
 //                    new Thread(new Runnable() {
 //                        @Override
@@ -222,6 +231,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      //Updates Map with latest location found.
     private void updateMapWithLocation(Location location) {
         currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        Location lastKnownLocation = previousLocation;
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16));
         if(isTrackingRun) {
             if (!isTimerStarted) {
@@ -230,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             DrawRoute(location);
             DistanceSpeakerAssistant(distanceTravelled);
-            kmSplit(false);
+            kmSplit(lastKnownLocation,location, false);
         } else {
 //            if (isEnd) {
 //                kmSplit(true);
@@ -315,43 +325,84 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void kmSplit(boolean isFinalSplit) {
-        if(distanceTravelled < 1000 && isFinalSplit) {
-            long timeNow = System.currentTimeMillis();
-            splitTime = previousTime == 0 ? timeNow - startTime : timeNow - previousTime;
-            fullTime = timeNow - startTime;
-            kmSplits.add(splitTime);
+    private void kmSplit(Location prevLocation, Location currLocation, boolean isFinalSplit) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("kmSplit called with isFinalSplit = " + isFinalSplit);
 
-            // Log the final split for debugging
-            Log.d("kmSplit", "Final split (short activity): " + splitTime + " ms for " + distanceTravelled + " meters");
-            return;
-        }
-
-        if (isFinalSplit || distanceTravelled >= targetKM) {
-            while (distanceTravelled >= targetKM) {
-                timeNow = System.currentTimeMillis();
-                splitTime = previousTime == 0 ? timeNow - startTime : timeNow - previousTime;
-                fullTime = timeNow - startTime;
-
-                kmSplits.add(splitTime);
-                //DisplaySplitFragment(targetKM, splitTime, fullTime);
-
-                targetKM += 1000;
-                previousTime = timeNow;
-            }
-
-            if (isFinalSplit) {
-                double remainingDistance = distanceTravelled % 1000;
-                if (remainingDistance > 0) {
-                    timeNow = System.currentTimeMillis();
-                    splitTime = timeNow - previousTime;
-                    System.out.println("final Split Time:" + splitTime);
-                    fullTime = timeNow - startTime;
-                    kmSplits.add(splitTime);
+                if (prevLocation == null || currLocation == null) {
+                    Log.e("kmSplit", "Previous or Current location is null!");
+                    System.out.println("prevLocation: " + prevLocation);
+                    System.out.println("currLocation: " + currLocation);
+                    return;
                 }
+
+                double distanceInterval = prevLocation.distanceTo(currLocation);
+                System.out.println("Distance Interval: " + distanceInterval);
+
+                if (!isFinalSplit && distanceInterval == 0) {
+                    System.out.println("Distance Interval is 0, returning early");
+                    return;
+                }
+
+                long currTime = System.currentTimeMillis();
+
+                synchronized (kmSplits) {
+                    System.out.println("Entering synchronized block");
+
+                    while (distanceTravelled >= (kmSplits.size() + 1) * 1000) {
+                        double nextSplitDistance = (kmSplits.size() + 1) * 1000;
+                        if (distanceTravelled < nextSplitDistance) break;
+
+                        double fraction = (nextSplitDistance - (distanceTravelled - distanceInterval)) / distanceInterval;
+                        fraction = Math.max(0, Math.min(1, fraction));
+                        long interpolatedTime = previousTime + Math.round(fraction * (currTime - previousTime));
+
+                        if (kmSplits.isEmpty()) {
+                            kmSplits.add(interpolatedTime - startTime);
+                        } else {
+                            kmSplits.add(interpolatedTime - (startTime + kmSplits.stream().mapToLong(Long::longValue).sum()));
+                        }
+
+                        System.out.println("Splits currently: " + kmSplits);
+                        System.out.println("kmSplit Hit " + nextSplitDistance + "m at " + interpolatedTime);
+                    }
+
+                    if (isFinalSplit) {
+                        System.out.println("Entering isFinalSplit block");
+                        long totalSplits = 0;
+                        double remainingDistance = distanceTravelled % 1000;
+                        System.out.println("Remaining Distance: " + remainingDistance);
+                        if (remainingDistance > 0) {
+                            System.out.println("Calculating final split...");
+                            for(long split : kmSplits) {
+                                totalSplits = totalSplits + split;
+                            }
+                            int splitsSecondsTotal = secondsConversion(totalSplits);
+                            int difference = elapsedTime - splitsSecondsTotal;
+                            System.out.println(difference);
+//                            long totalTime = currTime - startTime;
+//                            long finalSplit = totalTime - totalSplits;
+                            kmSplits.add((long) (difference * 1000));
+                            System.out.println("Final split added: " + remainingDistance + "m in " + difference + "ms");
+                            System.out.println("KM Splits Display:" + kmSplits);
+                            for(long split : kmSplits) {
+                                totalSplits = totalSplits + split;
+                            }
+                            System.out.println("Time: " + totalSplits);
+                            System.out.println("elapsedTime" + elapsedTime);
+                        } else {
+                            System.out.println("No remaining distance for final split");
+                        }
+                    }
+                }
+                previousTime = currTime;
             }
-        }
+        }).start();
     }
+
+
 
     private void DisplaySplitFragment(int Km, long splitTime, long fullTime) {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -412,6 +463,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else {
             super.onBackPressed();
         }
+    }
+
+    private int secondsConversion(long splitsTotal) {
+        return (int) (splitsTotal / 1000);
     }
 
     public class LocationUpdatesBroadcastReceiver extends BroadcastReceiver {

@@ -79,15 +79,16 @@ public class ActivitySplitsFragment extends Fragment {
     }
 
     private String longToTimeConversion(long longValue) {
+        long milliseconds = longValue % 1000;
         longValue = longValue / 1000;
         long hours = longValue / 3600;
         long minutes = (longValue % 3600) / 60;
         long seconds = longValue % 60;
 
         if (hours > 0) {
-            return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            return String.format("%02d:%02d:%02d.%d", hours, minutes, seconds, milliseconds / 100);
         } else {
-            return String.format("%02d:%02d", minutes, seconds);
+            return String.format("%02d:%02d.%d", minutes, seconds, milliseconds / 100);
         }
     }
 }

@@ -38,13 +38,13 @@ public class ActivityGraphs extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        AnyChartView paceGraph = view.findViewById(R.id.paceGraph);
 
         gamificationUtil.retrieveActivitySplits(ActivityID, new GamificationUtil.ActivitySplitsCallback() {
             @Override
             public void onCallback(List<String> splits) {
-                AnyChartView paceGraph = view.findViewById(R.id.mealGraph);
-
                 APIlib.getInstance().setActiveAnyChartView(paceGraph);
+                APIlib.getInstance().addJSLine("console.log('Chart initialized');");
 
                 Cartesian cartesian = AnyChart.line();
                 cartesian.animation(true);

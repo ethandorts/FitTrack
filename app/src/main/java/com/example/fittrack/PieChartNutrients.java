@@ -60,7 +60,7 @@ public class PieChartNutrients extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        AnyChartView anyChartView = view.findViewById(R.id.mealGraph);
+        AnyChartView anyChartView = view.findViewById(R.id.paceGraph);
         Pie pie = AnyChart.pie();
 
         System.out.println("Pie date" + selectedDate);

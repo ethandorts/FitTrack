@@ -55,8 +55,8 @@ public class ExerciseTypeRecyclerAdapter extends RecyclerView.Adapter<ExerciseTy
 
         public ExerciseTypeViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtExerciseType = itemView.findViewById(R.id.txtExerciseType);
-            imgExerciseType = itemView.findViewById(R.id.ExerciseTypeImage);
+            txtExerciseType = itemView.findViewById(R.id.txtBadgeDescription);
+            imgExerciseType = itemView.findViewById(R.id.imgBadge);
         }
     }
 }

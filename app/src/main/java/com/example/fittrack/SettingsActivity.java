@@ -40,6 +40,15 @@ public class SettingsActivity extends AppCompatActivity {
         Button btnCalendar = findViewById(R.id.btnCalendar);
         Button btnLogout = findViewById(R.id.btnLogOut);
         Button btnDeleteAccount = findViewById(R.id.btnDeleteAccount);
+        Button btnBadges = findViewById(R.id.btnBadges);
+
+        btnBadges.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SettingsActivity.this, MyBadgesActivity.class);
+                startActivity(intent);
+            }
+        });
 
         btnGoals.setOnClickListener(new View.OnClickListener() {
             @Override

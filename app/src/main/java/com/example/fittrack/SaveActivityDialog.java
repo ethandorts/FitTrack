@@ -97,7 +97,7 @@ public class SaveActivityDialog extends DialogFragment {
             data.put("type", type);
             data.put("activityCoordinates", locations);
             data.put("splits", splits);
-            data.put("caloriesBurned", caloriesCalculator.calculateCalories(time, (calculateAveragePace(distance, time)), 64));
+            data.put("caloriesBurned", caloriesCalculator.calculateCalories(time, (calculateAveragePace(distance, time)), type, 88));
 
         new Thread(new Runnable() {
             @Override
