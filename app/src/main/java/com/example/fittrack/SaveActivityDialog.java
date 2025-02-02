@@ -47,7 +47,8 @@ public class SaveActivityDialog extends DialogFragment {
     Map<String, Object> data;
     private List<Parcelable> activityLocations = new ArrayList<>();
     private ActivityLocationsDao activityLocationsDao;
-    private List<LatLng> locations;
+    private List<LatLng> locations = new ArrayList<>();
+    private ElevationUtil elevationUtil;
 
     @Override
     public Dialog onCreateDialog(Bundle SavedInstanceState) {
@@ -64,6 +65,7 @@ public class SaveActivityDialog extends DialogFragment {
                 .build();
         db.setFirestoreSettings(settings);
 
+        elevationUtil = new ElevationUtil(getContext());
 
         activityLocationsDao = ActivityLocationsDatabase.getActivityLocationsDatabase(getContext()).activityLocationsDao();
 
@@ -107,6 +109,8 @@ public class SaveActivityDialog extends DialogFragment {
 
                 if (entitiesList != null && !entitiesList.isEmpty()) {
                     for (ActivityLocationsEntity entity : entitiesList) {
+                        LatLng latLng = new LatLng(entity.latitude, entity.longitude);
+                        locations.add(latLng);
                         Map<String, Object> coordinates = new HashMap<>();
                         coordinates.put("latitude", entity.getLatitude());
                         coordinates.put("longitude", entity.getLongitude());
@@ -124,27 +128,7 @@ public class SaveActivityDialog extends DialogFragment {
                     .setPositiveButton("Save Activity", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            String ActivityID = DocumentIDGenerator.GenerateActivityID();
-                            data.put("ActivityID", ActivityID);
-
-                            db.collection("Activities")
-                                    .document(ActivityID)
-                                    .set(data)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void unused) {
-                                            NotificationUtil.showSavedActivityNotification(activity);
-                                            OneTimeWorkRequest checkGoalsRequest = new OneTimeWorkRequest.Builder(GoalCompletedChecker.class)
-                                                    .build();
-                                            WorkManager.getInstance(getContext()).enqueue(checkGoalsRequest);
-                                            Log.d("Activity Successfully Written", "Activity Successfully Written");
-                                        }
-                                    }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.d("Activity Write Failure", "Activity Write Failure");
-                                        }
-                                    });
+                            getElevationAndSave();
                         }
                     })
                     .setNegativeButton("Resume Activity", new DialogInterface.OnClickListener() {
@@ -165,5 +149,51 @@ public class SaveActivityDialog extends DialogFragment {
             String formattedPace = String.format("%d:%02d", minutes, seconds);
 
             return formattedPace;
+        }
+
+        private void getElevationAndSave() {
+        if(locations.isEmpty()) {
+            Log.e("No Activity Coordinates Found", "No activity coordinates found for SaveDialog");
+            saveActivity();
+            return;
+        }
+            elevationUtil.elevationRequest(locations, new ElevationUtil.ElevationCallback() {
+                @Override
+                public void onCallback(double[] elevationValues) {
+                    List<Double> elevationList = new ArrayList<>();
+                    for(double value : elevationValues) {
+                        elevationList.add(value);
+                    }
+                    data.put("Elevation", elevationList);
+                    saveActivity();
+                }
+            });
+        }
+
+        private void saveActivity() {
+            String ActivityID = DocumentIDGenerator.GenerateActivityID();
+            data.put("ActivityID", ActivityID);
+
+            db.collection("Activities")
+                    .document(ActivityID)
+                    .set(data)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Context context = getActivity() != null ? getActivity().getApplicationContext() : null;
+                            if(context != null) {
+                                NotificationUtil.showSavedActivityNotification(context);
+                                OneTimeWorkRequest checkGoalsRequest = new OneTimeWorkRequest.Builder(GoalCompletedChecker.class)
+                                        .build();
+                                WorkManager.getInstance(getContext()).enqueue(checkGoalsRequest);
+                                Log.d("Activity Successfully Written", "Activity Successfully Written");
+                            }
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("Activity Write Failure", "Activity Write Failure");
+                        }
+                    });
         }
 }

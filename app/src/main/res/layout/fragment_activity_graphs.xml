@@ -1,11 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
-    <com.anychart.AnyChartView
-        android:id="@+id/paceGraph"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Title TextView -->
+        <TextView
+            android:id="@+id/txtPaceGraphs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Average Pace Graphs"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:paddingBottom="16dp"/>
+
+        <!-- First Graph (Bar Graph) -->
+        <com.anychart.AnyChartView
+            android:id="@+id/paceBarGraph"
+            android:layout_width="match_parent"
+            android:layout_height="333dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Second Graph (Line Graph) -->
+        <com.anychart.AnyChartView
+            android:id="@+id/paceLineGraph"
+            android:layout_width="match_parent"
+            android:layout_height="261dp"
+            android:layout_marginBottom="32dp"/>
+
+        <!-- Elevation TextView -->
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Elevation"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:paddingBottom="16dp"
+            android:layout_marginTop="16dp"/>
+
+        <!-- Elevation Chart -->
+        <com.anychart.AnyChartView
+            android:id="@+id/elevationChart"
+            android:layout_width="match_parent"
+            android:layout_height="213dp"
+            android:layout_marginBottom="16dp"/>
+
+    </LinearLayout>
+
+</ScrollView>

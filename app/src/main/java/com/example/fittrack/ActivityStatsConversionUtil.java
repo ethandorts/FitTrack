@@ -7,4 +7,5 @@ public class ActivityStatsConversionUtil {
         }
         return Math.round(((distance * 2.23694) / time) * 100.0 / 100.0);
     }
+
 }

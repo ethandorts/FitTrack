@@ -18,6 +18,10 @@ public class PersonalBestUtil {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private String UserID = mAuth.getUid();
+    private static final double aerobic_scaling_factor = 5.0;
+    private static final double elevation_scaling_factor = 5.0;
+    private static final double anaerobic_scaling_factor = 5.0;
+
 
     public void findFastest5K(String UserID, int distance, String activityType) {
         Query query = db.collection("Activities")
@@ -74,6 +78,15 @@ public class PersonalBestUtil {
             System.out.println("Error fetching activities: " + e.getMessage());
         });
     }
+
+    // Based on Firstbeat Analytics (also used by Garmin)
+    // Seiler, S. (2010) "Quantifying Training Load for Endurance Athletes"
+    // Ainsworth et al. (2011) "Compendium of Physical Activities"
+
+    public void calculateAerobicTrainingEffect() {
+
+    }
+
 
     public int convertLongtoSeconds(long milliseconds) {
         int seconds = (int) Math.round(milliseconds / 1000.0);

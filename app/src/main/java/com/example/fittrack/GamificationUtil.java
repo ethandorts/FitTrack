@@ -12,6 +12,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -250,6 +251,64 @@ public class GamificationUtil {
                 });
     }
 
+    public void retrieveElevationStats(String ActivityID, ActivityElevationCallback callback) {
+        ArrayList<Double> elevationValues = new ArrayList<>();
+        db.collection("Activities")
+                .whereEqualTo("ActivityID", ActivityID)
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot querySnapshot) {
+                        List<DocumentSnapshot> documents = querySnapshot.getDocuments();
+                        double time = 0;
+                        for(DocumentSnapshot snapshot : documents) {
+                            List<Double> stats = (List<Double>) snapshot.get("Elevation");
+                            time = (double) snapshot.get("time");
+                            if(stats != null) {
+                                for(Double stat : stats) {
+                                    elevationValues.add(stat);
+                                }
+                            }
+                        }
+                        callback.onCallback(elevationValues, time);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Activity Elevation Stats Retrieval Failure", "Failure to get elevation stats: " + e);
+                    }
+                });
+    }
+
+    public double calculateElevationGain(List<Double> elevationValues) {
+        double elevationGain = 0;
+        for(int i = 1; i <elevationValues.size(); i++) {
+            double elevationChange = elevationValues.get(i) - elevationValues.get(i - 1);
+            if(elevationChange > 0) {
+                elevationGain += elevationChange;
+            }
+        }
+        return Math.round(elevationGain * 100.0) / 100.0;
+    }
+
+    public double calculateElevationLoss(List<Double> elevationValues) {
+        double elevationLoss = 0;
+        for(int i = 1; i < elevationValues.size(); i++) {
+            double elevationChange = elevationValues.get(i) - elevationValues.get(i - 1);
+            if(elevationChange < 0) {
+                elevationLoss += Math.abs(elevationChange);
+            }
+        }
+        return Math.round(elevationLoss * 100.0) / 100.0;
+    }
+
+    public double getMinElevation(List<Double> elevationValues) {
+        return Collections.min(elevationValues);
+    }
+
+    public double getMaxElevation(List<Double> elevationDouble) {
+        return Collections.max(elevationDouble);
+    }
+
     public int convertPacetoSeconds(String pace) {
         String [] paceParts = pace.split(":");
         int minutes = Integer.parseInt(paceParts[0]);
@@ -286,5 +345,9 @@ public class GamificationUtil {
 
     public interface ActivitySplitsCallback {
         void onCallback(List<String> splits);
+    }
+
+    public interface ActivityElevationCallback {
+        void onCallback(List<Double> elevationStats, double time);
     }
 }

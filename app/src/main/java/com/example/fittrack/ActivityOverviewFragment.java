@@ -119,6 +119,7 @@ public class ActivityOverviewFragment extends Fragment {
             }
         });
 
+        txtTitle = view.findViewById(R.id.txtActivityOverviewTitle);
         txtDistance = view.findViewById(R.id.txtActivityOverviewDistanceValue);
         txtPace = view.findViewById(R.id.txtActivityOverviewPaceValue);
         txtHeartRate = view.findViewById(R.id.txtActivityOverviewHeartRateValue);
@@ -186,6 +187,7 @@ public class ActivityOverviewFragment extends Fragment {
             @Override
             public void onCallback(Map<String, Object> data) {
                 System.out.println(data);
+                txtTitle.setText(String.valueOf(data.get("type")) + " Activity");
                 txtDistance.setText(String.valueOf(data.get("distance") + " M"));
                 txtPace.setText(String.valueOf(data.get("pace") + "/KM"));
                 Timestamp date = (Timestamp) data.get("date");

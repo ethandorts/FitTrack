@@ -28,6 +28,7 @@ public class OverviewFitnessStats extends AppCompatActivity {
         ViewPager2 pager = findViewById(R.id.viewPager3);
         OverviewActivityFragmentStateAdapter adapter = new OverviewActivityFragmentStateAdapter(this);
         adapter.addFragment(new ActivityOverviewFragment(ActivityID));
+        adapter.addFragment(new ActivityStatisticsFragment(ActivityID));
         adapter.addFragment(new ActivitySplitsFragment(ActivityID));
         adapter.addFragment(new ActivityGraphs(ActivityID));
         pager.setAdapter(adapter);
@@ -41,9 +42,12 @@ public class OverviewFitnessStats extends AppCompatActivity {
                                 tab.setText("Overview");
                                 break;
                             case 1:
-                                tab.setText("Splits");
+                                tab.setText("Statistics");
                                 break;
                             case 2:
+                                tab.setText("Splits");
+                                break;
+                            case 3:
                                 tab.setText("Graphs");
                                 break;
                         }
