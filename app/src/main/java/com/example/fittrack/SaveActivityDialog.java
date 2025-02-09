@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -20,7 +21,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 
@@ -32,8 +32,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class SaveActivityDialog extends DialogFragment {
+    private Context context;
     private FirebaseUser mAuth;
     private String UserID;
     private FirebaseFirestore db;
@@ -50,6 +52,10 @@ public class SaveActivityDialog extends DialogFragment {
     private List<LatLng> locations = new ArrayList<>();
     private ElevationUtil elevationUtil;
 
+    public SaveActivityDialog(Context context) {
+        this.context = context;
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle SavedInstanceState) {
         Activity activity = getActivity();
@@ -59,6 +65,8 @@ public class SaveActivityDialog extends DialogFragment {
         db = FirebaseFirestore.getInstance();
 
         NotificationUtil.createSavedWorkoutNotificationChannel(activity);
+        System.out.println("User Weight: " + getUserWeight());
+        System.out.println("Application Context: " + context);
 
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                 .setPersistenceEnabled(true)
@@ -99,7 +107,7 @@ public class SaveActivityDialog extends DialogFragment {
             data.put("type", type);
             data.put("activityCoordinates", locations);
             data.put("splits", splits);
-            data.put("caloriesBurned", caloriesCalculator.calculateCalories(time, (calculateAveragePace(distance, time)), type, 88));
+            data.put("caloriesBurned", caloriesCalculator.calculateCalories(time, (calculateAveragePace(distance, time)), type, getUserWeight()));
 
         new Thread(new Runnable() {
             @Override
@@ -129,6 +137,10 @@ public class SaveActivityDialog extends DialogFragment {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             getElevationAndSave();
+                            NotificationUtil.showSavedActivityNotification(context);
+                            OneTimeWorkRequest checkGoalsRequest = new OneTimeWorkRequest.Builder(GoalCompletedChecker.class).setInitialDelay(10, TimeUnit.SECONDS)
+                                    .build();
+                            WorkManager.getInstance(getContext()).enqueue(checkGoalsRequest);
                         }
                     })
                     .setNegativeButton("Resume Activity", new DialogInterface.OnClickListener() {
@@ -180,14 +192,9 @@ public class SaveActivityDialog extends DialogFragment {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
-                            Context context = getActivity() != null ? getActivity().getApplicationContext() : null;
-                            if(context != null) {
-                                NotificationUtil.showSavedActivityNotification(context);
-                                OneTimeWorkRequest checkGoalsRequest = new OneTimeWorkRequest.Builder(GoalCompletedChecker.class)
-                                        .build();
-                                WorkManager.getInstance(getContext()).enqueue(checkGoalsRequest);
-                                Log.d("Activity Successfully Written", "Activity Successfully Written");
-                            }
+                            context = getActivity() != null ? getActivity().getApplicationContext() : null;
+                            Log.d("Activity Successfully Written", "Activity Successfully Written");
+
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -195,5 +202,11 @@ public class SaveActivityDialog extends DialogFragment {
                             Log.d("Activity Write Failure", "Activity Write Failure");
                         }
                     });
+        }
+
+        private int getUserWeight() {
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserPI", Context.MODE_PRIVATE);
+            long longWeight = sharedPreferences.getLong("Weight", 0);
+            return Math.toIntExact(longWeight);
         }
 }

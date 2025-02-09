@@ -92,14 +92,14 @@ public class FirebaseDatabaseHelper {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         Map<String, Object> data = documentSnapshot.getData();
-                        callback.onCallback((String) data.get("FullName"));
+                        callback.onCallback((String) data.get("FullName"), (long) data.get("Weight"), (long) data.get("Height"));
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         System.out.println("Couldn't fetch user details");
                         System.out.println(e.getMessage());
-                        callback.onCallback(null);
+                        callback.onCallback(null, 0, 0);
                     }
                 });
     }
@@ -145,7 +145,7 @@ public class FirebaseDatabaseHelper {
     }
 
     public interface FirestoreUserNameCallback {
-        void onCallback(String FullName);
+        void onCallback(String FullName, long weight, long height);
     }
 
 

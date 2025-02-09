@@ -61,6 +61,13 @@ public class ConversionUtil {
         return minutes * 60 + seconds;
     }
 
+    public static int convertTimeToSeconds(String time) {
+        String[] parts = time.split(":");
+        int minutes = Integer.parseInt(parts[0]);
+        int seconds = Integer.parseInt(parts[1]);
+        return minutes * 60 + seconds;
+    }
+
     public static double convertLongToMPH(long millisecondsperKM) {
         Double seconds = millisecondsperKM / 1000.0;
         double miles = 1 * 0.621371;

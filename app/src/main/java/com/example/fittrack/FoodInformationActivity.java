@@ -73,26 +73,63 @@ public class FoodInformationActivity extends AppCompatActivity {
         btnLogFood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FoodModel food = new FoodModel(
-                        foodName,
-                        (calories * Double.parseDouble(editServingSize.getText().toString()) / 100
-                        * Double.parseDouble(editServingQuantity.getText().toString())),
-                        editMeal.getSelectedItem().toString(),
-                        Double.parseDouble(editServingSize.getText().toString()),
-                        Double.parseDouble(editServingQuantity.getText().toString()),
-                        fat,
-                        saturated_fat,
-                        protein,
-                        sodium,
-                        potassium,
-                        carbs,
-                        fiber,
-                        sugar,
-                        false
-                );
-                foodUtil.saveFood(food);
+                if(validateCalorieInputs()) {
+                    FoodModel food = new FoodModel(
+                            foodName,
+                            (calories * Double.parseDouble(editServingSize.getText().toString()) / 100
+                                    * Double.parseDouble(editServingQuantity.getText().toString())),
+                            editMeal.getSelectedItem().toString(),
+                            Double.parseDouble(editServingSize.getText().toString()),
+                            Double.parseDouble(editServingQuantity.getText().toString()),
+                            fat,
+                            saturated_fat,
+                            protein,
+                            sodium,
+                            potassium,
+                            carbs,
+                            fiber,
+                            sugar,
+                            false
+                    );
+                    foodUtil.saveFood(food);
+                    editServingSize.setText("");
+                    editServingQuantity.setText("");
+                }
             }
         });
 
+    }
+
+    private boolean validateCalorieInputs() {
+        String servingSizeStr = editServingSize.getText().toString().trim();
+        String servingQuantityStr = editServingQuantity.getText().toString().trim();
+
+        if (servingSizeStr.isEmpty()) {
+            editServingSize.setError("Serving size is required!");
+            return false;
+        }
+        if (servingQuantityStr.isEmpty()) {
+            editServingQuantity.setError("Serving quantity is required!");
+            return false;
+        }
+
+        try {
+            double servingSize = Double.parseDouble(servingSizeStr);
+            double servingQuantity = Double.parseDouble(servingQuantityStr);
+
+            if (servingSize <= 0) {
+                editServingSize.setError("Serving size must be greater than 0!");
+                return false;
+            }
+            if (servingQuantity <= 0) {
+                editServingQuantity.setError("Serving quantity must be greater than 0!");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            editServingSize.setError("Invalid number format!");
+            editServingQuantity.setError("Invalid number format!");
+            return false;
+        }
+        return true;
     }
 }

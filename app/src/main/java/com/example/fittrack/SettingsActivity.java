@@ -1,6 +1,7 @@
 package com.example.fittrack;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -41,6 +42,7 @@ public class SettingsActivity extends AppCompatActivity {
         Button btnLogout = findViewById(R.id.btnLogOut);
         Button btnDeleteAccount = findViewById(R.id.btnDeleteAccount);
         Button btnBadges = findViewById(R.id.btnBadges);
+        Button btnAIAssistant = findViewById(R.id.btnAI);
 
         btnBadges.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,9 +68,21 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        btnAIAssistant.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SettingsActivity.this, AIAssistantActivity.class);
+                startActivity(intent);
+            }
+        });
+
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                SharedPreferences sharedPreferences = getSharedPreferences("UserPI", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.apply();
                 mAuth.signOut();
                 Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
                 startActivity(intent);

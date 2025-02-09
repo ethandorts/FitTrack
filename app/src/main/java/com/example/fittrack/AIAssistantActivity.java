@@ -1,5 +1,7 @@
 package com.example.fittrack;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -48,13 +50,22 @@ public class AIAssistantActivity extends AppCompatActivity {
 
         txtAI = findViewById(R.id.txt_ai_response);
         editTextAskAI = findViewById(R.id.editAskAI);
-        btnAskAI = findViewById(R.id.imageButtonSendRequest);
+        //btnAskAI = findViewById(R.id.imageButtonSendRequest);
+
+        System.out.println("User Weight: " + getUserWeight());
+
 
         btnAskAI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String question = editTextAskAI.getText().toString();
-                AskFitTrackCoachingAssistant(question);
+                AskFitTrackCoachingAssistant("My calorie goal for today is 3000 calories. My current number of calories consumed is 2300. " +
+                        "The current time is 11:00am. Can you specifically make the food consumed add up to the difference between calorie goal and the calories consumed." +
+                        "Can you suggest foods for me to eat so I can reach my calorie goal by the end of the day?" +
+                        "Here is an example of a response: " +
+                        "Suggested Food: (Suggested Food Name Here + total grams of food) " +
+                        "Number of Calories: (Number of calories of food suggested) " +
+                        "(Provide a reason for selection)");
                 editTextAskAI.setText("");
             }
         });
@@ -118,5 +129,15 @@ public class AIAssistantActivity extends AppCompatActivity {
             }
         };
         requestQueue.add(request);
+    }
+
+    private long getUserWeight() {
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPI", Context.MODE_PRIVATE);
+        return sharedPreferences.getLong("Weight", 0);
+    }
+
+    private long getUserHeight() {
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPI", Context.MODE_PRIVATE);
+        return sharedPreferences.getLong("Height", 0);
     }
 }

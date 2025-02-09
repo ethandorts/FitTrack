@@ -39,7 +39,7 @@ public class LikesRecyclerActivity extends AppCompatActivity {
                 for(String like : likesList) {
                     userUtil.retrieveUserName(like, new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
                         @Override
-                        public void onCallback(String FullName) {
+                        public void onCallback(String FullName, long weight, long height) {
                             likes.add(new LikeModel(FullName, 0));
                             LikesRecyclerAdapter adapter = new LikesRecyclerAdapter(getApplicationContext(), likes);
                             likesRecyclerView.setAdapter(adapter);

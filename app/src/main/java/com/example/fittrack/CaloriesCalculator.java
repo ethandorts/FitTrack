@@ -61,6 +61,11 @@ public class CaloriesCalculator {
         Walking_MET_Values.put("19:30", 1.3);
         Walking_MET_Values.put("20:00", 1.2);
 
+        Cycling_MET_Values.put("0:30", 20.0);
+        Cycling_MET_Values.put("1:00", 18.0);
+        Cycling_MET_Values.put("1:30", 17.0);
+        Cycling_MET_Values.put("2:00", 16.5);
+        Cycling_MET_Values.put("2:30", 16.2);
         Cycling_MET_Values.put("3:00", 16.0);
         Cycling_MET_Values.put("3:30", 14.0);
         Cycling_MET_Values.put("4:00", 12.0);
@@ -79,6 +84,14 @@ public class CaloriesCalculator {
     }
 
     public int calculateCalories(double seconds, String pace, String activityType, int weight) {
+        if(weight < 0) {
+            weight = 0;
+        }
+
+        if(seconds < 0) {
+            throw new IllegalArgumentException("Activity duration must be more than 0");
+        }
+
         Map<String, Double> MET_Map = new HashMap<>();
         switch(activityType) {
             case "Running":
@@ -100,8 +113,14 @@ public class CaloriesCalculator {
 
     private static int secondsConversion(String pace) {
         String[] pace_split = pace.split(":");
+        if (pace_split.length != 2) {
+            throw new IllegalArgumentException("Invalid format for pace value. Use hh:mm!");
+        }
         int minutes = Integer.parseInt(pace_split[0]);
         int seconds = Integer.parseInt(pace_split[1]);
+        if (minutes < 0 || seconds < 0 || seconds >= 60) {
+            throw new IllegalArgumentException("Negative value found for pace!");
+        }
         return (minutes * 60) + seconds;
     }
 

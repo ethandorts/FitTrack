@@ -14,6 +14,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -174,17 +175,22 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
 
 
         mAuth = FirebaseAuth.getInstance().getCurrentUser();
-        UserID = mAuth.getUid();
+        UserID = (mAuth != null) ? mAuth.getUid() : "test_user";
 
         //util.findFastest5K(UserID, 5000, "Running");
 
         DatabaseUtil.retrieveUserName(UserID, new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
             @Override
-            public void onCallback(String FullName) {
+            public void onCallback(String FullName, long weight, long height) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         UserName.setText(FullName);
+                        SharedPreferences storedPI = getSharedPreferences("UserPI", MODE_PRIVATE);
+                        SharedPreferences.Editor PIEditor = storedPI.edit();
+                        PIEditor.putLong("Weight", weight);
+                        PIEditor.putLong("Height", height);
+                        PIEditor.apply();
                     }
                 });
             }

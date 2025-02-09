@@ -62,4 +62,9 @@
         <item>Collaborative Challenges</item>
     </string-array>
 
+    <string-array name="ai_generated_types">
+        <item>Create a Training Schedule for Me</item>
+        <item>Create a Nutrition Plan</item>
+    </string-array>
+
 </resources>

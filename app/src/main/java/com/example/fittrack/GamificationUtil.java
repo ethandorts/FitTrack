@@ -279,36 +279,6 @@ public class GamificationUtil {
                 });
     }
 
-    public double calculateElevationGain(List<Double> elevationValues) {
-        double elevationGain = 0;
-        for(int i = 1; i <elevationValues.size(); i++) {
-            double elevationChange = elevationValues.get(i) - elevationValues.get(i - 1);
-            if(elevationChange > 0) {
-                elevationGain += elevationChange;
-            }
-        }
-        return Math.round(elevationGain * 100.0) / 100.0;
-    }
-
-    public double calculateElevationLoss(List<Double> elevationValues) {
-        double elevationLoss = 0;
-        for(int i = 1; i < elevationValues.size(); i++) {
-            double elevationChange = elevationValues.get(i) - elevationValues.get(i - 1);
-            if(elevationChange < 0) {
-                elevationLoss += Math.abs(elevationChange);
-            }
-        }
-        return Math.round(elevationLoss * 100.0) / 100.0;
-    }
-
-    public double getMinElevation(List<Double> elevationValues) {
-        return Collections.min(elevationValues);
-    }
-
-    public double getMaxElevation(List<Double> elevationDouble) {
-        return Collections.max(elevationDouble);
-    }
-
     public int convertPacetoSeconds(String pace) {
         String [] paceParts = pace.split(":");
         int minutes = Integer.parseInt(paceParts[0]);

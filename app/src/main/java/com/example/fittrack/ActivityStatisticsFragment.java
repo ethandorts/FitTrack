@@ -26,7 +26,7 @@ public class ActivityStatisticsFragment extends Fragment {
     FirebaseDatabaseHelper activityUtil = new FirebaseDatabaseHelper(db);
     TableLayout statsTable;
     String ActivityID;
-    private GamificationUtil gamUtil = new GamificationUtil();
+    private ElevationCalculator elevationCalculator = new ElevationCalculator();
 
     public ActivityStatisticsFragment(String ActivityID) {
         this.ActivityID = ActivityID;
@@ -65,10 +65,10 @@ public class ActivityStatisticsFragment extends Fragment {
                 String bestPace = ConversionUtil.longToTimeConversion(minSplit);
 
                 List<Double> elevationStats = (data.get("Elevation") != null) ? (List<Double>) data.get("Elevation") : new ArrayList<>();
-                double gain = (elevationStats.isEmpty()) ? 0.0 : gamUtil.calculateElevationGain(elevationStats);
-                double loss = (elevationStats.isEmpty()) ? 0.0 : gamUtil.calculateElevationLoss(elevationStats);
-                double maxElevation = (elevationStats.isEmpty()) ? 0.0 : gamUtil.getMaxElevation(elevationStats);
-                double minElevation = (elevationStats.isEmpty()) ? 0.0 : gamUtil.getMinElevation(elevationStats);
+                double gain = (elevationStats.isEmpty()) ? 0.0 : elevationCalculator.calculateElevationGain(elevationStats);
+                double loss = (elevationStats.isEmpty()) ? 0.0 : elevationCalculator.calculateElevationLoss(elevationStats);
+                double maxElevation = (elevationStats.isEmpty()) ? 0.0 : elevationCalculator.getMaxElevation(elevationStats);
+                double minElevation = (elevationStats.isEmpty()) ? 0.0 : elevationCalculator.getMinElevation(elevationStats);
 
                 addTableSection(statsTable, "Pace");
                 addRowStatsTable(statsTable, "Average Pace", (String) data.get("pace") + " /KM");

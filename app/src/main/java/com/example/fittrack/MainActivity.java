@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     kmSplit(previousLocation, nowLocation,true);
                     btnStopStart.setText("Resume Run");
                     btnStopStart.setBackgroundColor(getResources().getColor(R.color.green));
-                    SaveActivityDialog saveActivityDialog = new SaveActivityDialog();
+                    SaveActivityDialog saveActivityDialog = new SaveActivityDialog(getApplicationContext());
                     long runTime = 0;
 
                     for(long split : kmSplits) {

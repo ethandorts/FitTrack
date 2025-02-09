@@ -2,6 +2,9 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="ScreenLoadingTest">
+        <State />
+      </entry>
       <entry key="app">
         <State>
           <targetsSelectedWithDialog>
@@ -16,6 +19,9 @@
             </Target>
           </targetsSelectedWithDialog>
         </State>
+      </entry>
+      <entry key="loadAIAssistantActivityWithin3Seconds()">
+        <State />
       </entry>
     </value>
   </component>

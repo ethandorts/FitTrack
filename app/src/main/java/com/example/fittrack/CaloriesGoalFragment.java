@@ -2,12 +2,14 @@ package com.example.fittrack;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -67,22 +69,61 @@ public class CaloriesGoalFragment extends Fragment {
         btnCreateCaloriesGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                editCompletionDate.setError(null);
                 Date endDate;
                 String targetCalories = editTargetCalories.getText().toString();
                 String completionDate = editCompletionDate.getText().toString();
 
+                if(targetCalories.isEmpty()) {
+                    editTargetCalories.setError("Please enter a target calorie goal!");
+                    return;
+                }
+                double calorieGoal;
+                try {
+                    calorieGoal = Double.parseDouble(targetCalories);
+                    if (calorieGoal <= 0) {
+                        editTargetCalories.setError("Please enter a valid calorie goal!");
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    editTargetCalories.setError("Please enter a valid value for the calorie goal!");
+                    return;
+                }
+
+                if(completionDate.isEmpty()) {
+                    editCompletionDate.setError("Please enter a completion date");
+                    return;
+                }
+
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                 SimpleDateFormat descriptionFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy", Locale.getDefault());
+
                 try {
                     endDate = dateFormat.parse(completionDate);
+                    if (endDate == null) {
+                        editCompletionDate.setError("Invalid date format entered! Please use this format: dd/MM/yyyy");
+                        return;
+                    }
+
+                    Date currentDate = new Date();
+                    if (endDate.before(currentDate)) {
+                        editCompletionDate.setError("Please enter a valid completion date");
+                        return;
+                    }
+
                 } catch (ParseException e) {
-                    throw new RuntimeException(e);
+                    editCompletionDate.setError("Invalid date format entered! Please use this format: dd/MM/yyyy");
+                    return;
                 }
 
                 Timestamp formattedCompletionDate = new Timestamp(endDate);
                 String formattedEndDate = descriptionFormat.format(endDate);
                 goalsUtil.setCalorieGoal(currentUser, Timestamp.now(), formattedCompletionDate, Double.parseDouble(targetCalories), "In Progress", 0,
-                        "Consumed " + targetCalories + " calories by the end of " + formattedEndDate);
+                        "Consume " + targetCalories + " calories by the end of " + formattedEndDate);
+                Toast.makeText(view.getContext(), "Calorie goal has been set successfully!", Toast.LENGTH_SHORT).show();
+
+                editTargetCalories.setText("");
+                editCompletionDate.setText("");
             }
         });
     }
