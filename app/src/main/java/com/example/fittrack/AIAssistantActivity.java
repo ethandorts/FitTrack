@@ -15,6 +15,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NoConnectionError;
@@ -39,105 +42,144 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AIAssistantActivity extends AppCompatActivity {
-    private TextView txtAI;
-    private EditText editTextAskAI;
-    private ImageButton btnAskAI;
+    private Button btnCreateTrainingSchedule, btnCreateNutritionPlan, btnFitnessAdvice, btnNutritionAdvice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_aiassistant);
 
-        txtAI = findViewById(R.id.txt_ai_response);
-        editTextAskAI = findViewById(R.id.editAskAI);
-        //btnAskAI = findViewById(R.id.imageButtonSendRequest);
+        btnCreateTrainingSchedule = findViewById(R.id.btnCreateTrainingSchedule);
+        btnCreateNutritionPlan = findViewById(R.id.btnCreateNutritionPlan);
+        btnFitnessAdvice = findViewById(R.id.btnFitnessAdvice);
+        btnNutritionAdvice = findViewById(R.id.btnNutritionAdvice);
 
-        System.out.println("User Weight: " + getUserWeight());
+        loadFragment(new IntroductionFragment());
 
-
-        btnAskAI.setOnClickListener(new View.OnClickListener() {
+        btnCreateTrainingSchedule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String question = editTextAskAI.getText().toString();
-                AskFitTrackCoachingAssistant("My calorie goal for today is 3000 calories. My current number of calories consumed is 2300. " +
-                        "The current time is 11:00am. Can you specifically make the food consumed add up to the difference between calorie goal and the calories consumed." +
-                        "Can you suggest foods for me to eat so I can reach my calorie goal by the end of the day?" +
-                        "Here is an example of a response: " +
-                        "Suggested Food: (Suggested Food Name Here + total grams of food) " +
-                        "Number of Calories: (Number of calories of food suggested) " +
-                        "(Provide a reason for selection)");
-                editTextAskAI.setText("");
+                loadFragment(new CreateTrainingScheduleFragment());
             }
         });
 
+        btnCreateNutritionPlan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadFragment(new CreateNutritionPlanFragment());
+            }
+        });
+
+        btnFitnessAdvice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadFragment(new GeneralFitnessAdviceFragment());
+            }
+        });
+
+        btnNutritionAdvice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadFragment(new GeneralNutritionAdvice());
+            }
+        });
+
+
+//        btnAskAI.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                String question = editTextAskAI.getText().toString();
+//                AskFitTrackCoachingAssistant(" You are an AI coaching assistant. If the user asks a question that is not related to fitness or nutrition, " +
+//                        "direct the conversation back to health, fitness and nutrition in a polite manner." +
+//                        "Do you know a good place I could go on holiday?"
+//                        );
+//                editTextAskAI.setText("");
+//            }
+//        });
+
     }
 
-    public void AskFitTrackCoachingAssistant(String question) {
-        JSONObject body = new JSONObject();
-        JSONArray messagesArray = new JSONArray();
-        try {
-            body.put("model", "gpt-3.5-turbo");
-            JSONObject messages = new JSONObject();
-            messages.put("role", "user");
-            messages.put("content", question);
-            messagesArray.put(messages);
-            body.put("messages", messagesArray);
-        } catch(JSONException e) {
-            System.out.println("Error creating request body: " + e);
+//    public void AskFitTrackCoachingAssistant(String question) {
+//        JSONObject body = new JSONObject();
+//        JSONArray messagesArray = new JSONArray();
+//        try {
+//            body.put("model", "gpt-3.5-turbo");
+//            JSONObject messages = new JSONObject();
+//            messages.put("role", "user");
+//            messages.put("content", question);
+//            messagesArray.put(messages);
+//            body.put("messages", messagesArray);
+//        } catch(JSONException e) {
+//            System.out.println("Error creating request body: " + e);
+//        }
+//
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        //String api_key;
+//        JsonObjectRequest request = new JsonObjectRequest(
+//                Request.Method.POST,
+//                "https://api.openai.com/v1/chat/completions",
+//                body,
+//                new Response.Listener<JSONObject>() {
+//                    @Override
+//                    public void onResponse(JSONObject jsonObject) {
+//                        try {
+//                            System.out.println(jsonObject);
+//                            JSONArray array = jsonObject.getJSONArray("choices");
+//                            JSONObject object = (JSONObject) array.get(0);
+//                            JSONObject nextObject = (JSONObject) object.get("message");
+//                            String message = nextObject.getString("content");
+//                            txtAI.setText(message);
+//                        } catch (JSONException e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError volleyError) {
+//                        System.out.println("AI failure: " + volleyError + " " + volleyError.getMessage() + " ");
+//                    }
+//                }
+//        ) {
+//            @Override
+//            public Map<String, String> getHeaders() {
+//                Map<String, String> headersMap = new HashMap<>();
+//                headersMap.put("Content-Type", "application/json");
+//                headersMap.put("Authorization", "Bearer "); // add API key here
+//
+//                return headersMap;
+//            }
+//
+//            @Override
+//            public RetryPolicy getRetryPolicy() {
+//                return new DefaultRetryPolicy(60000, 3, 1);
+//            }
+//        };
+//        requestQueue.add(request);
+//    }
+
+//    private long getUserWeight() {
+//        SharedPreferences sharedPreferences = getSharedPreferences("UserPI", Context.MODE_PRIVATE);
+//        return sharedPreferences.getLong("Weight", 0);
+//    }
+//
+//    private long getUserHeight() {
+//        SharedPreferences sharedPreferences = getSharedPreferences("UserPI", Context.MODE_PRIVATE);
+//        return sharedPreferences.getLong("Height", 0);
+//    }
+
+    private void loadFragment(Fragment fragment) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        Fragment currentFragment = fm.findFragmentById(R.id.fragmentContainerAIAdvice);
+
+        if(currentFragment != null) {
+            transaction.remove(currentFragment);
+            transaction.commit();
+            transaction = fm.beginTransaction();
         }
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        //String api_key;
-        JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.POST,
-                "https://api.openai.com/v1/chat/completions",
-                body,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject jsonObject) {
-                        try {
-                            System.out.println(jsonObject);
-                            JSONArray array = jsonObject.getJSONArray("choices");
-                            JSONObject object = (JSONObject) array.get(0);
-                            JSONObject nextObject = (JSONObject) object.get("message");
-                            String message = nextObject.getString("content");
-                            txtAI.setText(message);
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        System.out.println("AI failure: " + volleyError + " " + volleyError.getMessage() + " ");
-                    }
-                }
-        ) {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headersMap = new HashMap<>();
-                headersMap.put("Content-Type", "application/json");
-                headersMap.put("Authorization", "Bearer "); // add API key here
-
-                return headersMap;
-            }
-
-            @Override
-            public RetryPolicy getRetryPolicy() {
-                return new DefaultRetryPolicy(60000, 3, 1);
-            }
-        };
-        requestQueue.add(request);
-    }
-
-    private long getUserWeight() {
-        SharedPreferences sharedPreferences = getSharedPreferences("UserPI", Context.MODE_PRIVATE);
-        return sharedPreferences.getLong("Weight", 0);
-    }
-
-    private long getUserHeight() {
-        SharedPreferences sharedPreferences = getSharedPreferences("UserPI", Context.MODE_PRIVATE);
-        return sharedPreferences.getLong("Height", 0);
+        transaction.add(R.id.fragmentContainerAIAdvice, fragment);
+        transaction.commit();
     }
 }

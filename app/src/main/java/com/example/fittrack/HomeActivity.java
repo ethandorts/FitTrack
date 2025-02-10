@@ -181,7 +181,7 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
 
         DatabaseUtil.retrieveUserName(UserID, new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
             @Override
-            public void onCallback(String FullName, long weight, long height) {
+            public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -190,6 +190,8 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
                         SharedPreferences.Editor PIEditor = storedPI.edit();
                         PIEditor.putLong("Weight", weight);
                         PIEditor.putLong("Height", height);
+                        PIEditor.putLong("ActivityFrequency", activityFrequency);
+                        PIEditor.putLong("DailyCalorieGoal", dailyCalorieGoal);
                         PIEditor.apply();
                     }
                 });

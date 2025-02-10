@@ -9,8 +9,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class GoalsUtil {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -124,5 +128,64 @@ public class GoalsUtil {
                         Log.e("Update Status Failed", "Failure to update goal status: " + e);
                     }
                 });
+    }
+
+    public void retrieveUserGoals(String UserID, GoalsCallback callback) {
+        db.collection("Users")
+                .document(UserID)
+                .collection("Goals")
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot querySnapshot) {
+                        List<String> goals = new ArrayList<>();
+                        if(!querySnapshot.getDocuments().isEmpty()) {
+                            for(QueryDocumentSnapshot snapshot : querySnapshot) {
+                                String status = (String) snapshot.get("status");
+                                if(status.equals("In Progress")) {
+                                    String goal = (String) snapshot.get("goalDescription");
+                                    goals.add(goal);
+                                }
+                            }
+                            callback.onCallback(goals);
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Unable to retrieve goals", e.getMessage());
+                    }
+                });
+    }
+
+    public void retrieveUserCalorieGoals(String UserID, GoalsCallback callback) {
+        db.collection("Users")
+                .document(UserID)
+                .collection("Goals")
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot querySnapshot) {
+                        List<String> goals = new ArrayList<>();
+                        if(!querySnapshot.getDocuments().isEmpty()) {
+                            for(QueryDocumentSnapshot snapshot : querySnapshot) {
+                                String status = (String) snapshot.get("status");
+                                String type = (String) snapshot.get("goalType");
+                                if(status.equals("In Progress") && type.equals("Calorie")) {
+                                    String goal = (String) snapshot.get("goalDescription");
+                                    goals.add(goal);
+                                }
+                                callback.onCallback(goals);
+                            }
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Unable to retrieve goals", e.getMessage());
+                    }
+                });
+    }
+
+    public interface GoalsCallback {
+        void onCallback(List<String> goals);
     }
 }

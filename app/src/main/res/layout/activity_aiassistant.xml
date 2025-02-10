@@ -4,25 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:visibility="visible"
     tools:context=".AIAssistantActivity">
 
-
+    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/BadgesToolbar"
-        android:layout_width="412dp"
-        android:layout_height="68dp"
-        android:layout_marginBottom="112dp"
+        android:layout_width="408dp"
+        android:layout_height="61dp"
         android:background="@color/button_blue"
         android:elevation="4dp"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintBottom_toTopOf="@+id/spinner"
+        app:layout_constraintBottom_toTopOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/txtAIToolbar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -30,92 +26,86 @@
             android:text="AI Fitness Coach"
             android:textColor="@color/white"
             android:textSize="24sp"
-            android:textStyle="bold"
-            tools:layout_editor_absoluteX="147dp"
-            tools:layout_editor_absoluteY="16dp" />
-
+            android:textStyle="bold" />
     </androidx.appcompat.widget.Toolbar>
 
-    <LinearLayout
-        android:id="@+id/linearLayoutAI"
-        android:layout_width="405dp"
-        android:layout_height="81dp"
-        android:orientation="horizontal"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="4dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollView2">
-
-
-        <EditText
-            android:id="@+id/editAskAI"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:hint="Ask FitTrack Coaching Assistant..."
-            android:inputType="text" />
-
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="wrap_content"
-            android:layout_height="62dp"
-            android:layout_weight="1"
-            android:text="Create Fitness Routine" />
-
-    </LinearLayout>
-
-    <ScrollView
-        android:id="@+id/scrollView2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="3dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayoutAI"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/txt_ai_response"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Loading..."
-                tools:layout_editor_absoluteX="1dp"
-                tools:layout_editor_absoluteY="337dp" />
-
-        </LinearLayout>
-    </ScrollView>
-
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/scrollView2"
+    <!-- AI Robot Image -->
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="411dp"
+        android:layout_height="146dp"
+        android:layout_marginBottom="16dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/fittrack_bot"
+        app:layout_constraintBottom_toTopOf="@+id/gridOptions"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/BadgesToolbar" />
 
-    <ImageView
-        android:id="@+id/imageView"
+    <!-- Main Action Buttons (4 Options) -->
+    <GridLayout
+        android:id="@+id/gridOptions"
         android:layout_width="0dp"
-        android:layout_height="112dp"
-        android:layout_marginTop="1dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:columnCount="2"
+        app:layout_constraintBottom_toTopOf="@+id/fragmentContainerAIAdvice"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/BadgesToolbar"
-        app:srcCompat="@drawable/fitbot" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView">
+
+        <Button
+            android:id="@+id/btnCreateTrainingSchedule"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            android:backgroundTint="@color/button_blue"
+            android:text="Create Training Schedule"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/btnCreateNutritionPlan"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            android:backgroundTint="@color/button_blue"
+            android:text="Create Nutrition Plan"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/btnFitnessAdvice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            android:backgroundTint="@color/button_blue"
+            android:text="General Fitness Advice"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/btnNutritionAdvice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            android:backgroundTint="@color/button_blue"
+            android:text="General Nutrition Advice"
+            android:textColor="@android:color/white" />
+    </GridLayout>
+
+    <!-- Fragment Container View -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerAIAdvice"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gridOptions" />
+
+    <!-- User Input Section -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

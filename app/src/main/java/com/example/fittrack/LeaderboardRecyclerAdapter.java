@@ -38,7 +38,7 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
         holder.DistanceValue.setText(String.valueOf(String.format("%.2f KM", leaderboardModel.getDistance() / 1000)));
         userUtil.retrieveUserName(leaderboardModel.getUsername(), new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
             @Override
-            public void onCallback(String FullName, long weight, long height) {
+            public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal) {
                 holder.UserName.setText(FullName);
             }
         });
