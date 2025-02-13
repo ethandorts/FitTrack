@@ -11,120 +11,102 @@
         android:id="@+id/LikesCardView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="1dp"
         app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="50dp"
+        app:cardCornerRadius="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
             <TextView
                 android:id="@+id/txtMeetupTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
                 android:text="Meetup Title"
                 android:textColor="#000000"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/txtMeetupUser"
-                app:layout_constraintStart_toStartOf="@+id/txtMeetupUser" />
-
-            <TextView
-                android:id="@+id/txtMeetupUser"
-                android:layout_width="0dp"
-                android:layout_height="22dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="51dp"
-                android:layout_marginEnd="27dp"
-                android:layout_marginBottom="51dp"
-                android:text="Ethan Doherty "
-                android:textColor="#000000"
-                app:layout_constraintBottom_toTopOf="@+id/txtMeetupDetails"
-                app:layout_constraintEnd_toStartOf="@+id/txtMeetupDate"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <Button
-                android:id="@+id/btnReject"
+            <TextView
+                android:id="@+id/txtMeetupDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="104dp"
-                android:backgroundTint="#FF0000"
-                android:text="Reject"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="Date"
+                android:textColor="#000000"
+                app:layout_constraintTop_toTopOf="@id/txtMeetupTitle"
                 app:layout_constraintEnd_toEndOf="parent" />
 
             <TextView
-                android:id="@+id/txtMeetupDate"
-                android:layout_width="0dp"
-                android:layout_height="23dp"
-                android:layout_marginTop="51dp"
-                android:layout_marginEnd="1dp"
-                android:layout_marginBottom="50dp"
-                android:text="Date"
-                android:textColor="#000000"
-                app:layout_constraintBottom_toTopOf="@+id/txtMeetupDetails"
-                app:layout_constraintEnd_toEndOf="@+id/txtMeetupDetails"
-                app:layout_constraintStart_toStartOf="@+id/btnReject"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/btnAccept"
+                android:id="@+id/txtMeetupUser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="84dp"
-                android:layout_marginBottom="2dp"
-                android:backgroundTint="#4CAF50"
-                android:text="Accept"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="Ethan Doherty"
+                android:textColor="#000000"
+                app:layout_constraintTop_toBottomOf="@id/txtMeetupTitle"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/txtMeetupLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Meetup Location"
+                android:textColor="#000000"
+                app:layout_constraintTop_toBottomOf="@id/txtMeetupUser"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/txtMeetupDetails"
                 android:layout_width="0dp"
-                android:layout_height="62dp"
-                android:layout_marginStart="17dp"
-                android:layout_marginTop="124dp"
-                android:layout_marginEnd="17dp"
-                android:text="Details of Fitness Activity "
+                android:layout_height="wrap_content"
+                android:text="Details of Fitness Activity"
                 android:textColor="#000000"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/txtMeetupLocation"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <Button
+                android:id="@+id/btnViewAttendees"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View Attendees"
+                app:layout_constraintTop_toBottomOf="@id/txtMeetupDetails"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <ImageView
                 android:id="@+id/imgStatus"
                 android:layout_width="70dp"
                 android:layout_height="54dp"
-                android:layout_marginStart="82dp"
-                android:layout_marginTop="9dp"
-                android:layout_marginEnd="81dp"
-                android:layout_marginBottom="10dp"
-                app:layout_constraintBottom_toTopOf="@+id/btnAccept"
-                app:layout_constraintEnd_toEndOf="@+id/btnReject"
-                app:layout_constraintStart_toStartOf="@+id/btnAccept"
-                app:layout_constraintTop_toBottomOf="@+id/txtMeetupDetails" />
-
-            <TextView
-                android:id="@+id/txtMeetupLocation"
-                android:layout_width="232dp"
-                android:layout_height="23dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="83dp"
-                android:layout_marginBottom="80dp"
-                android:text="Meetup Location"
-                android:textColor="#000000"
-                app:layout_constraintBottom_toBottomOf="@+id/txtMeetupDetails"
+                app:layout_constraintTop_toBottomOf="@id/btnViewAttendees"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <Button
+                android:id="@+id/btnAccept"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#4CAF50"
+                android:text="Accept"
+                app:layout_constraintTop_toBottomOf="@id/imgStatus"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btnReject" />
+
+            <Button
+                android:id="@+id/btnReject"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FF0000"
+                android:text="Reject"
+                app:layout_constraintTop_toBottomOf="@id/imgStatus"
+                app:layout_constraintStart_toEndOf="@id/btnAccept"
+                app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

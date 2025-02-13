@@ -65,7 +65,7 @@ public class SaveEventDialogFragment extends DialogFragment {
                     String activityType = editActivityType.getSelectedItem().toString();
                     String eventName = editEventName.getText().toString().trim();
                     String description = editDescription.getText().toString().trim();
-                    EventModel event = new EventModel(activityType, onDate, eventName, description, "To Be Completed");
+                    EventModel event = new EventModel(activityType, onDate, description, eventName);
                     eventUtil.addNewEvent(event);
                     dismiss();
                 }
@@ -91,11 +91,6 @@ public class SaveEventDialogFragment extends DialogFragment {
         if (TextUtils.isEmpty(description)) {
             editDescription.setError("Description is required");
             editDescription.requestFocus();
-            return false;
-        }
-
-        if (editActivityType.getSelectedItemPosition() == 0) {
-            Toast.makeText(getContext(), "Please select an activity type", Toast.LENGTH_SHORT).show();
             return false;
         }
 

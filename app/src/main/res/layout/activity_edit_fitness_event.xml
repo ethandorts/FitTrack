@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditFitnessEvent">
+
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/EditEventToolbar"
+        android:layout_width="414dp"
+        android:layout_height="69dp"
+        android:layout_marginBottom="15dp"
+        android:background="@color/button_blue"
+        android:elevation="4dp"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toTopOf="@+id/labelEditEventName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/txtEditEventToolbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Edit Event"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <EditText
+        android:id="@+id/enterEditDescription"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="14dp"
+        android:gravity="start|top"
+        android:hint="Enter Description"
+        android:inputType="textMultiLine"
+        android:padding="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnEditEvent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editLabelDescription" />
+
+    <TextView
+        android:id="@+id/labelEditEventName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Event Name"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/enterEditEventName"
+        app:layout_constraintStart_toStartOf="@+id/enterEditEventName"
+        app:layout_constraintTop_toBottomOf="@+id/EditEventToolbar" />
+
+    <EditText
+        android:id="@+id/enterEditEventName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp"
+        android:hint="Enter Event Name"
+        android:inputType="text"
+        android:padding="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/labelEditActivityType"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelEditEventName" />
+
+    <Button
+        android:id="@+id/btnDeleteEvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="218dp"
+        android:text="Delete Event"
+        android:textColorHint="#FF0000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/btnEditEvent"
+        app:layout_constraintTop_toBottomOf="@+id/btnEditEvent" />
+
+    <TextView
+        android:id="@+id/labelEditActivityType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Activity Type"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/enterEditActivityType"
+        app:layout_constraintStart_toStartOf="@+id/enterEditEventName"
+        app:layout_constraintTop_toBottomOf="@+id/enterEditEventName" />
+
+    <TextView
+        android:id="@+id/editLabelDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
+        android:layout_marginBottom="8dp"
+        android:text="Description"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/enterEditDescription"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/enterEditActivityType" />
+
+    <Button
+        android:id="@+id/btnEditEvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="105dp"
+        android:layout_marginEnd="105dp"
+        android:layout_marginBottom="13dp"
+        android:text="Save Fitness Event"
+        app:layout_constraintBottom_toTopOf="@+id/btnDeleteEvent"
+        app:layout_constraintEnd_toEndOf="@+id/enterEditActivityType"
+        app:layout_constraintStart_toStartOf="@+id/enterEditDescription"
+        app:layout_constraintTop_toBottomOf="@+id/enterEditDescription" />
+
+    <Spinner
+        android:id="@+id/enterEditActivityType"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginBottom="13dp"
+        android:hint="Enter Activity Type"
+        android:inputType="text"
+        android:padding="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/editLabelDescription"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelEditActivityType" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

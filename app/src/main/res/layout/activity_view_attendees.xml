@@ -5,38 +5,37 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MyBadgesActivity">
+    tools:context=".ViewAttendeesActivity">
+
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/CreatePostsToolbar"
-        android:layout_width="412dp"
-        android:layout_height="70dp"
+        android:id="@+id/ViewAttendeesToolbar"
+        android:layout_width="413dp"
+        android:layout_height="76dp"
         android:layout_marginBottom="1dp"
         android:background="@color/button_blue"
         android:elevation="4dp"
         android:theme="?attr/actionBarTheme"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerBadges"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerAttendees"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/txtAIToolbar"
+            android:id="@+id/txtAttendees"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="My Badges"
+            android:text=" Confirmed Attendees"
             android:textColor="@color/white"
             android:textSize="24sp"
-            android:textStyle="bold"
-            tools:layout_editor_absoluteX="147dp"
-            tools:layout_editor_absoluteY="16dp" />
+            android:textStyle="bold" />
 
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerBadges"
+        android:id="@+id/recyclerAttendees"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="1dp"
@@ -45,5 +44,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/CreatePostsToolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/ViewAttendeesToolbar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

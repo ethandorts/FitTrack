@@ -50,7 +50,7 @@ public class GroupPostsViewModel extends ViewModel {
                 for(Map<String, Object> post : posts) {
                     PostModel singlePost = new PostModel(
                             String.valueOf(post.get("UserID")),
-                            (String) post.get("Date"),
+                            (Timestamp) post.get("Date"),
                             String.valueOf(post.get("Description"))
                     );
                     postCollection.add(singlePost);

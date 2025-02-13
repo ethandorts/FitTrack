@@ -13,18 +13,18 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class CommentsRecyclerViewAdapter extends FirestoreRecyclerAdapter<CommentModel,CommentsRecyclerViewAdapter.CommentHolder> {
+public class PostCommentsRecyclerView extends FirestoreRecyclerAdapter<CommentModel, PostCommentsRecyclerView.PostCommentHolder> {
     private Context context;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
 
-    public CommentsRecyclerViewAdapter(@NonNull FirestoreRecyclerOptions<CommentModel> options, Context context) {
+    public PostCommentsRecyclerView(@NonNull FirestoreRecyclerOptions<CommentModel> options, Context context) {
         super(options);
         this.context = context;
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull CommentHolder holder, int i, @NonNull CommentModel comment) {
+    protected void onBindViewHolder(@NonNull PostCommentHolder holder, int i, @NonNull CommentModel comment) {
         DatabaseUtil.retrieveUserName(comment.getUserID(), new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
             @Override
             public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal) {
@@ -36,19 +36,18 @@ public class CommentsRecyclerViewAdapter extends FirestoreRecyclerAdapter<Commen
 
     @NonNull
     @Override
-    public CommentHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public PostCommentHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.comment_row, parent, false);
-        return new CommentsRecyclerViewAdapter.CommentHolder(view);
+        return new PostCommentHolder(view);
     }
 
-
-    public static class CommentHolder extends RecyclerView.ViewHolder {
+    public static class PostCommentHolder extends RecyclerView.ViewHolder {
         TextView txtUser, txtComment;
-        public CommentHolder (@NonNull View itemView) {
+
+        public PostCommentHolder(@NonNull View itemView) {
             super(itemView);
             txtUser = itemView.findViewById(R.id.txtNutrientNameLabel);
             txtComment = itemView.findViewById(R.id.txtNutrientValueLabel);
         }
     }
-
 }

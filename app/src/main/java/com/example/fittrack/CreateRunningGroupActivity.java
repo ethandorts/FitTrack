@@ -1,6 +1,7 @@
 package com.example.fittrack;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -45,7 +46,32 @@ public class CreateRunningGroupActivity extends AppCompatActivity {
                 String Location = editLocation.getText().toString().trim();
                 String Motto = editMotto.getText().toString().trim();
                 String Description = editDescription.getText().toString().trim();
+
+                if(TextUtils.isEmpty(GroupName)) {
+                    editGroupName.setError("Group Name is required!");
+                    editGroupName.requestFocus();
+                    return;
+                }
+
+                if(TextUtils.isEmpty(Location)) {
+                    editLocation.setError("Location is required!");
+                    editLocation.requestFocus();
+                    return;
+                }
+
+                if(TextUtils.isEmpty(Motto)) {
+                    editMotto.setError("Motto is required!");
+                    editMotto.requestFocus();
+                    return;
+                }
+
+                if(TextUtils.isEmpty(Description)) {
+                    editDescription.setError("Description is required!");
+                    editDescription.requestFocus();
+                    return;
+                }
                 groupsDatabaseUtil.createNewGroup(currentUser, GroupName, FitnessActivity, Location, Motto, Description);
+                finish();
             }
         });
     }

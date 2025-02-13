@@ -89,6 +89,7 @@ public class GroupsDatabaseUtil {
         meetupFields.put("Date", date);
         meetupFields.put("Location", location);
         meetupFields.put("Description", description);
+        meetupFields.put("MeetupID", " ");
 
         groupReference.add(meetupFields).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
@@ -142,6 +143,29 @@ public class GroupsDatabaseUtil {
                         System.out.println("Failed to rejected request " + GroupID);
                     }
                 });
+    }
+
+    public void getMeetupAccepted(String GroupID, String MeetupID, AcceptedCallback callback) {
+        DocumentReference docReference = db.collection("Groups").document(GroupID).collection("Meetups").document(MeetupID);
+        docReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Map<String, Object> data = documentSnapshot.getData();
+                List<String> accepted = (List<String>) data.get("Accepted");
+                List<LikeModel> people = new ArrayList<>();
+
+                for(String accept : accepted) {
+                    LikeModel likeModel = new LikeModel(accept, 0);
+                    people.add(likeModel);
+                }
+                callback.onCallback(people);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("No Accepted Failure", "No accepted members failure");
+            }
+        });
     }
 
     public void removeRequested(String GroupID, String UserID) {
@@ -442,5 +466,9 @@ public class GroupsDatabaseUtil {
 
     public interface RequestsCallback{
         void onCallback(boolean RequestStatus);
+    }
+
+    public interface AcceptedCallback {
+        void onCallback(List<LikeModel> accepted);
     }
 }

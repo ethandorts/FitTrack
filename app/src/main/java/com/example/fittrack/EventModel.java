@@ -12,15 +12,12 @@ public class EventModel {
     private String Description;
     @PropertyName("EventName")
     private String EventName;
-    @PropertyName("Completed")
-    private String Completed;
 
-    public EventModel(String activityType, String dateTime, String description, String eventName, String isCompleted) {
+    public EventModel(String activityType, String dateTime, String description, String eventName) {
         ActivityType = activityType;
         DateTime = dateTime;
         Description = description;
         EventName = eventName;
-        Completed = isCompleted;
     }
 
     public EventModel() {}
@@ -55,13 +52,5 @@ public class EventModel {
 
     public void setEventName(String eventName) {
         EventName = eventName;
-    }
-
-    public String getCompleted() {
-        return Completed;
-    }
-
-    public void setCompleted(String completed) {
-        Completed = completed;
     }
 }

@@ -4,10 +4,10 @@ import com.google.firebase.Timestamp;
 
 public class PostModel {
     private String UserID;
-    private String Date;
+    private Timestamp Date;
     private String Description;
 
-    public PostModel(String userID, String date, String description) {
+    public PostModel(String userID, Timestamp date, String description) {
         UserID = userID;
         this.Date = date;
         this.Description = description;
@@ -25,12 +25,12 @@ public class PostModel {
         UserID = userID;
     }
 
-    public String getDate() {
+    public Timestamp getDate() {
         return Date;
     }
 
-    public void setDate(String date) {
-        this.Date = date;
+    public void setDate(Timestamp date) {
+        Date = date;
     }
 
     public String getDescription() {

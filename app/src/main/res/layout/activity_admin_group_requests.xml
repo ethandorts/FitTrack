@@ -8,7 +8,7 @@
     tools:context=".AdminGroupRequestsActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/BadgesToolbar"
+        android:id="@+id/CreatePostsToolbar"
         android:layout_width="415dp"
         android:layout_height="78dp"
         android:layout_marginBottom="1dp"
@@ -46,5 +46,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/BadgesToolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/CreatePostsToolbar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

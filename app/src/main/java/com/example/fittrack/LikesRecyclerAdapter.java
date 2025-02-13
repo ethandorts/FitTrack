@@ -4,16 +4,21 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 
 public class LikesRecyclerAdapter extends RecyclerView.Adapter<LikesRecyclerAdapter.LikesViewHolder>{
     private Context context;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ArrayList<LikeModel> likesList = new ArrayList<>();
+    private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
 
     public LikesRecyclerAdapter(Context context, ArrayList<LikeModel> likesList) {
         this.context = context;
@@ -31,7 +36,13 @@ public class LikesRecyclerAdapter extends RecyclerView.Adapter<LikesRecyclerAdap
     public void onBindViewHolder(@NonNull LikesViewHolder holder, int position) {
         LikeModel model = likesList.get(position);
 
-        holder.txtLikeName.setText(model.getLikeName());
+        DatabaseUtil.retrieveUserName(model.getLikeName(), new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
+            @Override
+            public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal) {
+                holder.txtLikeName.setText(FullName);
+                holder.img.setImageResource(R.drawable.profile);
+            }
+        });
     }
 
     @Override
@@ -41,10 +52,12 @@ public class LikesRecyclerAdapter extends RecyclerView.Adapter<LikesRecyclerAdap
 
     public static class LikesViewHolder extends RecyclerView.ViewHolder {
         TextView txtLikeName;
+        ImageView img;
 
         public LikesViewHolder(@NonNull View itemView) {
             super(itemView);
             txtLikeName = itemView.findViewById(R.id.txtLikeName);
+            img = itemView.findViewById(R.id.imgLikeProfile);
         }
     }
 }

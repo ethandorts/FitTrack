@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -96,16 +97,52 @@ public class CreateMeetupDialogFragment extends DialogFragment {
                 if(getArguments() != null) {
                     GroupID = getArguments().getString("GroupID");
                 }
+                Timestamp meetupDate;
                 String stringDate = editDate.getText().toString();
                 String stringTime = editTime.getText().toString();
+                String title = editTitle.getText().toString();
+                String location = editLocation.getText().toString();
+                String description = editDescription.getText().toString();
+                if(!TextUtils.isEmpty(stringDate) && !TextUtils.isEmpty(stringTime)) {
+                    meetupDate = convertDate(stringDate, stringTime);
+                    System.out.println("Conversion");
+                } else {
+                    editDate.setError("Date and Time is required!");
+                    editDate.requestFocus();
+                    System.out.println("Validation error");
+                    return;
+                }
 
-                Timestamp meetupDate = convertDate(stringDate, stringTime);
+                if(TextUtils.isEmpty(title)) {
+                    editTitle.setError("Meetup Title is required!");
+                    editTitle.requestFocus();
+                    return;
+                }
+
+                if(TextUtils.isEmpty(location)) {
+                    editLocation.setError("Location is required!");
+                    editLocation.requestFocus();
+                    return;
+                }
+
+                if(TextUtils.isEmpty(description)) {
+                    editDescription.setError("Description is required!");
+                    editDescription.requestFocus();
+                    return;
+                }
+
+                if (meetupDate.toDate().before(new Date())) {
+                    editDate.setError("Meetup date and time must be in the future!");
+                    editDate.requestFocus();
+                    return;
+                }
+
                 groupsUtil.createNewMeetup(GroupID,
                         UserID,
-                        editTitle.getText().toString(),
+                        title,
                         meetupDate,
-                        editLocation.getText().toString(),
-                        editDescription.getText().toString()
+                        location,
+                        description
                         );
                 dismiss();
             }

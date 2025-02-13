@@ -8,7 +8,7 @@
     tools:context=".NutritionTrackingOverview">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/BadgesToolbar"
+        android:id="@+id/CreatePostsToolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="18dp"
@@ -64,7 +64,7 @@
         app:layout_constraintBottom_toTopOf="@+id/tabLayoutMealTypes"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/txtSelectDateLabel"
-        app:layout_constraintTop_toBottomOf="@+id/BadgesToolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/CreatePostsToolbar" />
 
     <TextView
         android:id="@+id/txtSelectDateLabel"
@@ -79,5 +79,5 @@
         app:layout_constraintBottom_toTopOf="@+id/pagerFoods"
         app:layout_constraintEnd_toStartOf="@+id/editSelectedDate"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/BadgesToolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/CreatePostsToolbar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,7 +8,7 @@
     tools:context=".SelectExerciseTypeActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/BadgesToolbar"
+        android:id="@+id/CreatePostsToolbar"
         android:layout_width="411dp"
         android:layout_height="67dp"
         android:layout_marginBottom="1dp"
@@ -45,5 +45,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/BadgesToolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/CreatePostsToolbar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

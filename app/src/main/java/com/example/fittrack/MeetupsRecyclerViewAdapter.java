@@ -26,6 +26,7 @@ import java.util.Date;
 public class MeetupsRecyclerViewAdapter extends FirestoreRecyclerAdapter<MeetupModel, MeetupsRecyclerViewAdapter.MeetupsViewHolder> {
     private Context context;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
     private CommentUtil commentUtil = new CommentUtil(db);
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private String currentUser = mAuth.getCurrentUser().getUid();
@@ -46,12 +47,29 @@ public class MeetupsRecyclerViewAdapter extends FirestoreRecyclerAdapter<MeetupM
 
     @Override
     protected void onBindViewHolder(@NonNull MeetupsViewHolder holder, int i, @NonNull MeetupModel meetup) {
+        if(meetup.getUser().equals(currentUser)) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(view.getContext(), EditMeetupActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    // complete the rest of this next day.
+                }
+            });
+        }
+
         holder.itemView.setTag(meetup.getMeetupID());
         holder.Title.setText(meetup.getTitle());
-        holder.Username.setText(meetup.getUser());
+        DatabaseUtil.retrieveUserName(meetup.getUser(), new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
+            @Override
+            public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal) {
+                holder.Username.setText("Event Organiser: " + FullName);
+            }
+        });
         holder.Date.setText(dateFormatter(meetup.getDate()));
-        holder.Details.setText(meetup.getDescription());
-        holder.Location.setText(meetup.getLocation());
+        holder.Details.setText("Details: " + meetup.getDescription());
+        holder.Location.setText("Location: " + meetup.getLocation());
         System.out.println("MeetupID is " + meetup.getMeetupID());
 
         commentUtil.checkMeetupStatus(GroupID, currentUser, meetup.getMeetupID(), new CommentUtil.StatusCheckCallback() {
@@ -79,11 +97,22 @@ public class MeetupsRecyclerViewAdapter extends FirestoreRecyclerAdapter<MeetupM
                 commentUtil.rejectMeetup(GroupID, meetup.getMeetupID(), currentUser);
             }
         });
+
+        holder.btnViewAttendees.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), ViewAttendeesActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("GroupID", GroupID);
+                intent.putExtra("MeetupID", meetup.getMeetupID());
+                context.startActivity(intent);
+            }
+        });
     }
 
     public static class MeetupsViewHolder extends RecyclerView.ViewHolder {
         TextView Title, Username, Location, Details, Date;
-        Button btnAccept, btnReject;
+        Button btnAccept, btnReject, btnViewAttendees;
         ImageView Status;
 
         public MeetupsViewHolder(@NonNull View itemView) {
@@ -96,6 +125,7 @@ public class MeetupsRecyclerViewAdapter extends FirestoreRecyclerAdapter<MeetupM
             Status = itemView.findViewById(R.id.imgStatus);
             btnAccept = itemView.findViewById(R.id.btnAccept);
             btnReject = itemView.findViewById(R.id.btnReject);
+            btnViewAttendees = itemView.findViewById(R.id.btnViewAttendees);
         }
     }
     private String dateFormatter(Timestamp timestamp) {

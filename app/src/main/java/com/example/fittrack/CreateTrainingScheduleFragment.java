@@ -34,6 +34,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -79,7 +81,7 @@ public class CreateTrainingScheduleFragment extends Fragment {
                         "My goals are " + goalsList + "." + "Other Considerations is none. \n" +
                         "\n" +
                         "I would like to complete " + getActivityFrequency() + " fitness activities per week only. " +
-                        "Display the training schedule in this format, for example:\n" +
+                        "Display the training schedule in this format strictly with no asterixes following words, for example:\n" +
                         "\n" +
                         "Date: 24/10/2024\n" +
                         "Activity Type: Running\n" +
@@ -160,7 +162,8 @@ public class CreateTrainingScheduleFragment extends Fragment {
 
                             String message = messageObject.getString("content");
                             txtResponse.setText(message);
-                            extractAIRoutine(message);
+                            System.out.println(message);
+                            //extractAIRoutine(message);
                             lastMessage = message;
 
                             editMessage.setVisibility(View.VISIBLE);
@@ -242,17 +245,29 @@ public class CreateTrainingScheduleFragment extends Fragment {
             String description = "";
             String activityType = "";
 
+            DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
             for (String activity : futureActivities) {
                 activity = activity.trim();
 
-                if (activity.matches(".*(\\d{2}/\\d{2}/\\d{4}).*")) {
-                    dateTime = activity.replaceAll(".*(\\d{2}/\\d{2}/\\d{4}).*", "$1");
-                } else if (activity.startsWith("- Activity Type:")) {
-                    activityType = activity.replace("- Activity Type:", "").trim();
-                } else if (activity.startsWith("- Activity Title:")) {
-                    eventName = activity.replace("- Activity Title:", "").trim();
-                } else if (activity.startsWith("- Details:")) {
-                    description = activity.replace("- Details:", "").trim();
+                if (activity.startsWith("Date:")) {
+                    String rawDate = activity.replace("Date:", "").trim();
+                    try {
+                        dateTime = LocalDate.parse(rawDate, inputFormat).format(outputFormat);
+                        System.out.println(dateTime);
+                    } catch (Exception dateParseException) {
+                        Log.e("Date Parse Error", "Invalid date format: " + rawDate);
+                    }
+                } else if (activity.startsWith("Activity Type:")) {
+                    activityType = activity.replace("Activity Type:", "").trim();
+                    System.out.println("Activity Type " + activityType);
+                } else if (activity.startsWith("Activity Title:")) {
+                    eventName = activity.replace("Activity Title:", "").trim();
+                    System.out.println("EventName: " + eventName);
+                } else if (activity.startsWith("Details:")) {
+                    description = activity.replace("Details:", "").trim();
+                    System.out.println("Details " + description);
                 }
 
                 if (!dateTime.isEmpty() && !activityType.isEmpty() && !eventName.isEmpty() && !description.isEmpty()) {
@@ -269,6 +284,8 @@ public class CreateTrainingScheduleFragment extends Fragment {
             if (!dateTime.isEmpty() && !activityType.isEmpty() && !eventName.isEmpty() && !description.isEmpty()) {
                 addToCalendar(activityType, dateTime, eventName, description);
                 Log.d("AI Events Saved", "Saved AI event for " + dateTime);
+            } else {
+                System.out.println("Events not saved");
             }
 
         } catch (Exception e) {

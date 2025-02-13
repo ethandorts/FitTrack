@@ -124,6 +124,12 @@ public class Calendar extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        eventsAdapter.notifyDataSetChanged();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         eventsAdapter.stopListening();

@@ -30,6 +30,21 @@
         android:theme="@style/Theme.FitTrack"
         tools:targetApi="31">
         <activity
+            android:name=".EditMeetupActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ViewAttendeesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PostCommentsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreatePostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EditFitnessEvent"
+            android:exported="false" />
+        <activity
             android:name=".AIScheduleTrainingPlan"
             android:exported="false" />
         <activity

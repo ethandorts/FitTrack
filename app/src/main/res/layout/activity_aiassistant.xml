@@ -8,7 +8,7 @@
 
     <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/BadgesToolbar"
+        android:id="@+id/CreatePostsToolbar"
         android:layout_width="408dp"
         android:layout_height="61dp"
         android:background="@color/button_blue"
@@ -40,7 +40,7 @@
         app:layout_constraintBottom_toTopOf="@+id/gridOptions"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/BadgesToolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/CreatePostsToolbar" />
 
     <!-- Main Action Buttons (4 Options) -->
     <GridLayout

@@ -92,6 +92,7 @@ public class FirebaseDatabaseHelper {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         Map<String, Object> data = documentSnapshot.getData();
+                        System.out.println("Data: " + data);
                         callback.onCallback((String) data.get("FullName"), (long) data.get("Weight"), (long) data.get("Height"), (long) data.get("ActivityFrequency"), (long) data.get("DailyCalorieGoal") );
                     }
                 }).addOnFailureListener(new OnFailureListener() {

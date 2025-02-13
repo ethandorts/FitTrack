@@ -138,6 +138,27 @@ public class CommentUtil {
                 });
     }
 
+    public void savePostComment(String GroupID, String PostID, CommentModel comment) {
+        Map<String, Object> commentMap = new HashMap<>();
+        commentMap.put("UserID", comment.getUserID());
+        commentMap.put("Comment", comment.getComment());
+        commentMap.put("date", comment.getDate());
+
+        db.collection("Groups").document(GroupID).collection("Posts").document(PostID).collection("Comments").document()
+                .set(commentMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        System.out.println("Logged comment");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        System.out.println("Failure saving comment: " + e);
+                    }
+                });
+    }
+
     public void acceptMeetup(String GroupID, String Meetup, String UserID) {
         DocumentReference documentReference = db.collection("Groups")
                 .document(GroupID)
@@ -216,9 +237,14 @@ public class CommentUtil {
                 List<String> acceptedList = (List<String>) documentSnapshot.get("Accepted");
                 List<String> rejectedList = (List<String>) documentSnapshot.get("Rejected");
 
-                if(acceptedList.contains(UserID)) {
+                boolean isAccepted = acceptedList != null && acceptedList.contains(UserID);
+                boolean isRejected = rejectedList != null && rejectedList.contains(UserID);
+
+                if(isAccepted) {
                     callback.onCallback(true);
-                } else if (rejectedList.contains(UserID)) {
+                } else if (isRejected) {
+                    callback.onCallback(false);
+                } else {
                     callback.onCallback(false);
                 }
             }
