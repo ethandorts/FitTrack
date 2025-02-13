@@ -41,7 +41,7 @@ public class AIScheduleTrainingPlan extends AppCompatActivity {
     public void AskFitTrackCoachingAssistant(String question) {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-        // Step 1: Create a new Thread (Required for Assistants API)
+
         JSONObject threadBody = new JSONObject();
 
         JsonObjectRequest threadRequest = new JsonObjectRequest(
@@ -70,8 +70,8 @@ public class AIScheduleTrainingPlan extends AppCompatActivity {
             public Map<String, String> getHeaders() {
                 Map<String, String> headersMap = new HashMap<>();
                 headersMap.put("Content-Type", "application/json");
-                headersMap.put("Authorization", "Bearer YOUR_OPENAI_API_KEY"); // Replace with your API key
-                headersMap.put("OpenAI-Beta", "assistants=v2"); // Required for Assistants API
+                headersMap.put("Authorization", "Bearer YOUR_OPENAI_API_KEY");
+                headersMap.put("OpenAI-Beta", "assistants=v2");
                 return headersMap;
             }
         };

@@ -7,4 +7,152 @@
     android:layout_height="match_parent"
     tools:context=".EditMeetupActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/EditMeetupToolbar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/button_blue"
+        android:elevation="4dp"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toTopOf="@+id/txtMeetupTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/txtEditMeetupToolbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Edit Meetup"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <TextView
+        android:id="@+id/txtMeetupTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="Meetup Title"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/editMeetupTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/EditMeetupToolbar" />
+
+    <EditText
+        android:id="@+id/editMeetupTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@+id/txtMeetupDate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtMeetupTitle" />
+
+    <TextView
+        android:id="@+id/txtMeetupDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="7dp"
+        android:text="Date"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/editMeetupDate"
+        app:layout_constraintStart_toStartOf="@+id/editMeetupDate"
+        app:layout_constraintTop_toBottomOf="@+id/editMeetupTitle" />
+
+    <EditText
+        android:id="@+id/editMeetupDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:inputType="date"
+        app:layout_constraintBottom_toTopOf="@+id/txtMeetupLocation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtMeetupDate" />
+
+    <TextView
+        android:id="@+id/txtMeetupLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="Location"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/editMeetupLocation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editMeetupDate" />
+
+    <EditText
+        android:id="@+id/editMeetupLocation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@+id/txtMeetupDetails"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtMeetupLocation" />
+
+    <TextView
+        android:id="@+id/txtMeetupDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="Details"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/editMeetupDetails"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editMeetupLocation" />
+
+    <EditText
+        android:id="@+id/editMeetupDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="18dp"
+        android:inputType="textMultiLine"
+        android:minLines="3"
+        app:layout_constraintBottom_toTopOf="@+id/btnSaveMeetup"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtMeetupDetails" />
+
+    <Button
+        android:id="@+id/btnSaveMeetup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="14dp"
+        android:text="Save Meetup"
+        app:layout_constraintBottom_toTopOf="@+id/btnDeleteMeetup"
+        app:layout_constraintStart_toStartOf="@+id/btnDeleteMeetup"
+        app:layout_constraintTop_toBottomOf="@+id/editMeetupDetails" />
+
+    <Button
+        android:id="@+id/btnDeleteMeetup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="134dp"
+        android:text="Delete Meetup"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnSaveMeetup" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

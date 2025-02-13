@@ -58,7 +58,6 @@ public class GroupMeetupsFragment extends Fragment {
                 CreateMeetupDialogFragment dialog = new CreateMeetupDialogFragment();
                 dialog.setArguments(arguments);
                 dialog.show(getActivity().getSupportFragmentManager(), "CreateMeetup");
-                //groupsUtil.createNewMeetup(GroupID, currentUser, " ", " ", " ", " ");
             }
         });
 

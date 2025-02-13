@@ -322,7 +322,7 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
         addFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, NutritionTrackingOverview.class);
+                Intent intent = new Intent(HomeActivity.this, CreateManualActivity.class);
                 startActivity(intent);
             }
         });

@@ -2,6 +2,9 @@ package com.example.fittrack;
 
 import com.google.firebase.Timestamp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MeetupModel {
     private String MeetupID;
     private String Title;
@@ -10,8 +13,10 @@ public class MeetupModel {
     private String Location;
     private String Description;
     private String Status;
+    private ArrayList<String> Accepted;
+    private ArrayList<String> Rejected;
 
-    public MeetupModel(String meetupID, String title, String user, Timestamp date, String location, String description, String status) {
+    public MeetupModel(String meetupID, String title, String user, Timestamp date, String location, String description, String status, ArrayList<String> accepted, ArrayList<String> rejected) {
         MeetupID = meetupID;
         Title = title;
         User = user;
@@ -19,6 +24,8 @@ public class MeetupModel {
         Location = location;
         Description = description;
         Status = status;
+        Accepted = accepted;
+        Rejected = rejected;
     }
 
     public MeetupModel() {
@@ -79,5 +86,21 @@ public class MeetupModel {
 
     public void setMeetupID(String meetupID) {
         this.MeetupID = meetupID;
+    }
+
+    public ArrayList<String> getAccepted() {
+        return Accepted;
+    }
+
+    public void setAccepted(ArrayList<String> accepted) {
+        Accepted = accepted;
+    }
+
+    public void setRejected(ArrayList<String> rejected) {
+        Rejected = rejected;
+    }
+
+    public ArrayList<String> getRejected() {
+        return Rejected;
     }
 }

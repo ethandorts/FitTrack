@@ -168,6 +168,61 @@ public class GroupsDatabaseUtil {
         });
     }
 
+    public void deleteMeetup(String GroupID, String MeetupID) {
+        DocumentReference docReference = db.collection("Groups").document(GroupID).collection("Meetups").document(MeetupID);
+        docReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Log.d("Meetup Deleted", "Meetup Successfully Deleted");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("Delete Meetup Failure", "Delete Meetup Failure");
+            }
+        });
+    }
+
+    public void deletePost(String GroupID, String PostID) {
+        db.collection("Groups").document(GroupID).collection("Posts").document(PostID).delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+    }
+
+    public void updateMeetup(String GroupID, String MeetupID, String UserID, String Title, Timestamp Date, String Location, String Description, List<String> Accepted, List<String> Rejected) {
+        DocumentReference docReference = db.collection("Groups").document(GroupID).collection("Meetups").document(MeetupID);
+        Map<String, Object> meetupData = new HashMap<>();
+        meetupData.put("GroupID", GroupID);
+        meetupData.put("MeetupID", MeetupID);
+        meetupData.put("User", UserID);
+        meetupData.put("Title", Title);
+        meetupData.put("Date", Date);
+        meetupData.put("Location", Location);
+        meetupData.put("Description", Description);
+        meetupData.put("Accepted", Accepted);
+        meetupData.put("Rejected", Rejected);
+        docReference.update(meetupData).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+    }
+
     public void removeRequested(String GroupID, String UserID) {
         DocumentReference groupReference = db.collection("Groups").document(GroupID);
         groupReference.update("JoinRequests", FieldValue.arrayRemove(UserID))
@@ -211,30 +266,46 @@ public class GroupsDatabaseUtil {
                 });
     }
 
-    public void retrieveGroupMeetups(String GroupID, MeetupsCallback callback, DocumentSnapshot lastVisible) {
-        Query query = db.collection("Groups").document(GroupID).collection("Meetups");
+//    public void retrieveGroupMeetups(String GroupID, MeetupsCallback callback, DocumentSnapshot lastVisible) {
+//        Query query = db.collection("Groups").document(GroupID).collection("Meetups");
+//
+//        if (lastVisible != null) {
+//            query = query.startAfter(lastVisible);
+//        }
+//        query.get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            List<Map<String, Object>> data = new ArrayList<>();
+//                            DocumentSnapshot lastVisible = null;
+//                            for (QueryDocumentSnapshot document : task.getResult()) {
+//                                data.add(document.getData());
+//                                lastVisible = document;
+//                            }
+//                            callback.onCallback(data, lastVisible);
+//                        } else {
+//                            System.out.println("Error getting data: " + task.getException());
+//                            callback.onCallback(null, null);
+//                        }
+//                    }
+//                });
+//    }
 
-        if (lastVisible != null) {
-            query = query.startAfter(lastVisible);
-        }
-        query.get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            List<Map<String, Object>> data = new ArrayList<>();
-                            DocumentSnapshot lastVisible = null;
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                data.add(document.getData());
-                                lastVisible = document;
-                            }
-                            callback.onCallback(data, lastVisible);
-                        } else {
-                            System.out.println("Error getting data: " + task.getException());
-                            callback.onCallback(null, null);
-                        }
-                    }
-                });
+    public void retrieveMeetup(String GroupID, String MeetupID, MeetupCallback callback) {
+        DocumentReference docReference = db.collection("Groups").document(GroupID).collection("Meetups").document(MeetupID);
+        docReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Map<String, Object> data = documentSnapshot.getData();
+                callback.onCallback(data);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("Meetup Retrival Failure", "Meetup Retrieval Failure");
+            }
+        });
     }
 
     public void retrieveSpecificGroup(String GroupID, GroupInformationCallback callback) {
@@ -470,5 +541,9 @@ public class GroupsDatabaseUtil {
 
     public interface AcceptedCallback {
         void onCallback(List<LikeModel> accepted);
+    }
+
+    public interface MeetupCallback {
+        void onCallback(Map<String, Object> meetupData);
     }
 }

@@ -52,9 +52,17 @@ public class MeetupsRecyclerViewAdapter extends FirestoreRecyclerAdapter<MeetupM
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(view.getContext(), EditMeetupActivity.class);
+                    intent.putExtra("GroupID", GroupID);
+                    intent.putExtra("MeetupID", meetup.getMeetupID());
+                    intent.putExtra("User", meetup.getUser());
+                    intent.putExtra("Title", meetup.getTitle());
+                    intent.putExtra("Date", dateFormatter(meetup.getDate()));
+                    intent.putExtra("Location", meetup.getLocation());
+                    intent.putExtra("Description", meetup.getDescription());
+                    intent.putStringArrayListExtra("Accepted", meetup.getAccepted());
+                    intent.putStringArrayListExtra("Rejected", meetup.getRejected());
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                    // complete the rest of this next day.
+                    context.startActivity(intent);
                 }
             });
         }

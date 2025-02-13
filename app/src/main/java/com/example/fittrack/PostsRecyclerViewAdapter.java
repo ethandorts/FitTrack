@@ -46,7 +46,7 @@ public class PostsRecyclerViewAdapter extends FirestoreRecyclerAdapter<PostModel
                 holder.txtName.setText(FullName);
             }
         });
-        holder.txtDate.setText(String.valueOf(post.getDate()));
+        holder.txtDate.setText(ConversionUtil.TimestamptoString(post.getDate()));
         holder.txtDescription.setText(post.getDescription());
         holder.btnComments.setOnClickListener(new View.OnClickListener() {
             @Override

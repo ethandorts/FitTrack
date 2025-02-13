@@ -55,7 +55,7 @@ public class PostCommentsActivity extends AppCompatActivity {
                         .setQuery(query, CommentModel.class)
                         .build();
 
-        postCommentsRecyclerView = new PostCommentsRecyclerView(options, getApplicationContext());
+        postCommentsRecyclerView = new PostCommentsRecyclerView(options, getApplicationContext(), GroupID, PostID);
         postCommentsRecycler.setAdapter(postCommentsRecyclerView);
         postCommentsRecycler.setLayoutManager(new LinearLayoutManager(this));
 

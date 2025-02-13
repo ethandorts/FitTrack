@@ -142,7 +142,7 @@ public class ActivitiesRecyclerViewAdapter extends FirestoreRecyclerAdapter<Acti
                         Log.d("ActivitiesRecyclerViewAdapter", "No points to draw");
                     }
                 } else {
-                    System.out.println("GeoData object is null");
+                    holder.activityMapContainer.setVisibility(View.GONE);
                 }
             }
         });

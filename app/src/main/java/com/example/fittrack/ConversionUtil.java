@@ -2,12 +2,23 @@ package com.example.fittrack;
 
 import com.google.firebase.Timestamp;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class ConversionUtil {
     public ConversionUtil() {
 
+    }
+
+    public static String kmToMeters(double km) {
+        double meters = km * 1000;
+        DecimalFormat df = new DecimalFormat("0.00");
+        return df.format(meters);
     }
 
     public static String capitaliseFoodName(String foodName) {
@@ -87,5 +98,24 @@ public class ConversionUtil {
         int minutes = inputSeconds / 60;
         int seconds = inputSeconds % 60;
         return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+    }
+
+    public static Timestamp StringtoTimeStamp(String DateOfBirth) {
+        Timestamp convertedDOB = null;
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            Date date = dateFormat.parse(DateOfBirth);
+            convertedDOB = new Timestamp(date);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return convertedDOB;
+    }
+
+    public static String TimestamptoString(Timestamp time) {
+        LocalDateTime date = LocalDateTime.ofInstant(Instant.ofEpochSecond(time.getSeconds()), ZoneId.systemDefault());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+
+        return date.format(formatter);
     }
 }

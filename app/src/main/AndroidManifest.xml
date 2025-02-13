@@ -30,6 +30,12 @@
         android:theme="@style/Theme.FitTrack"
         tools:targetApi="31">
         <activity
+            android:name=".DeletePostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreateManualActivity"
+            android:exported="false" />
+        <activity
             android:name=".EditMeetupActivity"
             android:exported="false" />
         <activity

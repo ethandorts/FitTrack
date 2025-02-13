@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/txtManualDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:text="Date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editManualDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Enter Date..."
+        android:inputType="text"
+        app:layout_constraintStart_toStartOf="@+id/txtManualDate"
+        app:layout_constraintTop_toBottomOf="@+id/txtManualDate" />
+
+    <TextView
+        android:id="@+id/txtManualDistance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="19dp"
+        android:text="Distance (KM)"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editManualDate" />
+
+    <EditText
+        android:id="@+id/editManualDistance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Enter Distance..."
+        android:inputType="text"
+        app:layout_constraintStart_toStartOf="@+id/txtManualDistance"
+        app:layout_constraintTop_toBottomOf="@+id/txtManualDistance" />
+
+    <TextView
+        android:id="@+id/txtManualTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="26dp"
+        android:text="Time"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editManualDistance" />
+
+    <EditText
+        android:id="@+id/editManualTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Enter Time..."
+        android:inputType="text"
+        app:layout_constraintStart_toStartOf="@+id/txtManualTime"
+        app:layout_constraintTop_toBottomOf="@+id/txtManualTime" />
+
+    <Button
+        android:id="@+id/btnSaveActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:text="Save Activity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editManualTime" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
