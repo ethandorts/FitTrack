@@ -7,4 +7,52 @@
     android:layout_height="match_parent"
     tools:context=".PersonalRecordsActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/PersonalBestToolbar"
+        android:layout_width="414dp"
+        android:layout_height="76dp"
+        android:layout_marginBottom="9dp"
+        android:background="@color/button_blue"
+        android:elevation="4dp"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toTopOf="@+id/spinnerActivityPB"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/txtPersonalBestTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Personal Bests"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="147dp"
+            tools:layout_editor_absoluteY="16dp" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerPB"
+        android:name="com.example.fittrack.RunningPersonalBestFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerActivityPB" />
+
+    <Spinner
+        android:id="@+id/spinnerActivityPB"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="14dp"
+        app:layout_constraintBottom_toTopOf="@+id/fragmentContainerPB"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/PersonalBestToolbar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

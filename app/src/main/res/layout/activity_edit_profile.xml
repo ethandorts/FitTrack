@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditProfileActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/CreatePostsToolbar"
+        android:layout_width="413dp"
+        android:layout_height="54dp"
+        android:layout_marginBottom="4dp"
+        android:background="@color/button_blue"
+        android:elevation="4dp"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toTopOf="@+id/editProfileImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/txtPersonalBestTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="My FitTrack Profile"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <ImageView
+        android:id="@+id/editProfileImage"
+        android:layout_width="121dp"
+        android:layout_height="107dp"
+        android:layout_marginBottom="12dp"
+        android:contentDescription="Profile Image"
+        app:layout_constraintBottom_toTopOf="@+id/txtProfileName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/CreatePostsToolbar"
+        app:srcCompat="@drawable/profile" />
+
+    <TextView
+        android:id="@+id/txtProfileName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/txteditWeight"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editProfileImage" />
+
+    <TextView
+        android:id="@+id/txtDailyCalorieGoal"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="3dp"
+        android:layout_marginBottom="8dp"
+        android:text="Daily Calorie Goal"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/editProfileCalories"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editActivitiesNo" />
+
+    <TextView
+        android:id="@+id/txtWeightUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="233dp"
+        android:text="kg"
+        android:textSize="16sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/editProfileWeight"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editProfileWeight" />
+
+    <TextView
+        android:id="@+id/txtCalorieUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="177dp"
+        android:text="calories"
+        android:textSize="16sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/editProfileCalories"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editProfileCalories" />
+
+    <TextView
+        android:id="@+id/txtHeightUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="225dp"
+        android:text="cm"
+        android:textSize="16sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/editProfileHeight"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editProfileHeight" />
+
+    <EditText
+        android:id="@+id/editProfileHeight"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:hint="Enter height..."
+        android:inputType="numberDecimal"
+        app:layout_constraintBottom_toTopOf="@+id/txtProfileNoActivities"
+        app:layout_constraintEnd_toStartOf="@+id/txtHeightUnit"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtEditHeight" />
+
+    <TextView
+        android:id="@+id/txteditWeight"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="3dp"
+        android:layout_marginBottom="8dp"
+        android:text="Weight"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/editProfileWeight"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtProfileName" />
+
+    <TextView
+        android:id="@+id/txtProfileNoActivities"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="8dp"
+        android:text="Targed Fitness Activities Per Week"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/editActivitiesNo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editProfileHeight" />
+
+    <EditText
+        android:id="@+id/editActivitiesNo"
+        android:layout_width="397dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="17dp"
+        android:hint="Enter targeted activities..."
+        android:inputType="number"
+        app:layout_constraintBottom_toTopOf="@+id/txtDailyCalorieGoal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtProfileNoActivities" />
+
+    <EditText
+        android:id="@+id/editProfileWeight"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:hint="Enter weight..."
+        android:inputType="numberDecimal"
+        app:layout_constraintBottom_toTopOf="@+id/txtEditHeight"
+        app:layout_constraintEnd_toStartOf="@+id/txtWeightUnit"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txteditWeight" />
+
+    <TextView
+        android:id="@+id/txtEditHeight"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="8dp"
+        android:text="Height"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/editProfileHeight"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editProfileWeight" />
+
+    <EditText
+        android:id="@+id/editProfileCalories"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="65dp"
+        android:hint="Enter calorie goal"
+        android:inputType="number"
+        app:layout_constraintBottom_toTopOf="@+id/btnSaveFitnessDetails"
+        app:layout_constraintEnd_toStartOf="@+id/txtCalorieUnit"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtDailyCalorieGoal" />
+
+    <Button
+        android:id="@+id/btnSaveFitnessDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:text="Save Profile"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editProfileCalories" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

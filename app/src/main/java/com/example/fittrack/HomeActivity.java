@@ -355,6 +355,19 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
         }).start();
         activitiesAdapter.notifyDataSetChanged();
         activitiesAdapter.startListening();
+        DatabaseUtil.retrieveProfilePicture(UserID + ".jpeg", new FirebaseDatabaseHelper.ProfilePictureCallback() {
+            @Override
+            public void onCallback(Uri PicturePath) {
+                if(PicturePath != null) {
+                    Glide.with(HomeActivity.this)
+                            .load(PicturePath)
+                            .into(profileImage);
+                } else {
+                    Log.e("No profile picture found", "No profile picture found.");
+                    profileImage.setImageResource(R.drawable.profile);
+                }
+            }
+        });
         isEndofArray = false;
         lastVisible = null;
     }

@@ -67,4 +67,20 @@
         <item>Create a Nutrition Plan</item>
     </string-array>
 
+    <string-array name="activity_types_PB">
+        <item>Running</item>
+        <item>Walking</item>
+        <item>Cycling</item>
+    </string-array>
+
+    <string-array name="overall_fitness_goals">
+        <item>Lose Weight</item>
+        <item>Gain Weight</item>
+        <item>Maintain Current Weight</item>
+        <item>Increase Endurance</item>
+        <item>Increase Strength</item>
+        <item>Improve CardioVascular Health</item>
+        <item>Reduce Stress</item>
+    </string-array>
+
 </resources>

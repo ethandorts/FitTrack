@@ -28,8 +28,8 @@
 
             <TextView
                 android:id="@+id/txtBadgeDescription"
-                android:layout_width="174dp"
-                android:layout_height="49dp"
+                android:layout_width="304dp"
+                android:layout_height="72dp"
                 android:layout_marginStart="71dp"
                 android:gravity="center"
                 android:text="Exercise Type "

@@ -2,69 +2,56 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/txt_ai_response"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SettingsActivity">
 
-    <Button
-        android:id="@+id/btnDeleteAccount"
-        android:layout_width="178dp"
-        android:layout_height="0dp"
-        android:text="DELETE MY ACCOUNT"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="parent"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/MenuToolbar"
+        android:layout_width="416dp"
+        android:layout_height="78dp"
+        android:layout_marginBottom="2dp"
+        android:background="@color/button_blue"
+        android:elevation="4dp"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerFitTrackMenu"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <Button
-        android:id="@+id/btnCalendar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="9dp"
-        android:layout_marginBottom="25dp"
-        android:text="Calendar"
-        app:layout_constraintBottom_toTopOf="@+id/btnAI"
-        app:layout_constraintEnd_toEndOf="@+id/btnAI" />
+        <TextView
+            android:id="@+id/txtPersonalBestTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="FitTrack Menu"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="147dp"
+            tools:layout_editor_absoluteY="16dp" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerFitTrackMenu"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="11dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnLogOut"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/MenuToolbar" />
 
     <Button
         android:id="@+id/btnLogOut"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="34dp"
-        android:text="Logout"
-        app:layout_constraintStart_toStartOf="@+id/btnAI"
-        app:layout_constraintTop_toBottomOf="@+id/btnAI" />
-
-    <Button
-        android:id="@+id/btnGoals"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="40dp"
-        android:text="Goals"
-        app:layout_constraintStart_toStartOf="@+id/btnBadges"
-        app:layout_constraintTop_toBottomOf="@+id/btnBadges" />
-
-    <Button
-        android:id="@+id/btnBadges"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="78dp"
-        android:text="Badges"
+        android:layout_marginBottom="7dp"
+        android:text="Log Out"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btnAI"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="113dp"
-        android:text="AI Assistant"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnGoals" />
+        app:layout_constraintTop_toBottomOf="@+id/recyclerFitTrackMenu" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -30,6 +30,9 @@
         android:theme="@style/Theme.FitTrack"
         tools:targetApi="31">
         <activity
+            android:name=".EditProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".DeletePostActivity"
             android:exported="false" />
         <activity

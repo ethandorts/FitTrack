@@ -23,7 +23,7 @@ public class PersonalBestUtil {
     private static final double anaerobic_scaling_factor = 5.0;
 
 
-    public void findFastest5K(String UserID, int distance, String activityType) {
+    public void findFastestDistanceTime(String UserID, int distance, String activityType, PersonalBestCallback callback) {
         Query query = db.collection("Activities")
                 .whereEqualTo("UserID", UserID)
                 .whereEqualTo("type", activityType);
@@ -54,8 +54,6 @@ public class PersonalBestUtil {
                                 for (int j = i; j < i + requiredSplits; j++) {
                                     segmentTime += convertLongtoSeconds(splits.get(j));
                                 }
-
-                                // Update the fastest time if this segment is faster
                                 if (segmentTime < fastestTime) {
                                     fastestTime = segmentTime;
                                     Log.d("New Fastest", "Updated Fastest Time: " + formatTime(fastestTime));
@@ -71,8 +69,10 @@ public class PersonalBestUtil {
             }
             if (fastestTime == Integer.MAX_VALUE) {
                 System.out.println("Distance requirements not met or no valid splits found");
+                callback.onCallback("-");
             } else {
                 System.out.println("Fastest Time: " + formatTime(fastestTime));
+                callback.onCallback(formatTime(fastestTime));
             }
         }).addOnFailureListener(e -> {
             System.out.println("Error fetching activities: " + e.getMessage());
@@ -96,6 +96,10 @@ public class PersonalBestUtil {
     public String formatTime(int seconds) {
         int minutes = seconds / 60;
         int remainingSeconds = seconds % 60;
-        return String.format("%d min %02d sec", minutes, remainingSeconds);
+        return String.format("%d:%02d", minutes, remainingSeconds);
+    }
+
+    public interface PersonalBestCallback {
+        void onCallback(String PB);
     }
 }
