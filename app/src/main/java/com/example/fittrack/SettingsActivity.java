@@ -48,6 +48,7 @@ public class SettingsActivity extends AppCompatActivity {
         menuOptions.add(new MenuOptionModel("My Fitness Badges", 0));
         menuOptions.add(new MenuOptionModel("Personal Bests", 0));
         menuOptions.add(new MenuOptionModel("AI Fitness Coach", 0));
+        menuOptions.add(new MenuOptionModel("Nutrition", 0));
 
 
         RecyclerView recyclerMenu = findViewById(R.id.recyclerFitTrackMenu);

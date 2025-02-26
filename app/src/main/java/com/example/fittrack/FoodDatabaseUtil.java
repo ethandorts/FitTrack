@@ -232,8 +232,35 @@ public class FoodDatabaseUtil {
                 });
             }
         });
-
     }
+
+    public void deleteFoodItem(String documentID) {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        Date today = new Date();
+        String date = dateFormat.format(today);
+
+        db.collection("Users")
+                .document(UserID)
+                .collection("Nutrition")
+                .document(date)
+                .collection("Meals")
+                .document(documentID).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        System.out.println("Delete Food Error: " + e.getMessage());
+                    }
+                });
+    }
+
+
+
+
 //    private void updateDoc(CollectionReference docRef, Map<String, Object> FoodMap) {
 //        docRef.update("food", FieldValue.arrayUnion(FoodMap))
 //                .addOnSuccessListener(new OnSuccessListener<Void>() {

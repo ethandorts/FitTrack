@@ -51,7 +51,6 @@ public class NutritionStatsFragment extends Fragment {
         System.out.println("The selected Date is " + selectedDate);
         TextView txtCalories = view.findViewById(R.id.txtCalculation);
 
-
         loadFragment(new PieChartNutrients(selectedDate), R.id.frameLayout7);
 
         foodUtil.getTotalCalories(selectedDate, new FoodDatabaseUtil.DayCaloriesCallback() {
@@ -62,19 +61,15 @@ public class NutritionStatsFragment extends Fragment {
         });
     }
 
-
     public void loadFragment(Fragment fragment, int frameLayoutId) {
         FragmentManager fm = getChildFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
 
-        // Check if there's an existing fragment in the container
         Fragment existingFragment = fm.findFragmentById(frameLayoutId);
         if (existingFragment != null) {
-            // Remove the existing fragment
             transaction.remove(existingFragment);
         }
 
-        // Add/replace the new fragment
         transaction.replace(frameLayoutId, fragment);
         transaction.commit();
     }

@@ -7,9 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".CreateGoalActivity">
 
-    <!-- Toolbar with Title -->
-
-    <!-- Container for Spinner -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar2"
         android:layout_width="0dp"
@@ -40,7 +37,6 @@
 
     </LinearLayout>
 
-    <!-- FrameLayout for goal form content -->
     <FrameLayout
         android:id="@+id/goalFormFrame"
         android:layout_width="0dp"

@@ -72,6 +72,7 @@ public class NutritionTracking extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nutrition_tracking);
         Intent intent = getIntent();
+        String mealTime = intent.getStringExtra("mealType");
 
         EditText editFood = findViewById(R.id.editFood);
         Button btnSearchFood = findViewById(R.id.btnSearchFood);
@@ -81,6 +82,8 @@ public class NutritionTracking extends AppCompatActivity {
         foodAdapter = new NutritionSearchRecyclerViewAdapter(getApplicationContext(), foodlist);
         recyclerNutrition.setAdapter(foodAdapter);
         recyclerNutrition.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+        loadGeneralFoods(mealTime);
 
 //        Query query = db.collection("Users")
 //                .document(UserID)
@@ -138,20 +141,24 @@ public class NutritionTracking extends AppCompatActivity {
                     public void onResponse(JSONObject jsonObject) {
                         try {
                             JSONArray itemsArray = jsonObject.getJSONArray("items");
-                            JSONObject foodObject = itemsArray.getJSONObject(0);
-                            String name = foodObject.getString("name");
-                            double calories = foodObject.getDouble("calories");
-                            double fat = foodObject.getDouble("fat_total_g");
-                            double saturated_fat = foodObject.getDouble("fat_saturated_g");
-                            double protein = foodObject.getDouble("protein_g");
-                            double sodium = foodObject.getDouble("sodium_mg");
-                            double potassium = foodObject.getDouble("potassium_mg");
-                            double carbs = foodObject.getDouble("carbohydrates_total_g");
-                            double fiber = foodObject.getDouble("fiber_g");
-                            double sugar = foodObject.getDouble("sugar_g");
-                            int quantity = 1;
-                            String mealType = "Dinner";
-                            response.onFoodResponse(name, calories, fat, saturated_fat, protein, sodium, potassium, carbs, fiber, sugar, quantity, mealType);
+                            if(itemsArray.length() != 0) {
+                                JSONObject foodObject = itemsArray.getJSONObject(0);
+                                String name = foodObject.getString("name");
+                                double calories = foodObject.getDouble("calories");
+                                double fat = foodObject.getDouble("fat_total_g");
+                                double saturated_fat = foodObject.getDouble("fat_saturated_g");
+                                double protein = foodObject.getDouble("protein_g");
+                                double sodium = foodObject.getDouble("sodium_mg");
+                                double potassium = foodObject.getDouble("potassium_mg");
+                                double carbs = foodObject.getDouble("carbohydrates_total_g");
+                                double fiber = foodObject.getDouble("fiber_g");
+                                double sugar = foodObject.getDouble("sugar_g");
+                                int quantity = 1;
+                                String mealType = "Dinner";
+                                response.onFoodResponse(name, calories, fat, saturated_fat, protein, sodium, potassium, carbs, fiber, sugar, quantity, mealType);
+                            } else {
+                                System.out.println("No food found for this search!");
+                            }
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -167,7 +174,7 @@ public class NutritionTracking extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headersMap = new HashMap<>();
-                headersMap.put("X-Api-Key", ""); // insert API KEY HERE
+                headersMap.put("X-Api-Key", "3T9QzDFbiwikUXS4RMQsKg==DeZjUwaU7l1WgRkm"); // insert API KEY HERE
 
                 return headersMap;
             }
@@ -195,5 +202,16 @@ public class NutritionTracking extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void loadGeneralFoods(String mealType) {
+        foodlist.add(new SearchFoodModel("Chicken", 166.2, 3.5, 1, 31, 72, 226, 0, 0, 0, 1, mealType));
+        foodlist.add(new SearchFoodModel("Cereal", 386.0, 6.8, 1.5, 12.2, 495, 489, 71.9, 9.2, 4.3, 1, mealType));
+        foodlist.add(new SearchFoodModel("Chips", 540.8, 34.4, 3.4, 6.4, 533, 150, 54.3, 3.1, 0.3, 1, mealType));
+        foodlist.add(new SearchFoodModel("Potatoes", 92.9, 0.1, 0.0, 2.5, 10, 70, 21, 2.2, 1.2, 1, mealType));
+        foodlist.add(new SearchFoodModel("Apple", 53.0, 0.2, 0.0, 0.3, 1, 11, 14.1, 2.4, 10.3, 1, mealType));
+        foodlist.add(new SearchFoodModel("Toast", 298.3, 4.0, 0.8, 9.1, 541, 102, 54.2, 2.9, 6.2, 1, mealType));
+        foodlist.add(new SearchFoodModel("Tomatoes", 34.3, 0.2, 0, 0.7, 187, 15, 7.6, 0.5, 4, 1, mealType));
+        foodlist.add(new SearchFoodModel("Ham", 167.7, 5.9, 1.5, 9.4, 631, 98, 20.4, 1.9, 2.5,1, mealType));
     }
 }

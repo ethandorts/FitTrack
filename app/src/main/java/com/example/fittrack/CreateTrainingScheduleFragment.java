@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -48,6 +49,7 @@ public class CreateTrainingScheduleFragment extends Fragment {
     private String lastMessage;
     private TextView txtResponse;
     private ImageButton btnSendRequest;
+    private Button btnSaveTrainingSchedule;
     private EditText editMessage;
     private GoalsUtil goalsUtil = new GoalsUtil(db);
     private String goalsList = " ";
@@ -58,6 +60,7 @@ public class CreateTrainingScheduleFragment extends Fragment {
         txtResponse = view.findViewById(R.id.txtAIResponse);
         btnSendRequest = view.findViewById(R.id.btnSendRequest);
         editMessage = view.findViewById(R.id.editModify);
+        btnSaveTrainingSchedule = view.findViewById(R.id.btnSaveScheduleToCalendar);
 
         editMessage.setVisibility(View.GONE);
         btnSendRequest.setVisibility(View.GONE);
@@ -163,11 +166,23 @@ public class CreateTrainingScheduleFragment extends Fragment {
                             String message = messageObject.getString("content");
                             txtResponse.setText(message);
                             System.out.println(message);
-                            //extractAIRoutine(message);
                             lastMessage = message;
 
                             editMessage.setVisibility(View.VISIBLE);
                             btnSendRequest.setVisibility(View.VISIBLE);
+                            //btnSaveTrainingSchedule.setVisibility(View.VISIBLE);
+
+                            if(txtResponse.getText().length() > 0) {
+                                btnSaveTrainingSchedule.setVisibility(View.VISIBLE);
+                                btnSaveTrainingSchedule.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        extractAIRoutine(message);
+                                    }
+                                });
+                            }
+
+
 
                         } catch (JSONException e) {
                             e.printStackTrace();

@@ -68,6 +68,10 @@ public class MenuOptionsRecyclerAdapter extends RecyclerView.Adapter<MenuOptions
                         intent = new Intent(view.getContext(), EditProfileActivity.class);
                         context.startActivity(intent);
                         break;
+                    case "Nutrition":
+                        intent = new Intent(view.getContext(), NutritionTrackingOverview.class);
+                        context.startActivity(intent);
+                        break;
                 }
             }
         });

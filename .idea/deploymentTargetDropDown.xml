@@ -2,7 +2,10 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="ScreenLoadingTest">
+      <entry key="addEventSuccessfully()">
+        <State />
+      </entry>
+      <entry key="addGoalSuccessfully()">
         <State />
       </entry>
       <entry key="app">
@@ -32,7 +35,13 @@
           </targetsSelectedWithDialog>
         </State>
       </entry>
-      <entry key="loadAIAssistantActivityWithin3Seconds()">
+      <entry key="createGroupMeetup()">
+        <State />
+      </entry>
+      <entry key="loadFitnessActivitiesTestIn5Seconds()">
+        <State />
+      </entry>
+      <entry key="loadFitnessActivitiesTestWithoutInternet()">
         <State />
       </entry>
     </value>
