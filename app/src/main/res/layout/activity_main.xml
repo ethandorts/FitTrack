@@ -13,23 +13,22 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/txtRunTime"
+        app:layout_constraintBottom_toTopOf="@+id/txtLiveActivityStats"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txtDistanceTravelled"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
-        android:text="Distance Travelled"
-        android:textSize="34sp"
-        app:layout_constraintBottom_toTopOf="@+id/stopStartBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtRunTime" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="47dp"
+        android:text="0.00 KM"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/txtRunTime"
+        app:layout_constraintEnd_toStartOf="@+id/currentSpeed"
+        app:layout_constraintStart_toEndOf="@+id/txtRunTime"
+        app:layout_constraintTop_toTopOf="@+id/txtRunTime" />
 
     <Button
         android:id="@+id/btnClearMap"
@@ -37,9 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="582dp"
         android:text="Clear Map"
-        app:layout_constraintBottom_toTopOf="@+id/stopStartBtn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -47,24 +44,85 @@
         android:id="@+id/txtRunTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginEnd="52dp"
         android:text="00:00:00"
-        android:textSize="34sp"
-        app:layout_constraintBottom_toTopOf="@+id/txtDistanceTravelled"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toStartOf="@+id/txtDistanceTravelled"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/map_fragment" />
+        app:layout_constraintTop_toBottomOf="@+id/txtClockTime" />
 
     <Button
         android:id="@+id/stopStartBtn"
         android:layout_width="249dp"
-        android:layout_height="0dp"
+        android:layout_height="46dp"
+        android:layout_marginTop="26dp"
         android:layout_marginBottom="39dp"
         android:text="Start Run"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnClearMap" />
+        app:layout_constraintTop_toBottomOf="@+id/currentSpeed" />
+
+    <TextView
+        android:id="@+id/txtLiveActivityStats"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginBottom="11dp"
+        android:text="Live Activity Stats"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/txtRunPace"
+        app:layout_constraintStart_toEndOf="@+id/txtClockTime" />
+
+    <TextView
+        android:id="@+id/currentSpeed"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="7dp"
+        android:text="0:00 /km"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/txtDistanceTravelled"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/txtDistanceTravelled"
+        app:layout_constraintTop_toBottomOf="@+id/txtRunPace" />
+
+    <TextView
+        android:id="@+id/txtClockTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="153dp"
+        android:text="Time"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/txtRunPace"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="Pace"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/txtDistanceTravelled"
+        app:layout_constraintStart_toStartOf="@+id/currentSpeed" />
+
+    <TextView
+        android:id="@+id/txtRunDistance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="Distance"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/txtDistanceTravelled"
+        app:layout_constraintStart_toStartOf="@+id/txtDistanceTravelled" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

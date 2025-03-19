@@ -118,4 +118,23 @@ public class ConversionUtil {
 
         return date.format(formatter);
     }
+
+    public static String convertToMinutesPerKM(float metresPerSecondSpeed) {
+        if(metresPerSecondSpeed > 0) {
+            float minutesPerKMPace = (1000 / metresPerSecondSpeed) / 60;
+
+            int minutes = (int) minutesPerKMPace;
+            int seconds = (int) ((minutesPerKMPace - minutes) * 60);
+
+           return String.format("%d:%02d /km", minutes, seconds);
+        } else {
+            return "00:00 min/km";
+        }
+    }
+
+    public static String convertMetersToKilometers(double meters) {
+        double km = meters / 1000;
+        return String.format("%.2f km", km);
+    }
+
 }

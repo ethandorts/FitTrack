@@ -82,7 +82,6 @@ public class GroupActivitiesFragment extends Fragment {
                 groupActivitiesAdapter.updateOptions(options);
                 LinearLayoutManager layout = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(layout);
-                recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
                 loadingActivities.setVisibility(View.INVISIBLE);
             }
         });

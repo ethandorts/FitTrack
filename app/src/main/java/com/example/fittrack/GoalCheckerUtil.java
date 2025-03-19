@@ -41,12 +41,13 @@ public class GoalCheckerUtil {
             @Override
             public void onSuccess(QuerySnapshot querySnapshot) {
                 List<DocumentSnapshot> goalDocuments = querySnapshot.getDocuments();
+                System.out.println("Number of  distance goal documents: " + goalDocuments.size());
                 for(DocumentSnapshot snapshot : goalDocuments) {
-                    System.out.println(snapshot.get("startDate"));
-                    System.out.println(snapshot.get("endDate"));
+                    System.out.println(snapshot.get("startDate") + ": startDate");
+                    System.out.println(snapshot.get("endDate") + ": endDate");
                     Timestamp startDate = (Timestamp) snapshot.get("startDate");
                     Timestamp endDate = (Timestamp) snapshot.get("endDate");
-                    double targetDistance = (double) snapshot.get("targetDistance") * 1000;
+                    double targetDistance = (double) snapshot.get("targetDistance");
 
                     Query activitiesQuery = db.collection("Activities")
                             .whereEqualTo("UserID", UserID)
@@ -56,7 +57,7 @@ public class GoalCheckerUtil {
                     activitiesQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot querySnapshot) {
-                            System.out.println(querySnapshot.size());
+                            System.out.println("Suitable Distance Activities: " + querySnapshot.size());
                             List<DocumentSnapshot> activityDocuments = querySnapshot.getDocuments();
                             double totalDistance = 0;
                             for(DocumentSnapshot snapshot : activityDocuments) {
@@ -127,7 +128,7 @@ public class GoalCheckerUtil {
 
                             for (DocumentSnapshot activity : activityDocuments) {
                                 double totalDistance = Double.parseDouble((String) activity.get("distance"));
-                                totalDistance /= 1000;
+                                totalDistance = totalDistance / 1000;
                                 List<Long> splits = (List<Long>) activity.get("splits");
 
                                 if (splits != null && splits.size() > 0) {
@@ -137,9 +138,10 @@ public class GoalCheckerUtil {
                                     System.out.println("Valid Full Splits: " + validSplits);
 
                                     int requiredSplits = (int) targetDistance;
-                                    for (int i = 0; i <= validSplits - requiredSplits; i++) {
+                                    System.out.println(requiredSplits + " : Required Splits");
+                                    for (int i = 0; i < validSplits; i++) {
                                         double segmentTime = 0;
-                                        for (int j = i; j < i + requiredSplits; j++) {
+                                        for (int j = i; j < validSplits; j++) {
                                             int seconds = convertLongtoSeconds(splits.get(j));
                                             segmentTime += seconds;
                                         }

@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editTargetDistance"
+        android:id="@+id/editCreateMeetupTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -27,7 +27,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/txtTargetDistanceForm" />
 
-    <!-- Date -->
     <TextView
         android:id="@+id/txtTargetDistanceTimeForm"
         android:layout_width="wrap_content"
@@ -37,10 +36,10 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTargetDistance" />
+        app:layout_constraintTop_toBottomOf="@id/editCreateMeetupTitle" />
 
     <EditText
-        android:id="@+id/editTargetTimeForm"
+        android:id="@+id/editCreateMeetupDate"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -60,10 +59,10 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTargetTimeForm" />
+        app:layout_constraintTop_toBottomOf="@id/editCreateMeetupDate" />
 
     <EditText
-        android:id="@+id/editGroupLocation"
+        android:id="@+id/editCreateMeetupTime"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -83,10 +82,10 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editGroupLocation" />
+        app:layout_constraintTop_toBottomOf="@id/editCreateMeetupTime" />
 
     <EditText
-        android:id="@+id/editTextLocation"
+        android:id="@+id/editCreateMeetupLocation"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -104,10 +103,10 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTextLocation" />
+        app:layout_constraintTop_toBottomOf="@id/editCreateMeetupLocation" />
 
     <EditText
-        android:id="@+id/editDistanceGoalDescription"
+        android:id="@+id/editCreateMeetupDescription"
         android:layout_width="0dp"
         android:layout_height="150dp"
         android:layout_marginTop="8dp"
@@ -120,13 +119,13 @@
 
 
     <Button
-        android:id="@+id/btnCreateDistanceGoal"
+        android:id="@+id/btnCreateMeetup2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Create Meetup"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editDistanceGoalDescription" />
+        app:layout_constraintTop_toBottomOf="@id/editCreateMeetupDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

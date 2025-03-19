@@ -91,9 +91,13 @@ public class FirebaseDatabaseHelper {
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        Map<String, Object> data = documentSnapshot.getData();
-                        System.out.println("Data: " + data);
-                        callback.onCallback((String) data.get("FullName"), (long) data.get("Weight"), (long) data.get("Height"), (long) data.get("ActivityFrequency"), (long) data.get("DailyCalorieGoal") );
+                        if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
+                            Map<String, Object> data = documentSnapshot.getData();
+                            System.out.println("Data: " + data);
+                            callback.onCallback((String) data.get("FullName"), (long) data.get("Weight"), (long) data.get("Height"), (long) data.get("ActivityFrequency"), (long) data.get("DailyCalorieGoal"));
+                        } else {
+                            callback.onCallback(null, 0, 0, 0, 0);
+                        }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override

@@ -3,87 +3,70 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:layout_editor_absoluteX="0dp"
-    tools:layout_editor_absoluteY="-25dp">
+    android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/txtTargetDistanceForm"
+        android:id="@+id/txtTargetDistance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
         android:text="Target Distance"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/editTargetDistance"
-        app:layout_constraintStart_toStartOf="@+id/editTargetDistance"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editTargetDistance"
-        android:layout_width="324dp"
-        android:layout_height="51dp"
+        android:id="@+id/editEnterDistanceGoal"
+        android:layout_width="383dp"
+        android:layout_height="45dp"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="20dp"
-        android:hint="Enter Target Distance..."
-        android:inputType="numberDecimal"
-        app:layout_constraintBottom_toTopOf="@+id/txtGoalDateTarget"
-        app:layout_constraintEnd_toStartOf="@+id/txtKMlabel2"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Enter Target Calories..."
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtTargetDistanceForm" />
+        app:layout_constraintTop_toBottomOf="@id/txtTargetDistance" />
 
     <TextView
-        android:id="@+id/txtGoalDateTarget"
+        android:id="@+id/txtDistanceGoalDateTarget"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
         android:text="Goal Completion Date"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/edit"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTargetDistance" />
+        app:layout_constraintTop_toBottomOf="@id/editEnterDistanceGoal" />
 
     <EditText
-        android:id="@+id/edit"
+        android:id="@+id/editDistanceCompletionDate"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="552dp"
         android:focusable="false"
         android:hint="Select Completion Date..."
         android:inputType="none"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtKMlabel2" />
+        app:layout_constraintTop_toBottomOf="@id/txtDistanceGoalDateTarget" />
 
     <Button
-        android:id="@+id/btnCreateDistanceGoal"
+        android:id="@+id/btnCreateGoalDistance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="483dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="32dp"
         android:text="Create Distance Goal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit" />
-
-    <TextView
-        android:id="@+id/txtKMlabel2"
-        android:layout_width="70dp"
-        android:layout_height="25dp"
-        android:layout_marginTop="41dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="58dp"
-        android:text="KM"
-        android:textSize="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/edit"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/editTargetDistance"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintVertical_bias="0.015" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

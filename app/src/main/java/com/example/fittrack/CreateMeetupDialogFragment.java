@@ -43,12 +43,12 @@ public class CreateMeetupDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.save_meetup_dialog, null);
 
-        btnSaveMeetup = view.findViewById(R.id.btnCreateDistanceGoal);
-        editTitle = view.findViewById(R.id.editTargetDistance);
-        editDate = view.findViewById(R.id.editTargetTimeForm);
-        editTime = view.findViewById(R.id.editGroupLocation);
-        editLocation = view.findViewById(R.id.editTextLocation);
-        editDescription = view.findViewById(R.id.editDistanceGoalDescription);
+        btnSaveMeetup = view.findViewById(R.id.btnCreateMeetup2);
+        editTitle = view.findViewById(R.id.editCreateMeetupTitle);
+        editDate = view.findViewById(R.id.editCreateMeetupDate);
+        editTime = view.findViewById(R.id.editCreateMeetupTime);
+        editLocation = view.findViewById(R.id.editCreateMeetupLocation);
+        editDescription = view.findViewById(R.id.editCreateMeetupDescription);
 
         editDate.setOnClickListener(new View.OnClickListener() {
             @Override

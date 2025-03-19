@@ -1,5 +1,6 @@
 package com.example.fittrack;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,10 @@ import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.anychart.charts.Pie;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -62,8 +67,7 @@ public class PieChartNutrients extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        AnyChartView anyChartView = view.findViewById(R.id.paceGraph);
-        APIlib.getInstance().setActiveAnyChartView(anyChartView);
+        PieChart pieChart = view.findViewById(R.id.paceGraph);
 //        anyChartView.setJsListener(new AnyChartView.JsListener() {
 //            @Override
 //            public void onJsLineAdd(String s) {
@@ -71,24 +75,18 @@ public class PieChartNutrients extends Fragment {
 //            }
 //        });
 
-        if (anyChartView == null) {
-            Log.e("PieChartNutrients", "Error: AnyChartView is NULL! Check XML layout ID.");
-            return;
-        }
-        Pie pie = AnyChart.pie();
-
         Log.d("PieChartNutrients", "Pie date: " + selectedDate);
 
         if (selectedDate != null) {
-            getNutrientChartData(anyChartView, pie, selectedDate);
+            getNutrientChartData(pieChart, selectedDate);
             getRecyclerNutrientData(view, selectedDate);
         } else {
-            getNutrientChartData(anyChartView, pie, "22-02-2025");
+            getNutrientChartData(pieChart, "22-02-2025");
             getRecyclerNutrientData(view, "22-02-2025");
         }
     }
 
-    public void getNutrientChartData(AnyChartView anyChartView, Pie pie, String selectedDate) {
+    public void getNutrientChartData(PieChart pieChart, String selectedDate) {
         foodUtil.getCaloriesForMealType(selectedDate, new FoodDatabaseUtil.CaloriesMealCallback() {
             @Override
             public void onCallback(HashMap<String, Double> caloriesMap) {
@@ -97,22 +95,30 @@ public class PieChartNutrients extends Fragment {
                     return;
                 }
 
-                List<DataEntry> data = new ArrayList<>();
-                data.add(new ValueDataEntry("Breakfast", caloriesMap.getOrDefault("Breakfast", 0.0)));
-                data.add(new ValueDataEntry("Lunch", caloriesMap.getOrDefault("Lunch", 0.0)));
-                data.add(new ValueDataEntry("Dinner", caloriesMap.getOrDefault("Dinner", 0.0)));
-                data.add(new ValueDataEntry("Snacks", caloriesMap.getOrDefault("Snacks", 0.0)));
+                List<PieEntry> entries = new ArrayList<>();
+                entries.add(new PieEntry(caloriesMap.getOrDefault("Breakfast", 0.0).floatValue(), "Breakfast"));
+                entries.add(new PieEntry(caloriesMap.getOrDefault("Lunch", 0.0).floatValue(), "Lunch"));
+                entries.add(new PieEntry(caloriesMap.getOrDefault("Dinner", 0.0).floatValue(), "Dinner"));
+                entries.add(new PieEntry(caloriesMap.getOrDefault("Snacks", 0.0).floatValue(), "Snacks"));
 
-                pie.data(data);
-                pie.title("Calories Consumed Per Meal");
+                PieDataSet dataSet = new PieDataSet(entries, "Calories Consumed Per Meal");
+                dataSet.setColors(Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW);
+                dataSet.setValueTextSize(16f);
+
+                PieData pieData = new PieData(dataSet);
 
                 if (isAdded() && getView() != null) {
                     getActivity().runOnUiThread(() -> {
-                        AnyChartView updatedChartView = getView().findViewById(R.id.paceGraph);
+                        PieChart updatedChartView = getView().findViewById(R.id.paceGraph);
                         if (updatedChartView != null) {
-                            updatedChartView.setChart(pie);
+                            updatedChartView.setData(pieData);
+                            updatedChartView.invalidate();
+                            updatedChartView.setCenterText("Calories Consumed per Meal");
+                            updatedChartView.setDrawHoleEnabled(true);
+                            updatedChartView.setUsePercentValues(true);
+                            updatedChartView.animateY(1400);
                         } else {
-                            Log.e("Pie Chart Nutrients Fragment Error ", "AnyChartView is null!");
+                            Log.e("Pie Chart Nutrients Fragment Error ", "MPAndroidChart is null!");
                         }
                     });
                 } else {

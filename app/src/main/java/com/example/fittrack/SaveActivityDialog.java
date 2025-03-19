@@ -136,7 +136,7 @@ public class SaveActivityDialog extends DialogFragment {
                     .setPositiveButton("Save Activity", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            getElevationAndSave();
+                            saveActivity();
                             NotificationUtil.showSavedActivityNotification(context);
                             OneTimeWorkRequest checkGoalsRequest = new OneTimeWorkRequest.Builder(GoalCompletedChecker.class).setInitialDelay(10, TimeUnit.SECONDS)
                                     .build();
@@ -163,24 +163,24 @@ public class SaveActivityDialog extends DialogFragment {
             return formattedPace;
         }
 
-        private void getElevationAndSave() {
-        if(locations.isEmpty()) {
-            Log.e("No Activity Coordinates Found", "No activity coordinates found for SaveDialog");
-            saveActivity();
-            return;
-        }
-            elevationUtil.elevationRequest(locations, new ElevationUtil.ElevationCallback() {
-                @Override
-                public void onCallback(double[] elevationValues) {
-                    List<Double> elevationList = new ArrayList<>();
-                    for(double value : elevationValues) {
-                        elevationList.add(value);
-                    }
-                    data.put("Elevation", elevationList);
-                    saveActivity();
-                }
-            });
-        }
+//        private void getElevationAndSave() {
+//        if(locations.isEmpty()) {
+//            Log.e("No Activity Coordinates Found", "No activity coordinates found for SaveDialog");
+//            saveActivity();
+//            return;
+//        }
+//            elevationUtil.elevationRequest(locations, new ElevationUtil.ElevationCallback() {
+//                @Override
+//                public void onCallback(double[] elevationValues) {
+//                    List<Double> elevationList = new ArrayList<>();
+//                    for(double value : elevationValues) {
+//                        elevationList.add(value);
+//                    }
+//                    data.put("Elevation", elevationList);
+//                    saveActivity();
+//                }
+//            });
+//        }
 
         private void saveActivity() {
             String ActivityID = DocumentIDGenerator.GenerateActivityID();

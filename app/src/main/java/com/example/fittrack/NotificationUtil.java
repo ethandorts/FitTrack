@@ -5,7 +5,9 @@ import static androidx.core.content.ContextCompat.getSystemService;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
@@ -36,7 +38,7 @@ public class NotificationUtil {
         }
     }
 
-    public static void showNotification(Context context, String channelID, String contentTitle, String contentMessage, int priorityLevel) {
+    public static void showNotification(Context context, String channelID, String contentTitle, String contentMessage, int priorityLevel, PendingIntent intent) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (ContextCompat.checkSelfPermission(context, "android.permission.POST_NOTIFICATIONS")
                     != PackageManager.PERMISSION_GRANTED) {
@@ -65,7 +67,7 @@ public class NotificationUtil {
     }
 
     public static void showSavedActivityNotification(Context context) {
-        showNotification(context,SAVED_ACTIVITY_ID, "Fitness Activity Saved","Your fitness activity has been successfully saved!", NotificationCompat.PRIORITY_HIGH);
+        showNotification(context,SAVED_ACTIVITY_ID, "Fitness Activity Saved","Your fitness activity has been successfully saved!", NotificationCompat.PRIORITY_HIGH, null);
     }
 
     public static void createProgressNotificationChannel(Context context) {
@@ -77,7 +79,7 @@ public class NotificationUtil {
     }
 
     public static void showProgressTrackingNotification(Context context) {
-        showNotification(context,PROGRESS_TRACKING_ID, "Progress Tracking","Progress Update Alert", NotificationCompat.PRIORITY_HIGH);
+        showNotification(context,PROGRESS_TRACKING_ID, "Progress Tracking","Progress Update Alert", NotificationCompat.PRIORITY_HIGH, null);
     }
 
     public static void createWorkoutReminderNotificationChannel(Context context) {
@@ -88,7 +90,17 @@ public class NotificationUtil {
     }
 
     public static void showWorkoutReminderNotification(Context context) {
-        showNotification(context, WORKOUT_REMINDER_ID, "Workout Reminder","Workout Reminder Content", NotificationCompat.PRIORITY_HIGH);
+        Intent intent = new Intent(context, Calendar.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        showNotification(context, WORKOUT_REMINDER_ID, "Workout Reminder","You have a scheduled workout for today! Get exercising!", NotificationCompat.PRIORITY_HIGH, pendingIntent);
     }
 
     public static void createLogFoodNotificationChannel(Context context) {
@@ -96,7 +108,7 @@ public class NotificationUtil {
     }
 
     public static void showLogFoodNotification(Context context, String mealType) {
-        showNotification(context,LOG_FOOD_REMINDER_ID, "Log Food for " + mealType+ " Reminder", "You haven't logged any food for your " + mealType, NotificationCompat.PRIORITY_HIGH);
+        showNotification(context,LOG_FOOD_REMINDER_ID, "Log Food for " + mealType+ " Reminder", "You haven't logged any food for your " + mealType, NotificationCompat.PRIORITY_HIGH, null);
     }
 
     public static void createCalorieGoalSuccessfulNotificationChannel(Context context) {
@@ -104,7 +116,7 @@ public class NotificationUtil {
     }
 
     public static void showCalorieGoalSuccessfulNotification(Context context) {
-        showNotification(context, CALORIE_GOAL_SUCCESSFUL_ID, "Calorie Goal Successfully Completed", "Calorie Goal Successfully Completed", NotificationCompat.PRIORITY_HIGH);
+        showNotification(context, CALORIE_GOAL_SUCCESSFUL_ID, "Calorie Goal Successfully Completed", "Calorie Goal Successfully Completed", NotificationCompat.PRIORITY_HIGH, null);
     }
 
     public static void createDistanceGoalSuccessfulNotificationChannel(Context context) {
@@ -112,7 +124,7 @@ public class NotificationUtil {
     }
 
     public static void showDistanceGoalSuccessfulNotification(Context context) {
-        showNotification(context, DISTANCE_GOAL_SUCCESSFUL_ID, "Distance Goal Successfully Completed", "Distance Goal Successfully Completed", NotificationCompat.PRIORITY_HIGH);
+        showNotification(context, DISTANCE_GOAL_SUCCESSFUL_ID, "Distance Goal Successfully Completed", "Distance Goal Successfully Completed", NotificationCompat.PRIORITY_HIGH, null);
     }
 
     public static void createTimeGoalSuccessfulNotificationChannel(Context context) {
@@ -120,6 +132,6 @@ public class NotificationUtil {
     }
 
     public static void showTimeGoalSuccessfulNotification(Context context) {
-        showNotification(context, TIME_GOAL_SUCCESSFUL_ID, "Time Goal Successfully Completed", "Time Goal Successfully Completed", NotificationCompat.PRIORITY_HIGH);
+        showNotification(context, TIME_GOAL_SUCCESSFUL_ID, "Time Goal Successfully Completed", "Time Goal Successfully Completed", NotificationCompat.PRIORITY_HIGH, null);
     }
 }

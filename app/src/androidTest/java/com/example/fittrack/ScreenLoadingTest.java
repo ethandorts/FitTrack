@@ -3,6 +3,7 @@ package com.example.fittrack;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.SystemClock;
 
 import androidx.annotation.NonNull;
@@ -73,6 +74,102 @@ public class ScreenLoadingTest {
         loadScreen(CommentsActivity.class);
     }
 
+    @Test
+    public void loadMainActivityWithin3Seconds() throws InterruptedException {
+        loginUser();
+        loadScreen(MainActivity.class);
+    }
+
+    @Test
+    public void loadNutritionTrackingActivityWithin3Seconds() throws InterruptedException {
+        loginUser();
+        loadScreen(NutritionTracking.class);
+    }
+
+    @Test
+    public void loadNutritionTrackingOverviewActivityWithin3Seconds() throws InterruptedException {
+        loginUser();
+        loadScreen(NutritionTrackingOverview.class);
+    }
+
+    @Test
+    public void loadOverviewFitnessStatsActivityWithin3Seconds() throws InterruptedException {
+        loginUser();
+        loadScreen(OverviewFitnessStats.class);
+    }
+
+    @Test
+    public void loadMenuActivityWithin3Seconds() throws InterruptedException {
+        loginUser();
+        loadScreen(MenuActivity.class);
+    }
+
+    @Test
+    public void loadMyBadgesActivityWithin3Seconds() throws InterruptedException {
+        loginUser();
+        loadScreen(MyBadgesActivity.class);
+    }
+
+    @Test
+    public void loadCreateGoalActivityWithin3Seconds() throws InterruptedException {
+        loginUser();
+        loadScreen(CreateGoalActivity.class);
+    }
+
+    @Test
+    public void loadCreateManualActivityWithin3Seconds() throws InterruptedException {
+        loginUser();
+        loadScreen(CreateManualActivity.class);
+    }
+
+    @Test
+    public void loadCreatePostActivityWithin3Seconds() throws InterruptedException {
+        loginUser();
+        loadScreen(CreatePostActivity.class);
+    }
+
+    @Test
+    public void loadCreateRunningGroupActivityWithin3Seconds() throws InterruptedException {
+        loginUser();
+        loadScreen(CreateRunningGroupActivity.class);
+    }
+
+    @Test
+    public void loadEditMeetupActivityWithin3Seconds() throws InterruptedException {
+        loginUser();
+        loadScreen(EditMeetupActivity.class);
+    }
+
+    @Test
+    public void loadGoalSettingActivityWithin3Seconds() throws InterruptedException {
+        loginUser();
+        loadScreen(GoalSettingActivity.class);
+    }
+
+    @Test
+    public void loadFindRunningGroupsActivityWithin3Seconds() throws InterruptedException {
+        loginUser();
+        loadScreen(FindRunningGroupsActivity.class);
+    }
+
+    @Test
+    public void loadGroupOverviewActivityWithin3Seconds() throws InterruptedException {
+        loginUser();
+        loadScreen(GroupOverviewActivity.class);
+    }
+
+    @Test
+    public void loadDeletePostActivityWithin3Seconds() throws InterruptedException {
+        loginUser();
+        loadScreen(DeletePostActivity.class);
+    }
+
+    @Test
+    public void loadSelectExerciseTypeActivityWithin3Seconds() throws InterruptedException {
+        loginUser();
+        loadScreen(SelectExerciseTypeActivity.class);
+    }
+
     public void loginUser() throws InterruptedException {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser == null) {
@@ -82,7 +179,24 @@ public class ScreenLoadingTest {
     }
 
     public <T extends Activity> void loadScreen(Class<T> activity) {
-        ActivityScenario<T> scenario = ActivityScenario.launch(activity);
+        Intent intent = new Intent(androidx.test.core.app.ApplicationProvider.getApplicationContext(), activity);
+
+        if (activity.equals(GroupActivity.class) || activity.equals(GroupOverviewActivity.class)) {
+            intent.putExtra("GroupID", "Sg8JLYf9lpE1akjQRHBv");
+            intent.putExtra("GroupName", "Test Group");
+            intent.putExtra("GroupSize", 10);
+            intent.putExtra("GroupActivity", "Running");
+        }
+
+        if (activity.equals(AdminGroupRequestsActivity.class)) {
+            intent.putExtra("GroupID", "Sg8JLYf9lpE1akjQRHBv");
+        }
+
+        if (activity.equals(CommentsActivity.class) || activity.equals(OverviewFitnessStats.class)) {
+            intent.putExtra("ActivityID", "2BxZb9qLQqEQtYlA");
+        }
+
+        ActivityScenario<T> scenario = ActivityScenario.launch(intent);
         long startTime = SystemClock.elapsedRealtime();
 
         scenario.onActivity(act -> {

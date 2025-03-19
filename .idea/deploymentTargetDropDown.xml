@@ -2,10 +2,13 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="addEventSuccessfully()">
+      <entry key="CreateEventTest">
         <State />
       </entry>
-      <entry key="addGoalSuccessfully()">
+      <entry key="ScreenLoadingTest">
+        <State />
+      </entry>
+      <entry key="addEventSuccessfully()">
         <State />
       </entry>
       <entry key="app">
@@ -35,13 +38,10 @@
           </targetsSelectedWithDialog>
         </State>
       </entry>
+      <entry key="createFitnessGroup()">
+        <State />
+      </entry>
       <entry key="createGroupMeetup()">
-        <State />
-      </entry>
-      <entry key="loadFitnessActivitiesTestIn5Seconds()">
-        <State />
-      </entry>
-      <entry key="loadFitnessActivitiesTestWithoutInternet()">
         <State />
       </entry>
     </value>

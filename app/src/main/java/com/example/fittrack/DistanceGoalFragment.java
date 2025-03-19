@@ -44,10 +44,9 @@ public class DistanceGoalFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        EditText editTargetDistance = view.findViewById(R.id.editTargetDistance);
-        EditText editCompletionDate = view.findViewById(R.id.edit);
-        EditText editGoalDescription = view.findViewById(R.id.editDistanceGoalDescription);
-        Button btnCreateDistanceGoal = view.findViewById(R.id.btnCreateDistanceGoal);
+        EditText editTargetDistance = view.findViewById(R.id.editEnterDistanceGoal);
+        EditText editCompletionDate = view.findViewById(R.id.editDistanceCompletionDate);
+        Button btnCreateDistanceGoal = view.findViewById(R.id.btnCreateGoalDistance);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 

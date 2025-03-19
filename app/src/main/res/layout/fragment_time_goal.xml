@@ -3,117 +3,96 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".CreateGoalActivity">
+    android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/tvDistanceTarget"
+        android:id="@+id/txtTargetTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
-        android:text="Distance Target"
+        android:layout_marginTop="4dp"
+        android:text="Target Distance"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/etDistanceTarget"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/etDistanceTarget"
-        android:layout_width="317dp"
-        android:layout_height="53dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="46dp"
-        android:layout_marginBottom="213dp"
-        android:hint="Enter Distance Target..."
-        android:inputType="numberDecimal"
-        app:layout_constraintBottom_toTopOf="@+id/btnCreateTimeGoal"
-        app:layout_constraintEnd_toStartOf="@+id/txtKMlabel"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Enter Target Distance..."
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/txtTargetTime" />
 
     <TextView
-        android:id="@+id/tvTimeTarget"
+        android:id="@+id/txtGoalDateTarget"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="68dp"
-        android:text="Time Target"
+        android:layout_marginTop="16dp"
+        android:text="Target Time"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/tvCompletionDate"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etDistanceTarget" />
-
+        app:layout_constraintTop_toBottomOf="@id/etDistanceTarget" />
 
     <EditText
         android:id="@+id/etTimeTarget"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="45dp"
-        android:hint="Enter Time Target..."
-        android:maxLength="8"
-        app:layout_constraintBottom_toTopOf="@+id/etCompletionDate"
+        android:hint="Enter Target Time..."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtKMlabel" />
+        app:layout_constraintTop_toBottomOf="@id/txtGoalDateTarget" />
 
     <TextView
-        android:id="@+id/tvCompletionDate"
+        android:id="@+id/txtTimeCompletionDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="511dp"
+        android:layout_marginTop="16dp"
         android:text="Goal Completion Date"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTimeTarget" />
+        app:layout_constraintTop_toBottomOf="@id/etTimeTarget" />
 
     <EditText
         android:id="@+id/etCompletionDate"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="458dp"
         android:focusable="false"
-        android:hint="Select Completion Date..."
+        android:clickable="true"
         android:inputType="none"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:hint="Enter Completion Date..."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etTimeTarget" />
+        app:layout_constraintTop_toBottomOf="@id/txtTimeCompletionDate" />
 
-    <!-- Create Goal Button -->
     <Button
         android:id="@+id/btnCreateTimeGoal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="378dp"
-        android:text="Create Goal"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="32dp"
+        android:text="Create Time Goal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etDistanceTarget" />
-
-    <TextView
-        android:id="@+id/txtKMlabel"
-        android:layout_width="73dp"
-        android:layout_height="25dp"
-        android:layout_marginTop="59dp"
-        android:layout_marginEnd="3dp"
-        android:layout_marginBottom="52dp"
-        android:text="KM"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/etTimeTarget"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/etDistanceTarget"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/etCompletionDate"
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

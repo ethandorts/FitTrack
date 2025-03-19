@@ -93,19 +93,19 @@
         app:layout_constraintTop_toBottomOf="@+id/ActivityOverviewToolbar">
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/tabOverview"
+            android:id="@+id/tabActivities"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Activities" />
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/tabStats"
+            android:id="@+id/tabPosts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Posts " />
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/tabGraphs"
+            android:id="@+id/tabMeetups"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Meetups" />

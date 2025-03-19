@@ -6,23 +6,27 @@ import java.util.ArrayList;
 
 public class GroupModel {
     private String GroupID;
-    private String GroupName;
+    private String Name;
     private String shortDescription;
-    private String GroupDescription;
+    private String Description;
     private String Activity;
-    private String GroupLocation;
-    private ArrayList<String> MembersNumber;
+    private String Location;
+    private ArrayList<String> Runners;
     private ImageView GroupIcon;
 
     public GroupModel(String groupID, String groupName, String shortDescription, String groupDescription, String groupLocation, ImageView groupIcon, ArrayList<String> members, String activity) {
         GroupID = groupID;
-        GroupName = groupName;
+        Name = groupName;
         this.shortDescription = shortDescription;
-        GroupDescription = groupDescription;
-        GroupLocation = groupLocation;
+        Description = groupDescription;
+        Location = groupLocation;
         GroupIcon = groupIcon;
-        this.MembersNumber = members;
+        this.Runners = members;
         this.Activity = activity;
+    }
+
+    public GroupModel() {
+
     }
 
     public String getGroupID() {
@@ -33,12 +37,12 @@ public class GroupModel {
         GroupID = groupID;
     }
 
-    public String getGroupName() {
-        return GroupName;
+    public String getName() {
+        return Name;
     }
 
-    public void setGroupName(String groupName) {
-        GroupName = groupName;
+    public void setName(String name) {
+        Name = name;
     }
 
     public String getShortDescription() {
@@ -49,36 +53,12 @@ public class GroupModel {
         this.shortDescription = shortDescription;
     }
 
-    public String getGroupDescription() {
-        return GroupDescription;
+    public String getDescription() {
+        return Description;
     }
 
-    public void setGroupDescription(String groupDescription) {
-        GroupDescription = groupDescription;
-    }
-
-    public String getGroupLocation() {
-        return GroupLocation;
-    }
-
-    public void setGroupLocation(String groupLocation) {
-        GroupLocation = groupLocation;
-    }
-
-    public ImageView getGroupIcon() {
-        return GroupIcon;
-    }
-
-    public void setGroupIcon(ImageView groupIcon) {
-        GroupIcon = groupIcon;
-    }
-
-    public ArrayList<String> getMembersNumber() {
-        return MembersNumber;
-    }
-
-    public void setMembersNumber(ArrayList<String> membersNumber) {
-        MembersNumber = membersNumber;
+    public void setDescription(String description) {
+        Description = description;
     }
 
     public String getActivity() {
@@ -87,5 +67,29 @@ public class GroupModel {
 
     public void setActivity(String activity) {
         Activity = activity;
+    }
+
+    public String getLocation() {
+        return Location;
+    }
+
+    public void setLocation(String location) {
+        Location = location;
+    }
+
+    public ArrayList<String> getRunners() {
+        return Runners;
+    }
+
+    public void setRunners(ArrayList<String> runners) {
+        Runners = runners;
+    }
+
+    public ImageView getGroupIcon() {
+        return GroupIcon;
+    }
+
+    public void setGroupIcon(ImageView groupIcon) {
+        GroupIcon = groupIcon;
     }
 }

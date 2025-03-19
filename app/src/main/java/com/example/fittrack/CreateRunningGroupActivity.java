@@ -26,12 +26,12 @@ public class CreateRunningGroupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_running_group);
 
-        Spinner activitySpinner = findViewById(R.id.editTargetTimeForm);
-        editGroupName = findViewById(R.id.editTargetDistance);
+        Spinner activitySpinner = findViewById(R.id.editGroupFitnessActivity);
+        editGroupName = findViewById(R.id.editGroupName);
         editLocation = findViewById(R.id.editGroupLocation);
-        editMotto = findViewById(R.id.editTextLocation);
-        editDescription = findViewById(R.id.editDistanceGoalDescription);
-        btnCreateFitnessGroup = findViewById(R.id.btnCreateDistanceGoal);
+        editMotto = findViewById(R.id.editGroupMotto);
+        editDescription = findViewById(R.id.editGroupDetailedDescription);
+        btnCreateFitnessGroup = findViewById(R.id.btnCreateFitnessGroup);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter
                 .createFromResource(this, R.array.fitness_activities, android.R.layout.simple_spinner_item);

@@ -40,8 +40,8 @@ public class CaloriesGoalFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        EditText editTargetCalories = view.findViewById(R.id.editTargetTime);
-        EditText editCompletionDate = view.findViewById(R.id.edit);
+        EditText editTargetCalories = view.findViewById(R.id.editenterCalorieGoal);
+        EditText editCompletionDate = view.findViewById(R.id.editCalorieCompletionDate);
         Button btnCreateCaloriesGoal = view.findViewById(R.id.btnCreateCaloriesGoal);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());

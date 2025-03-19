@@ -1,11 +1,12 @@
 package com.example.fittrack;
 
-import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -16,21 +17,22 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItem;
 
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static java.util.EnumSet.allOf;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.contrib.PickerActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,72 +74,211 @@ public class CreateEventTest {
     }
 
     @Test
-    public void addGoalSuccessfully() {
+    public void addTimeGoalSuccessfully() {
         mAuth.signInWithEmailAndPassword("brendy@gmail.com", "Brendy1976");
+
         ActivityScenario.launch(CreateGoalActivity.class);
+
+        onView(withId(R.id.spinnerGoalType)).perform(click());
+        onView(withText("Time Goal"))
+                .inRoot(isPlatformPopup())
+                .perform(click());
+
+        onView(withId(R.id.etDistanceTarget)).perform(typeText("5"), closeSoftKeyboard());
+        onView(withId(R.id.etTimeTarget)).perform(typeText("00:23:00"), closeSoftKeyboard());
+        onView(withId(R.id.etCompletionDate)).perform(click());
+
+        int year = 2025;
+        int month = 5;
+        int day = 15;
+
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName())))
+                .inRoot(isDialog())
+                .perform(PickerActions.setDate(year, month, day));
+
+        onView(withId(android.R.id.button1)).perform(click());
+        onView(withId(R.id.btnCreateTimeGoal)).perform(click());
+
+        ActivityScenario.launch(GoalSettingActivity.class);
+        onView(withText("Time Goal")).check(matches(isDisplayed()));
+        onView(withText("Achieve a time of 23:00 for a distance of 5 KM by Thursday, May 15, 2025")).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void addDistanceGoalSuccessfully() {
+        mAuth.signInWithEmailAndPassword("brendy@gmail.com", "Brendy1976");
+
+        ActivityScenario.launch(CreateGoalActivity.class);
+
         onView(withId(R.id.spinnerGoalType)).perform(click());
         onView(withText("Distance Goal"))
                 .inRoot(isPlatformPopup())
                 .perform(click());
-        onView(withId(R.id.editTargetDistance)).perform(typeText("5"), closeSoftKeyboard());
-        onView(withId(R.id.editTargetDistance)).perform(typeText("5"), closeSoftKeyboard());
-        onView(withId(R.id.edit)).perform(click());
+
+        onView(withId(R.id.editEnterDistanceGoal)).perform(typeText("5"), closeSoftKeyboard());
+        onView(withId(R.id.editDistanceCompletionDate)).perform(click());
+
         int year = 2025;
-        int month = 2;
+        int month = 5;
         int day = 15;
-        onView(withClassName(equalTo(DatePicker.class.getName())))
-                .perform(PickerActions.setDate(year, month + 1, day));
+
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName())))
+                .inRoot(isDialog())
+                .perform(PickerActions.setDate(year, month, day));
+
         onView(withId(android.R.id.button1)).perform(click());
+        onView(withId(R.id.btnCreateGoalDistance)).perform(click());
+
+        ActivityScenario.launch(GoalSettingActivity.class);
+        onView(withText("Time Goal")).check(matches(isDisplayed()));
+        onView(withText("Achieve a time of 23:00 for a distance of 5 KM by Thursday, May 15, 2025")).check(matches(isDisplayed()));
     }
 
     @Test
-    public void createFitnessGroup() {
+    public void addCalorieGoalSuccessfully() {
         mAuth.signInWithEmailAndPassword("brendy@gmail.com", "Brendy1976");
-        ActivityScenario.launch(CreateRunningGroupActivity.class);
-        onView(withId(R.id.editTargetDistance)).perform(typeText(""), closeSoftKeyboard());
+
+        ActivityScenario.launch(CreateGoalActivity.class);
+
+        onView(withId(R.id.spinnerGoalType)).perform(click());
+        onView(withText("Calorie Goal"))
+                .inRoot(isPlatformPopup())
+                .perform(click());
+
+        onView(withId(R.id.editenterCalorieGoal)).perform(typeText("2000"), closeSoftKeyboard());
+        onView(withId(R.id.editCalorieCompletionDate)).perform(click());
+
+        int year = 2025;
+        int month = 6;
+        int day = 20;
+
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName())))
+                .inRoot(isDialog())
+                .perform(PickerActions.setDate(year, month, day));
+
+        onView(withId(android.R.id.button1)).perform(click());
+        onView(withId(R.id.btnCreateCaloriesGoal)).perform(click());
+
+        ActivityScenario.launch(GoalSettingActivity.class);
+        onView(withText("Calorie Goal")).check(matches(isDisplayed()));
+        onView(withText("Consume 2000 calories by the end of Friday, June 20, 2025")).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void createFitnessGroup() throws InterruptedException {
+        mAuth.signInWithEmailAndPassword("brendy@gmail.com", "Brendy1976");
+        ActivityScenario<CreateRunningGroupActivity> scenario = ActivityScenario.launch(CreateRunningGroupActivity.class);
+
+        onView(withId(R.id.editGroupName))
+                .perform(typeText("Test Runners"), closeSoftKeyboard());
+
+        onView(withId(R.id.editGroupFitnessActivity)).perform(click());
+        onView(withText("Running"))
+                .inRoot(isPlatformPopup())
+                .perform(click());
+
+        onView(withId(R.id.editGroupLocation))
+                .perform(typeText("New York City"), closeSoftKeyboard());
+
+        onView(withId(R.id.editGroupMotto))
+                .perform(typeText("Run Fast, Live Healthy"), closeSoftKeyboard());
+
+        onView(withId(R.id.editGroupDetailedDescription))
+                .perform(typeText("Join us every morning at 6 AM to run and have fun!"), closeSoftKeyboard());
+
+        onView(withId(R.id.btnCreateFitnessGroup)).perform(click());
+    }
+
+
+    @Test
+    public void createGroupPost() throws InterruptedException {
+        mAuth.signInWithEmailAndPassword("brendy@gmail.com", "Brendy1976");
+
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), GroupActivity.class);
+        intent.putExtra("GroupID", "Sg8JLYf9lpE1akjQRHBv");
+        intent.putExtra("GroupName", "Test Group");
+        intent.putExtra("GroupSize", 10);
+        intent.putExtra("GroupActivity", "Running");
+
+        ActivityScenario.launch(intent);
+
+        onView(withText("Posts")).perform(click());
+        onView(withId(R.id.editMessage)).perform(typeText("Any good running routes?"), closeSoftKeyboard());
+        onView(withId(R.id.btnImgSend)).perform(click());
+        Thread.sleep(2000);
+
+        onView(withId(R.id.postsRecyclerView))
+                .check(matches(hasDescendant(withText("Any good running routes?"))));
+    }
+
+    @Test
+    public void createGroupMeetup() throws InterruptedException {
+        mAuth.signInWithEmailAndPassword("brendy@gmail.com", "Brendy1976");
+
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), GroupActivity.class);
+        intent.putExtra("GroupID", "Sg8JLYf9lpE1akjQRHBv");
+        intent.putExtra("GroupName", "Test Group");
+        intent.putExtra("GroupSize", 10);
+        intent.putExtra("GroupActivity", "Running");
+
+        ActivityScenario.launch(intent);
+
+        onView(withText("Meetup Requests")).perform(click());
+        onView(withId(R.id.btnCreateMeetup)).perform(click());
+        onView(withId(R.id.editCreateMeetupTitle))
+                .perform(typeText("Test Meetup"), closeSoftKeyboard());
+        onView(withId(R.id.editCreateMeetupLocation))
+                .perform(typeText("Test Location"), closeSoftKeyboard());
+        onView(withId(R.id.editCreateMeetupDescription))
+                .perform(typeText("Test Description"), closeSoftKeyboard());
+
+        onView(withId(R.id.editCreateMeetupDate)).perform(click());
+        java.util.Calendar futureDate = java.util.Calendar.getInstance();
+        futureDate.add(java.util.Calendar.DAY_OF_MONTH, 5);
+        onView(withClassName(org.hamcrest.Matchers.equalTo(DatePicker.class.getName())))
+                .perform(PickerActions.setDate(
+                        futureDate.get(java.util.Calendar.YEAR),
+                        futureDate.get(java.util.Calendar.MONTH) + 1,
+                        futureDate.get(java.util.Calendar.DAY_OF_MONTH)
+                ));
+        onView(withText("OK")).perform(click());
+
+
+        onView(withId(R.id.editCreateMeetupTime)).perform(click());
+        onView(withClassName(org.hamcrest.Matchers.equalTo(TimePicker.class.getName())))
+                .perform(PickerActions.setTime(10, 30));
+        onView(withText("OK")).perform(click());
+
+        onView(withId(R.id.btnCreateMeetup2)).perform(click());
+
+        onView(withId(R.id.meetupsRecyclerView))
+                .perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Test Meetup"))));
+
+        onView(withText("Test Meetup")).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void sendDirectMessageSuccessfully() throws InterruptedException {
+        mAuth.signInWithEmailAndPassword("brendy@gmail.com", "Brendy1976");
+
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MessagingChatActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("name", "Aileen Doherty");
+        bundle.putString("UserID", "75IWND3yGZTdi4f05jkcApf4N9p2");
+        intent.putExtras(bundle);
+
+        ActivityScenario.launch(intent);
+
+        String message = "Hello, I have sent a test message!";
+        onView(withId(R.id.editPost)).perform(typeText(message), closeSoftKeyboard());
+
+        onView(withId(R.id.btnSendPost)).perform(click());
+        onView(withText("Hello, I have sent a test message!"));
+        onView(withId(R.id.editPost)).check(matches(withText("")));
     }
 
     @Test
     public void joinFitnessGroup() {
 
     }
-
-    @Test
-    public void createGroupPost() {
-        ActivityScenario.launch(CreatePostActivity.class);
-
-    }
-
-    @Test
-    public void createGroupMeetup() {
-        onView(withText("Meetup Requests")).perform(click());
-
-        onView(withId(R.id.btnCreateDistanceGoal)).perform(click());
-
-        onView(withId(R.id.editTargetDistance)).perform(typeText("Weekend Run"), closeSoftKeyboard());
-
-
-        onView(withId(R.id.editTargetTimeForm)).perform(click());
-        onView(withClassName(equalTo(DatePicker.class.getName())))
-                .perform(PickerActions.setDate(2025, 3, 15));
-        onView(withId(android.R.id.button1)).perform(click());
-
-
-        onView(withId(R.id.editGroupLocation)).perform(click());
-        onView(withClassName(equalTo(TimePicker.class.getName())))
-                .perform(PickerActions.setTime(8, 30));
-        onView(withId(android.R.id.button1)).perform(click());
-
-        onView(withId(R.id.editTextLocation)).perform(typeText("Derry Quay"), closeSoftKeyboard());
-
-        onView(withId(R.id.editDistanceGoalDescription)).perform(typeText("Group running session"), closeSoftKeyboard());
-
-
-        onView(withId(R.id.btnCreateDistanceGoal)).perform(click());
-
-        onView(withId(R.id.meetupsRecyclerView))
-                .perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Weekend Run"))))
-                .check(matches(isDisplayed()));
-    }
-
 }

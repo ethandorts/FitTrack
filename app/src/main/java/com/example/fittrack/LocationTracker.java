@@ -123,9 +123,11 @@ public class LocationTracker extends Service {
             for (Location location : locationResult.getLocations()) {
                 previousLocation = location;
                 LatLng newLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                float speed = location.getSpeed();
                 Intent passGeoData = new Intent();
                 passGeoData.setAction("com.example.broadcast.LOCATION_UPDATE");
                 passGeoData.putExtra("location", location);
+                passGeoData.putExtra("speed", speed);
                 sendBroadcast(passGeoData);
             }
         }

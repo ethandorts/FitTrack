@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private double distanceTravelled;
     private TextView txtDistanceTravelled;
     private TextView txtRunTime;
+    private TextView speedView;
     private LatLng currentLocation;
     private boolean isTrackingRun;
     private boolean isTimerStarted;
@@ -103,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Button btnClear = findViewById(R.id.btnClearMap);
         Button btnStopStart = findViewById(R.id.stopStartBtn);
         txtRunTime = findViewById(R.id.txtRunTime);
+        speedView = findViewById(R.id.currentSpeed);
 
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakelock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Fittrack:PREVENT_DOZE_MODE");
@@ -136,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(this);
 
-        txtDistanceTravelled.setText(String.format("%.2f metres", distanceTravelled));
+        txtDistanceTravelled.setText(String.format("%.2f km", distanceTravelled / 1000));
 
         btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -256,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             double distanceTravelledInterval = previousLocation.distanceTo(location);
             distanceTravelled += distanceTravelledInterval;
             String.valueOf(distanceTravelled);
-            txtDistanceTravelled.setText(String.format("%.2f meters", distanceTravelled));
+            txtDistanceTravelled.setText(String.format("%.2f KM", distanceTravelled / 1000));
             LatLng prevLocation = new LatLng(previousLocation.getLatitude(), previousLocation.getLongitude());
             googleMap.addPolyline(new PolylineOptions()
                     .add(prevLocation, currentLocation)
@@ -475,6 +477,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         public void onReceive(Context context, Intent intent) {
             Location newLocation = intent.getParcelableExtra("location");
+            float currentSpeed = intent.getFloatExtra("speed", 0);
             //activityLocations.add(new LatLng(newLocation.getLatitude(), newLocation.getLongitude()));
             new Thread(new Runnable() {
                 @Override
@@ -492,6 +495,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             //System.out.println(newLocation);
             updateMapWithLocation(newLocation);
             previousLocation = newLocation;
+            speedView.setText(ConversionUtil.convertToMinutesPerKM(currentSpeed));
         }
     }
 }

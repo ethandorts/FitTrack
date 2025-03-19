@@ -160,7 +160,7 @@ public class TimeGoalFragment extends Fragment {
                     Double.parseDouble(targetDistance) * 1000,
                     "In Progress",
                     0,
-                    "Achieve a time of " + targetTimeInSeconds + " seconds for a distance of " + targetDistance + " KM by " + formattedEndDate
+                    "Achieve a time of " + ConversionUtil.convertSecondsToTime(targetTimeInSeconds) + " for a distance of " + targetDistance + " KM by " + formattedEndDate
             );
 
             Toast.makeText(getContext(), "Time Goal has been set successfully", Toast.LENGTH_SHORT).show();

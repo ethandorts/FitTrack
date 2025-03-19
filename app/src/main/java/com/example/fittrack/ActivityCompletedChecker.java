@@ -47,7 +47,7 @@ public class ActivityCompletedChecker extends Worker {
             @Override
             public void onSuccess(QuerySnapshot querySnapshot) {
                 Date date = new Date();
-                String format = String.valueOf(date.getYear() + 1900) + "-" +  String.format("%02d", date.getMonth() + 1) + "-" + String.valueOf(date.getDate());
+                String format = String.format("%02d", date.getDate()) + "-" +  String.format("%02d", date.getMonth() + 1) + "-" + String.valueOf(date.getYear() + 1900);
                 System.out.println("FormatDate: " + format);
                 if(querySnapshot.getDocuments().size() > 0) {
                     Query todayActivitiesQuery = db.collection("Activities")

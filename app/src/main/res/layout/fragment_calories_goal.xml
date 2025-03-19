@@ -18,7 +18,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/editTargetTime"
+            android:id="@+id/editenterCalorieGoal"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -40,10 +40,10 @@
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/editTargetTime" />
+            app:layout_constraintTop_toBottomOf="@id/editenterCalorieGoal" />
 
         <EditText
-            android:id="@+id/edit"
+            android:id="@+id/editCalorieCompletionDate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -67,7 +67,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/edit"
             app:layout_constraintVertical_bias="0.015" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

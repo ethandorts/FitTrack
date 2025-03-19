@@ -19,10 +19,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class GroupActivity extends AppCompatActivity {
     TextView txtGroupName;
     ViewPager2 pager;
-    private ActivitiesRecyclerViewAdapter groupActivitiesAdapter;
-    private GroupActivitiesViewModel groupActivityViewModel;
+//    private ActivitiesRecyclerViewAdapter groupActivitiesAdapter;
+//    private GroupActivitiesViewModel groupActivityViewModel;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private GroupsDatabaseUtil databaseUtil = new GroupsDatabaseUtil(db);
+//    private GroupsDatabaseUtil databaseUtil = new GroupsDatabaseUtil(db);
     private ProgressBar loadingActivities;
 
     @Override

@@ -7,13 +7,13 @@
 
     <TextView
         android:id="@+id/txtMyRunningGroups"
-        android:layout_width="412dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="1dp"
+        android:layout_width="405dp"
+        android:layout_height="75dp"
+        android:layout_marginBottom="2dp"
         android:gravity="center"
         android:text="My Running Groups"
         android:textColor="#FFFFFF"
-        android:textSize="38sp"
+        android:textSize="36sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/recyclerView"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,11 +22,9 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
-        android:layout_width="410dp"
-        android:layout_height="650dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="1dp"
+        android:layout_width="404dp"
+        android:layout_height="640dp"
+        android:layout_marginBottom="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
