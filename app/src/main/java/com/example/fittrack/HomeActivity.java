@@ -311,13 +311,13 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
             }
         });
 
-        btnMessageFriends.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, DirectMessagingMenu.class);
-                startActivity(intent);
-            }
-        });
+//        btnMessageFriends.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(HomeActivity.this, DirectMessagingMenu.class);
+//                startActivity(intent);
+//            }
+//        });
 
         addFriend.setOnClickListener(new View.OnClickListener() {
             @Override

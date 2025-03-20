@@ -38,9 +38,9 @@ public class GroupActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String GroupID = intent.getStringExtra("GroupID");
         String groupName = intent.getStringExtra("GroupName");
-        int GroupSize = intent.getIntExtra("GroupSize", 0);
+        int GroupSize = intent.getIntExtra("MembersValue", 0);
         System.out.println("Buzz Lightyear: " + GroupSize);
-        String GroupActivity = intent.getStringExtra("GroupActivity");
+        String GroupActivity = intent.getStringExtra("ActivityType");
         txtGroupName.setText(groupName);
 
         pager = findViewById(R.id.viewPager3);
@@ -72,6 +72,7 @@ public class GroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(GroupActivity.this, DirectMessagingMenu.class);
+                intent.putExtra("GroupID", GroupID);
                 startActivity(intent);
             }
         });
@@ -88,6 +89,7 @@ public class GroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(GroupActivity.this, GroupOverviewActivity.class);
+                System.out.println(GroupID + " " + GroupSize + " " + groupName + " " + GroupActivity);
                 intent.putExtra("GroupID", GroupID);
                 intent.putExtra("GroupSize", GroupSize);
                 intent.putExtra("GroupName", groupName);

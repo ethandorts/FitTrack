@@ -18,6 +18,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -503,6 +505,23 @@ public class GroupsDatabaseUtil {
                 });
     }
 
+    public void retrieveGroupProfileImage(String groupPath, GroupPictureCallback callback) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReference("group-profile-images/" + groupPath);
+
+        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                callback.onCallback(uri);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("Profile Picture Failure", "Couldn't retrieve profile picture");
+            }
+        });
+    }
+
     public interface AllGroupsCallback {
         void onCallback(List<Map<String, Object>> groupsData);
     }
@@ -545,5 +564,9 @@ public class GroupsDatabaseUtil {
 
     public interface MeetupCallback {
         void onCallback(Map<String, Object> meetupData);
+    }
+
+    public interface GroupPictureCallback {
+        void onCallback(Uri PicturePath);
     }
 }

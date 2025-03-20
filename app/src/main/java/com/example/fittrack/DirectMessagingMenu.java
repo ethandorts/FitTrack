@@ -33,11 +33,12 @@ import java.util.Map;
 public class DirectMessagingMenu extends AppCompatActivity implements RecyclerViewInterface {
     private FirebaseUser mAuth = FirebaseAuth.getInstance().getCurrentUser();
     private String UserID;
+    private String GroupID;
     private DirectMessagingMenuViewAdapter chatsAdapter;
     private ArrayList<UserModel> userList = new ArrayList<UserModel>();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
-    private UserViewModel userViewModel = new UserViewModel();
+    private UserViewModel userViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,9 @@ public class DirectMessagingMenu extends AppCompatActivity implements RecyclerVi
     @Override
     protected void onResume() {
         super.onResume();
-        userViewModel.loadUsersToChat();
+        Intent intent = getIntent();
+        GroupID = intent.getStringExtra("GroupID");
+        System.out.println("GroupID: " + GroupID);
 //        userList.clear();
 //        String UserID = mAuth.getUid();
 
@@ -78,7 +81,7 @@ public class DirectMessagingMenu extends AppCompatActivity implements RecyclerVi
         chatsAdapter = new DirectMessagingMenuViewAdapter(this, this);
         RecyclerView chatsRecyclerView = findViewById(R.id.recyclerViewChats);
         chatsRecyclerView.setAdapter(chatsAdapter);
-        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        userViewModel = new ViewModelProvider(this, new UserViewModelFactory(GroupID)).get(UserViewModel.class);
         userViewModel.getChatUsers().observe(this, new Observer<ArrayList<UserModel>>() {
             @Override
             public void onChanged(ArrayList<UserModel> userModels) {

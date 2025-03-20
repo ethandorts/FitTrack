@@ -2,6 +2,8 @@ package com.example.fittrack;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -22,6 +25,7 @@ public class PostsRecyclerViewAdapter extends FirestoreRecyclerAdapter<PostModel
     private Context context;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
+    private FirebaseDatabaseHelper userUtil = new FirebaseDatabaseHelper(db);
     private String GroupID;
 
     public PostsRecyclerViewAdapter(@NonNull FirestoreRecyclerOptions<PostModel> options, Context context, String GroupID) {
@@ -58,6 +62,22 @@ public class PostsRecyclerViewAdapter extends FirestoreRecyclerAdapter<PostModel
                 context.startActivity(intent);
             }
         });
+        userUtil.retrieveProfilePicture(post.getUserID() + ".jpeg", new FirebaseDatabaseHelper.ProfilePictureCallback() {
+            @Override
+            public void onCallback(Uri PicturePath) {
+                System.out.println(PicturePath);
+                System.out.println("Post Comment UserID: " + post.getUserID());
+                System.out.println(context);
+                if(PicturePath != null) {
+                    Glide.with(holder.itemView.getContext())
+                            .load(PicturePath)
+                            .into(holder.PostUserImage);
+                } else {
+                    Log.e("No profile picture found", "No profile picture found.");
+                    holder.PostUserImage.setImageResource(R.drawable.profile);
+                }
+            }
+        });
     }
 
     public static class PostsViewHolder extends RecyclerView.ViewHolder {
@@ -71,6 +91,7 @@ public class PostsRecyclerViewAdapter extends FirestoreRecyclerAdapter<PostModel
             txtDate = itemView.findViewById(R.id.txtPostDate);
             txtDescription = itemView.findViewById(R.id.txtPostDescription);
             btnComments = itemView.findViewById(R.id.btnComments);
+            PostUserImage = itemView.findViewById(R.id.imgPostLogo);
         }
     }
 }

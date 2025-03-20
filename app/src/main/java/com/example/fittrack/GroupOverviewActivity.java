@@ -1,10 +1,12 @@
 package com.example.fittrack;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -29,6 +32,7 @@ public class GroupOverviewActivity extends AppCompatActivity {
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private String currentUser = mAuth.getUid();
     private TextView txtRunningGroupInfo;
+    private ImageView imgGroupProfile;
     private Button btnAdminJoinRequests;
     private RecyclerView membersRecyclerView;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -41,6 +45,7 @@ public class GroupOverviewActivity extends AppCompatActivity {
         txtRunningGroupInfo = findViewById(R.id.txtClubNameOverview);
         btnAdminJoinRequests = findViewById(R.id.btnAdminRequests);
         membersRecyclerView = findViewById(R.id.membersRecyclerView);
+        imgGroupProfile = findViewById(R.id.membersListLogo);
 
         Intent intent = getIntent();
         String GroupName = intent.getStringExtra("GroupName");
@@ -49,6 +54,19 @@ public class GroupOverviewActivity extends AppCompatActivity {
         String GroupID = intent.getStringExtra("GroupID");
 
         txtRunningGroupInfo.setText(GroupName + "\n\n" + String.valueOf(GroupSize) + " Members" + "\n\n" + GroupActivity);
+        groupUtil.retrieveGroupProfileImage(GroupID + ".jpg", new GroupsDatabaseUtil.GroupPictureCallback() {
+            @Override
+            public void onCallback(Uri PicturePath) {
+                if(PicturePath != null) {
+                    Glide.with(getApplicationContext())
+                            .load(PicturePath)
+                            .into(imgGroupProfile);
+                } else {
+                    Log.e("No profile picture found", "No profile picture found.");
+                    imgGroupProfile.setImageResource(R.drawable.running_club_background);
+                }
+            }
+        });
 
         btnAdminJoinRequests.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,11 +86,11 @@ public class GroupOverviewActivity extends AppCompatActivity {
                 ArrayList<MemberModel> members = new ArrayList<>();
                 HashSet<String> adminSet = new HashSet<>(admins);
                 for(String admin : admins) {
-                    members.add(new MemberModel(admin, null, true));
+                    members.add(new MemberModel(admin,  true));
                 }
                 for(String runner: runners) {
                     if(!adminSet.contains(runner)) {
-                        members.add(new MemberModel(runner, null, false));
+                        members.add(new MemberModel(runner, false));
                     }
                 }
 

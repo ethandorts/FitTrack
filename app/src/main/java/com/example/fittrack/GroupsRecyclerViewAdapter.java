@@ -4,6 +4,8 @@ import static java.security.AccessController.getContext;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +15,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
 public class GroupsRecyclerViewAdapter extends FirestoreRecyclerAdapter<GroupModel, GroupsRecyclerViewAdapter.GroupsViewHolder> {
     private Context context;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private GroupsDatabaseUtil groupsDatabaseUtil = new GroupsDatabaseUtil(db);
 
     public GroupsRecyclerViewAdapter(@NonNull FirestoreRecyclerOptions<GroupModel> options, Context context) {
         super(options);
@@ -94,6 +100,19 @@ public class GroupsRecyclerViewAdapter extends FirestoreRecyclerAdapter<GroupMod
         });
         holder.GroupName.setText(group.getName());
         holder.GroupDescription.setText(group.getShortDescription());
+        groupsDatabaseUtil.retrieveGroupProfileImage(group.getGroupID() + ".jpg", new GroupsDatabaseUtil.GroupPictureCallback() {
+            @Override
+            public void onCallback(Uri PicturePath) {
+                if(PicturePath != null) {
+                    Glide.with(context)
+                            .load(PicturePath)
+                            .into(holder.GroupImage);
+                } else {
+                    Log.e("No profile picture found", "No profile picture found.");
+                    holder.GroupImage.setImageResource(R.drawable.profile);
+                }
+            }
+        });
     }
 
     public static class GroupsViewHolder extends RecyclerView.ViewHolder {

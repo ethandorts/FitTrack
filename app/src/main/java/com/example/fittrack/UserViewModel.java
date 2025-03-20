@@ -1,5 +1,7 @@
 package com.example.fittrack;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -13,6 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class UserViewModel extends ViewModel {
     MutableLiveData<ArrayList<UserModel>> users = new MutableLiveData<>();
@@ -21,9 +24,13 @@ public class UserViewModel extends ViewModel {
     private String UserID = mAuth.getUid();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
+    private GroupsDatabaseUtil groupsDatabaseUtil = new GroupsDatabaseUtil(db);
+
+    public UserViewModel(String GroupID) {
+        loadGroupUsers(GroupID);
+    }
 
     public UserViewModel() {
-        loadUsersToChat();
     }
 
     public MutableLiveData<ArrayList<UserModel>> getChatUsers() {
@@ -37,7 +44,7 @@ public class UserViewModel extends ViewModel {
                 ArrayList<UserModel> userList = new ArrayList<>();
                 System.out.println("Data retrieved size: " + data.size());
                 for(Map<String, Object> userMap : data) {
-                    // data got - formatting users
+
                     String documentID = DirectMessagingUtil.getDocumentID(UserID, (String) userMap.get("UserID"));
                     System.out.println("User Retrieved: " + userMap.get("UserID"));
                     db.collection("DM").document(documentID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -59,4 +66,67 @@ public class UserViewModel extends ViewModel {
         });
     }
 
+    public void loadGroupUsers(String GroupID) {
+        if (GroupID == null || GroupID.isEmpty()) {
+            Log.e("loadGroupUsers", "GroupID is null or empty");
+            return;
+        }
+
+        groupsDatabaseUtil.retrieveUsersinGroup(GroupID, new GroupsDatabaseUtil.UsersinGroupsCallback() {
+            @Override
+            public void onCallback(ArrayList<String> runners) {
+                ArrayList<UserModel> userList = new ArrayList<>();
+
+                if (runners.isEmpty()) {
+                    users.setValue(userList);
+                    return;
+                }
+
+                AtomicInteger completedTasks = new AtomicInteger(0);  // Track completed tasks
+
+                for (String runner : runners) {
+                    if (UserID == null || runner == null) {
+                        Log.e("loadGroupUsers", "UserID or runner is null, skipping.");
+                        continue;
+                    }
+
+                    String documentID = DirectMessagingUtil.getDocumentID(UserID, runner);
+                    if (documentID == null || documentID.isEmpty()) {
+                        Log.e("loadGroupUsers", "documentID is null or empty for runner: " + runner);
+                        continue;
+                    }
+
+                    db.collection("DM").document(documentID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            String lastMessage = "";
+
+                            if (task.isSuccessful() && task.getResult() != null) {
+                                DocumentSnapshot retrievedSnapshot = task.getResult();
+                                lastMessage = retrievedSnapshot.exists() ? retrievedSnapshot.getString("LastMessage") : "";
+                            } else {
+                                Log.e("Firestore", "Error retrieving document: " + task.getException());
+                            }
+
+                            final String finalLastMessage = (lastMessage != null) ? lastMessage : "";
+
+                            DatabaseUtil.retrieveChatName(runner, new FirebaseDatabaseHelper.ChatUserCallback() {
+                                @Override
+                                public void onCallback(String FullName) {
+                                    UserModel userModel = new UserModel(FullName, finalLastMessage, runner);
+                                    if(!userModel.getUserID().equals(UserID)) {
+                                        userList.add(userModel);
+                                    }
+
+                                    if (completedTasks.incrementAndGet() == runners.size()) {
+                                        users.setValue(userList);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+        });
+    }
 }

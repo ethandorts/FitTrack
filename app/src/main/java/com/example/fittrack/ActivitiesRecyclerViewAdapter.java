@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Picture;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -112,6 +115,19 @@ public class ActivitiesRecyclerViewAdapter extends FirestoreRecyclerAdapter<Acti
             @Override
             public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal) {
                 holder.activityUser.setText(FullName);
+            }
+        });
+        userUtil.retrieveProfilePicture(activity.getUserID() + ".jpeg", new FirebaseDatabaseHelper.ProfilePictureCallback() {
+            @Override
+            public void onCallback(Uri PicturePath) {
+                if(PicturePath != null) {
+                    Glide.with(context)
+                            .load(PicturePath)
+                            .into(holder.activityUserImage);
+                } else {
+                    Log.e("No profile picture found", "No profile picture found.");
+                    holder.activityUserImage.setImageResource(R.drawable.profile);
+                }
             }
         });
         holder.activityMapContainer.onCreate(null);

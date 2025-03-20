@@ -109,6 +109,30 @@ public class FirebaseDatabaseHelper {
                 });
     }
 
+    public void retrieveChatName(String UserID, ChatUserCallback callback) {
+        DocumentReference documentReference = db.collection("Users").document(UserID);
+        documentReference.get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
+                            Map<String, Object> data = documentSnapshot.getData();
+                            System.out.println("Data: " + data);
+                            callback.onCallback((String) data.get("FullName"));
+                        } else {
+                            callback.onCallback(null);
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        System.out.println("Couldn't fetch user details");
+                        System.out.println(e.getMessage());
+                        callback.onCallback(null);
+                    }
+                });
+    }
+
     public void retrieveAllUsers( String loggedInID, FirestoreAllUsersCallback callback) {
         db.collection("Users")
                 .get()
@@ -168,6 +192,10 @@ public class FirebaseDatabaseHelper {
 
     public interface ProfilePictureCallback {
         void onCallback(Uri PicturePath);
+    }
+
+    public interface ChatUserCallback {
+        void onCallback(String Chatname);
     }
 
 }
