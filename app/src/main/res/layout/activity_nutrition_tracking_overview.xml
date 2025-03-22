@@ -30,16 +30,17 @@
             android:textColor="@color/white"
             android:textSize="24sp"
             android:textStyle="bold" />
+
     </androidx.appcompat.widget.Toolbar>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayoutMealTypes"
         android:layout_width="0dp"
         android:layout_height="57dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="7dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtSelectDateLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/editSelectedDate" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/pagerFoods"
@@ -52,19 +53,18 @@
 
     <EditText
         android:id="@+id/editSelectedDate"
-        android:layout_width="139dp"
+        android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginTop="18dp"
         android:layout_marginEnd="75dp"
-        android:layout_marginBottom="13dp"
         android:ems="10"
-        android:focusable="true"
         android:hint="Select Date..."
-        android:inputType="text"
-        app:layout_constraintBottom_toTopOf="@+id/tabLayoutMealTypes"
+        android:inputType="none"
+        android:focusable="false"
+        android:clickable="true"
+        android:textStyle="bold"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txtSelectDateLabel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/txtSelectDateLabel"
-        app:layout_constraintTop_toBottomOf="@+id/CreatePostsToolbar" />
+        app:layout_constraintStart_toEndOf="@+id/txtSelectDateLabel" />
 
     <TextView
         android:id="@+id/txtSelectDateLabel"
@@ -80,4 +80,5 @@
         app:layout_constraintEnd_toStartOf="@+id/editSelectedDate"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/CreatePostsToolbar" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -30,6 +30,15 @@
         android:theme="@style/Theme.FitTrack"
         tools:targetApi="31">
         <activity
+            android:name=".AdditionalNutrtionalInformationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdditionalNutritionalInformationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AINutritionInsightsActivity"
+            android:exported="false" />
+        <activity
             android:name=".ActivitiesByMonthActivity"
             android:exported="false" />
         <activity

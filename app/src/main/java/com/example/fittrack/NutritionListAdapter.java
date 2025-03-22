@@ -1,6 +1,7 @@
 package com.example.fittrack;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,15 +43,18 @@ public class NutritionListAdapter extends FirestoreRecyclerAdapter<FoodModel, Nu
         System.out.println(food.getCalories());
         holder.foodName.setText(food.getFoodName());
         holder.calories.setText(String.valueOf(food.getCalories() + " Calories"));
-        holder.moreDetails.setText(
-                "Fat: " + String.format("%.2f", food.getFat()) + " g" +  "\n" +
-                "Saturated Fat: " + String.format("%.2f", food.getSaturated_fat()) + " g" + "\n" +
-                "Protein: " + String.format("%.2f", food.getProtein()) + " g" + "\n" +
-                "Sodium: " + String.format("%.2f", food.getPotassium()) + " mg" + "\n" +
-                "Potassium: " + String.format("%.2f", food.getPotassium()) + " mg" + "\n" +
-                "Carbohydrates: " + String.format("%.2f", food.getCarbs()) + " g" + "\n" +
-                "Fiber: " + String.format("%.2f", food.getFiber()) + " g" + "\n" +
-                "Sugar: " + String.format("%.2f", food.getSugar()) + " g");
+        holder.moreDetails.setText(Html.fromHtml(
+                "<b>Serving Size:</b> " + String.format("%.2f", food.getServingSize()) + " g<br>" +
+                        "<b>Fat:</b> " + String.format("%.2f", food.getFat()) + " g<br>" +
+                        "<b>Saturated Fat:</b> " + String.format("%.2f", food.getSaturated_fat()) + " g<br>" +
+                        "<b>Protein:</b> " + String.format("%.2f", food.getProtein()) + " g<br>" +
+                        "<b>Sodium:</b> " + String.format("%.2f", food.getSodium()) + " mg<br>" +
+                        "<b>Potassium:</b> " + String.format("%.2f", food.getPotassium()) + " mg<br>" +
+                        "<b>Carbohydrates:</b> " + String.format("%.2f", food.getCarbs()) + " g<br>" +
+                        "<b>Fiber:</b> " + String.format("%.2f", food.getFiber()) + " g<br>" +
+                        "<b>Sugar:</b> " + String.format("%.2f", food.getSugar()) + " g"
+        ));
+
         if(food.isDetailsShown()) {
             holder.moreDetails.setVisibility(View.VISIBLE);
             holder.btnRemoveFood.setVisibility(View.VISIBLE);

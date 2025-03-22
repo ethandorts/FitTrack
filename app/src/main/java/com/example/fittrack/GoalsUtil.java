@@ -8,6 +8,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -157,6 +158,26 @@ public class GoalsUtil {
                 });
     }
 
+    public void retrieveGoalSpecificDescription(String UserID, String GoalID, SpecificGoalCallback callback) {
+        db.collection("Users")
+                .document(UserID)
+                .collection("Goals")
+                .document(GoalID)
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        String description = (String) documentSnapshot.get("goalDescription");
+                        callback.onCallback(description);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        callback.onCallback(null);
+                        System.out.println(e.getMessage());
+                    }
+                });
+    }
+
     public void retrieveUserCalorieGoals(String UserID, GoalsCallback callback) {
         db.collection("Users")
                 .document(UserID)
@@ -187,5 +208,9 @@ public class GoalsUtil {
 
     public interface GoalsCallback {
         void onCallback(List<String> goals);
+    }
+
+    public interface SpecificGoalCallback {
+        void onCallback(String description);
     }
 }

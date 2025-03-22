@@ -178,9 +178,6 @@ public class GoalCheckerUtil {
         });
     }
 
-
-
-
     public void checkCalorieGoalIsAchieved(String UserID, NotificationCallback callback) {
         Query query = db.collection("Users")
                 .document(UserID)

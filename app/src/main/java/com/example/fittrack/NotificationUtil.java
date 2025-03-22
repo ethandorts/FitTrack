@@ -16,6 +16,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class NotificationUtil {
     private static final String SAVED_ACTIVITY_ID = "save_activity_channel";
     private static final String PROGRESS_TRACKING_ID = "progress_tracking_channel";
@@ -115,23 +117,33 @@ public class NotificationUtil {
         createNotificationChannel(context, CALORIE_GOAL_SUCCESSFUL_ID, "Calorie Goal Successfully Completed", "Calorie Goal Successfully Completed", NotificationManager.IMPORTANCE_HIGH);
     }
 
-    public static void showCalorieGoalSuccessfulNotification(Context context) {
-        showNotification(context, CALORIE_GOAL_SUCCESSFUL_ID, "Calorie Goal Successfully Completed", "Calorie Goal Successfully Completed", NotificationCompat.PRIORITY_HIGH, null);
+    public static void showCalorieGoalSuccessfulNotification(Context context, String description) {
+        showNotification(context, CALORIE_GOAL_SUCCESSFUL_ID, "Calorie Goal Successfully Completed", modifyCalorieGoalNotificationMessage(description), NotificationCompat.PRIORITY_HIGH, null);
     }
 
     public static void createDistanceGoalSuccessfulNotificationChannel(Context context) {
         createNotificationChannel(context, DISTANCE_GOAL_SUCCESSFUL_ID, "Distance Goal Successfully Completed", "Distance Goal Successfully Completed", NotificationManager.IMPORTANCE_HIGH);
     }
 
-    public static void showDistanceGoalSuccessfulNotification(Context context) {
-        showNotification(context, DISTANCE_GOAL_SUCCESSFUL_ID, "Distance Goal Successfully Completed", "Distance Goal Successfully Completed", NotificationCompat.PRIORITY_HIGH, null);
+    public static void showDistanceGoalSuccessfulNotification(Context context, String description) {
+        showNotification(context, DISTANCE_GOAL_SUCCESSFUL_ID, "Distance Goal Successfully Completed", modifyGoalNotificationMessage(description), NotificationCompat.PRIORITY_HIGH, null);
     }
 
     public static void createTimeGoalSuccessfulNotificationChannel(Context context) {
         createNotificationChannel(context, TIME_GOAL_SUCCESSFUL_ID, "Time Goal Successfully Completed", "Time Goal Successfully Completed", NotificationManager.IMPORTANCE_HIGH);
     }
 
-    public static void showTimeGoalSuccessfulNotification(Context context) {
-        showNotification(context, TIME_GOAL_SUCCESSFUL_ID, "Time Goal Successfully Completed", "Time Goal Successfully Completed", NotificationCompat.PRIORITY_HIGH, null);
+    public static void showTimeGoalSuccessfulNotification(Context context, String description) {
+        showNotification(context, TIME_GOAL_SUCCESSFUL_ID, "Time Goal Successfully Completed", modifyGoalNotificationMessage(description), NotificationCompat.PRIORITY_HIGH, null);
+    }
+
+    private static String modifyGoalNotificationMessage(String description) {
+        String successMessage = description.replace("Achieve", "achieved");
+        return "Successfully " + successMessage;
+    }
+
+    private static String modifyCalorieGoalNotificationMessage(String description) {
+        String successMessage = description.replace("Consume", "consumed");
+        return "Successfully " + successMessage;
     }
 }

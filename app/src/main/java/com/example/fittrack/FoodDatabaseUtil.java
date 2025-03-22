@@ -1,5 +1,7 @@
 package com.example.fittrack;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,6 +33,11 @@ public class FoodDatabaseUtil {
     }
 
     public void getTotalCalories(String todayDate, DayCaloriesCallback callback) {
+        if(todayDate == null) {
+            Log.e("No date passed to getTodayCalories method","No date passed to getTodayCalories method");
+            return;
+        }
+
         CollectionReference collectionRef = db.collection("Users")
                 .document(UserID)
                 .collection("Nutrition")

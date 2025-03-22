@@ -132,7 +132,7 @@
         android:id="@+id/txtNutritionalInformation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=" Nutritional Information"
+        android:text=" Nutritional Information (per 100g)"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"

@@ -2,6 +2,7 @@ package com.example.fittrack;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -61,14 +62,17 @@ public class FoodInformationActivity extends AppCompatActivity {
         txtFoodName.setText(foodName);
         txtCalories.setText(calories + " calories");
 
-        txtNutritionalFacts.setText(" Fat : " + fat + "\n"
-        + " Saturated Fat: " + saturated_fat + "\n"
-        + " Protein : " + protein + "\n"
-        + " Sodium: " + sodium + "\n"
-        + " Potassium: " + potassium + "\n"
-        + " Carbohydrates: " + carbs + "\n"
-        + " Fiber: " + fiber + "\n"
-        + " Sugar: " + sugar);
+        txtNutritionalFacts.setText(Html.fromHtml(
+                "<b>Fat:</b> " + fat + " g<br>" +
+                        "<b>Saturated Fat:</b> " + saturated_fat + " g<br>" +
+                        "<b>Protein:</b> " + protein + " g<br>" +
+                        "<b>Sodium:</b> " + sodium + " mg<br>" +
+                        "<b>Potassium:</b> " + potassium + " mg<br>" +
+                        "<b>Carbohydrates:</b> " + carbs + " g<br>" +
+                        "<b>Fiber:</b> " + fiber + " g<br>" +
+                        "<b>Sugar:</b> " + sugar + " g"
+        ));
+
 
         btnLogFood.setOnClickListener(new View.OnClickListener() {
             @Override

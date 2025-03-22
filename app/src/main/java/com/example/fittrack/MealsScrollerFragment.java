@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,11 +33,9 @@ public class MealsScrollerFragment extends Fragment {
     private String currentUser = mAuth.getUid();
     private NutritionListAdapter mealsAdapter;
     private String mealType;
-    private String formattedDate;
 
-    public MealsScrollerFragment(String mealType, String formattedDate) {
+    public MealsScrollerFragment(String mealType) {
         this.mealType = mealType;
-        this.formattedDate = formattedDate;
     }
 
     @Nullable
@@ -55,22 +54,27 @@ public class MealsScrollerFragment extends Fragment {
 
         txtMealTitle.setText(mealType);
 
-        Query query = db.collection("Users")
-                .document(currentUser)
-                .collection("Nutrition")
-                .document(formattedDate)
-                .collection("Meals")
-                .whereEqualTo("mealType", mealType);
+        SelectedDateViewModel selectedDateViewModel = new ViewModelProvider(getActivity()).get(SelectedDateViewModel.class);
+
+        selectedDateViewModel.getSelectedDate().observe(getViewLifecycleOwner(), date -> {
+            Query query = db.collection("Users")
+                    .document(currentUser)
+                    .collection("Nutrition")
+                    .document(date)
+                    .collection("Meals")
+                    .whereEqualTo("mealType", mealType);
 
 
-        FirestoreRecyclerOptions<FoodModel> options =
-                new FirestoreRecyclerOptions.Builder<FoodModel>()
-                        .setQuery(query, FoodModel.class)
-                        .build();
+            FirestoreRecyclerOptions<FoodModel> options =
+                    new FirestoreRecyclerOptions.Builder<FoodModel>()
+                            .setQuery(query, FoodModel.class)
+                            .build();
 
-        mealsAdapter = new NutritionListAdapter(options, getContext());
-        mealsRecyclerView.setAdapter(mealsAdapter);
-        mealsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            mealsAdapter = new NutritionListAdapter(options, getContext());
+            mealsRecyclerView.setAdapter(mealsAdapter);
+            mealsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            mealsAdapter.startListening();
+        });
 
         btnAddMeal.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,7 +89,9 @@ public class MealsScrollerFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        mealsAdapter.startListening();
+       if(mealsAdapter != null) {
+           mealsAdapter.startListening();
+       }
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
@@ -18,11 +19,14 @@ import java.util.Date;
 import java.util.Locale;
 
 public class NutritionTrackingOverview extends AppCompatActivity {
+    SelectedDateViewModel selectedDateViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nutrition_tracking_overview);
+
+        selectedDateViewModel = new ViewModelProvider(this).get(SelectedDateViewModel.class);
 
         ViewPager2 pager = findViewById(R.id.pagerFoods);
         TabLayout tabs = findViewById(R.id.tabLayoutMealTypes);
@@ -31,6 +35,8 @@ public class NutritionTrackingOverview extends AppCompatActivity {
         Date date = new Date();
         String format = String.valueOf(date.getDate()) + "-" + String.format("%02d", date.getMonth() + 1) + "-" + String.valueOf(date.getYear() + 1900);
         editSelectedDate.setText(format);
+
+        selectedDateViewModel.setSelectedDate(format);
 
         editSelectedDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,12 +50,14 @@ public class NutritionTrackingOverview extends AppCompatActivity {
                                 String selectedDate = String.format(Locale.getDefault(), "%02d-%02d-%04d", day, month + 1, year);
                                 editSelectedDate.setText(selectedDate);
 
+                                selectedDateViewModel.setSelectedDate(selectedDate);
+
                                 MealTypesFragmentStateAdapter adapter = new MealTypesFragmentStateAdapter(NutritionTrackingOverview.this);
-                                adapter.addFragment(new NutritionStatsFragment(editSelectedDate.getText().toString()));
-                                adapter.addFragment(new MealsScrollerFragment("Breakfast", editSelectedDate.getText().toString()));
-                                adapter.addFragment(new MealsScrollerFragment("Lunch", editSelectedDate.getText().toString()));
-                                adapter.addFragment(new MealsScrollerFragment("Dinner", editSelectedDate.getText().toString()));
-                                adapter.addFragment(new MealsScrollerFragment("Snacks", editSelectedDate.getText().toString()));
+                                adapter.addFragment(new NutritionStatsFragment());
+                                adapter.addFragment(new MealsScrollerFragment("Breakfast"));
+                                adapter.addFragment(new MealsScrollerFragment("Lunch"));
+                                adapter.addFragment(new MealsScrollerFragment("Dinner"));
+                                adapter.addFragment(new MealsScrollerFragment("Snacks"));
                                 pager.setAdapter(adapter);
                             }
                         },
@@ -61,11 +69,11 @@ public class NutritionTrackingOverview extends AppCompatActivity {
         });
 
         MealTypesFragmentStateAdapter adapter = new MealTypesFragmentStateAdapter(this);
-        adapter.addFragment(new NutritionStatsFragment(editSelectedDate.getText().toString()));
-        adapter.addFragment(new MealsScrollerFragment("Breakfast", editSelectedDate.getText().toString()));
-        adapter.addFragment(new MealsScrollerFragment("Lunch", editSelectedDate.getText().toString()));
-        adapter.addFragment(new MealsScrollerFragment("Dinner", editSelectedDate.getText().toString()));
-        adapter.addFragment(new MealsScrollerFragment("Snacks", editSelectedDate.getText().toString()));
+        adapter.addFragment(new NutritionStatsFragment());
+        adapter.addFragment(new MealsScrollerFragment("Breakfast"));
+        adapter.addFragment(new MealsScrollerFragment("Lunch"));
+        adapter.addFragment(new MealsScrollerFragment("Dinner"));
+        adapter.addFragment(new MealsScrollerFragment("Snacks"));
         pager.setAdapter(adapter);
 
         new TabLayoutMediator(tabs, pager,

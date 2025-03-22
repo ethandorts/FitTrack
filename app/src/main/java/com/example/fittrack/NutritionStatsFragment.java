@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,13 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class NutritionStatsFragment extends Fragment {
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-    FoodDatabaseUtil foodUtil = new FoodDatabaseUtil(db);
-    private String selectedDate;
-
-    public NutritionStatsFragment(String selectedDate) {
-        this.selectedDate = selectedDate;
-    }
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FoodDatabaseUtil foodUtil = new FoodDatabaseUtil(db);
 
     public NutritionStatsFragment() {
     }
@@ -48,15 +44,37 @@ public class NutritionStatsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        System.out.println("The selected Date is " + selectedDate);
-        TextView txtCalories = view.findViewById(R.id.txtCalculation);
+        //TextView txtCalories = view.findViewById(R.id.txtCalculation);
+        SelectedDateViewModel selectedDateViewModel = new ViewModelProvider(getActivity()).get(SelectedDateViewModel.class);
 
-        loadFragment(new PieChartNutrients(selectedDate), R.id.frameLayout7);
+        selectedDateViewModel.getSelectedDate().observe(getViewLifecycleOwner(), selectedDate -> {
+            if(selectedDate != null && !selectedDate.isEmpty()) {
+                loadFragment(PieChartNutrients.newInstance(selectedDate), R.id.frameLayout7);
+                foodUtil.getTotalCalories(selectedDate, new FoodDatabaseUtil.DayCaloriesCallback() {
+                    @Override
+                    public void onCallback(double calories) {
+                        //txtCalories.setText("Total Daily Calories: " + calories + " calories");
+                    }
+                });
+            }
+        });
+    }
 
-        foodUtil.getTotalCalories(selectedDate, new FoodDatabaseUtil.DayCaloriesCallback() {
-            @Override
-            public void onCallback(double calories) {
-                txtCalories.setText("Total Daily Calories: " + calories + " calories");
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        SelectedDateViewModel selectedDateViewModel = new ViewModelProvider(getActivity()).get(SelectedDateViewModel.class);
+
+        selectedDateViewModel.getSelectedDate().observe(getViewLifecycleOwner(), selectedDate -> {
+            if(selectedDate != null && !selectedDate.isEmpty()) {
+                loadFragment(PieChartNutrients.newInstance(selectedDate), R.id.frameLayout7);
+                foodUtil.getTotalCalories(selectedDate, new FoodDatabaseUtil.DayCaloriesCallback() {
+                    @Override
+                    public void onCallback(double calories) {
+                        //txtCalories.setText("Total Daily Calories: " + calories + " calories");
+                    }
+                });
             }
         });
     }

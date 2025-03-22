@@ -25,6 +25,7 @@ public class GoalCompletedChecker extends Worker {
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private String UserID = mAuth.getUid();
     private GoalCheckerUtil checkerUtil = new GoalCheckerUtil();
+    private GoalsUtil goalsUtil = new GoalsUtil(db);
 
 
     public GoalCompletedChecker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
@@ -67,7 +68,12 @@ public class GoalCompletedChecker extends Worker {
             @Override
             public void onCallback(boolean notify, String GoalID) {
                 if(notify) {
-                    NotificationUtil.showTimeGoalSuccessfulNotification(getApplicationContext());
+                    goalsUtil.retrieveGoalSpecificDescription(UserID, GoalID, new GoalsUtil.SpecificGoalCallback() {
+                        @Override
+                        public void onCallback(String description) {
+                            NotificationUtil.showTimeGoalSuccessfulNotification(getApplicationContext(), description);
+                        }
+                    });
                     DocumentReference docRef = db.collection("Users")
                             .document(UserID)
                             .collection("Goals")
@@ -91,7 +97,12 @@ public class GoalCompletedChecker extends Worker {
             @Override
             public void onCallback(boolean notify, String GoalID) {
                 if(notify) {
-                    NotificationUtil.showDistanceGoalSuccessfulNotification(getApplicationContext());
+                    goalsUtil.retrieveGoalSpecificDescription(UserID, GoalID, new GoalsUtil.SpecificGoalCallback() {
+                        @Override
+                        public void onCallback(String description) {
+                            NotificationUtil.showDistanceGoalSuccessfulNotification(getApplicationContext(), description);
+                        }
+                    });
                     DocumentReference docRef = db.collection("Users")
                             .document(UserID)
                             .collection("Goals")
@@ -115,7 +126,12 @@ public class GoalCompletedChecker extends Worker {
             @Override
             public void onCallback(boolean notify, String GoalID) {
                 if(notify) {
-                    NotificationUtil.showCalorieGoalSuccessfulNotification(getApplicationContext());
+                    goalsUtil.retrieveGoalSpecificDescription(UserID, GoalID, new GoalsUtil.SpecificGoalCallback() {
+                        @Override
+                        public void onCallback(String description) {
+                            NotificationUtil.showCalorieGoalSuccessfulNotification(getApplicationContext(), description);
+                        }
+                    });
                     DocumentReference docRef = db.collection("Users")
                             .document(UserID)
                             .collection("Goals")
@@ -135,8 +151,6 @@ public class GoalCompletedChecker extends Worker {
                 }
             }
         });
-
-
 
         return Result.success();
     }
