@@ -55,6 +55,10 @@ public class ActivityGraphs extends Fragment {
                     return;
                 }
 
+                if (!splits.isEmpty()) {
+                    splits.remove(splits.size() - 1);
+                }
+
                 APIlib.getInstance().setActiveAnyChartView(paceGraph);
 
                 Cartesian cartesian = AnyChart.line();

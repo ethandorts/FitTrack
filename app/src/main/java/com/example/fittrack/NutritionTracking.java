@@ -77,6 +77,7 @@ public class NutritionTracking extends AppCompatActivity {
         EditText editFood = findViewById(R.id.editFood);
         Button btnSearchFood = findViewById(R.id.btnSearchFood);
         //txtCalorieCount = findViewById(R.id.txtCalorieCount);
+        Button btnReturn = findViewById(R.id.btnNutritionOverview);
         RecyclerView recyclerNutrition = findViewById(R.id.recyclerViewnutrition);
 
         foodAdapter = new NutritionSearchRecyclerViewAdapter(getApplicationContext(), foodlist);
@@ -100,6 +101,8 @@ public class NutritionTracking extends AppCompatActivity {
 //        recyclerNutrition.setAdapter(foodAdapter);
 //        recyclerNutrition.setLayoutManager(new LinearLayoutManager(this));
 //        getCalorieCount();
+
+
 
         btnSearchFood.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,6 +128,14 @@ public class NutritionTracking extends AppCompatActivity {
 //                        }, 2000);
                     }
                 });
+            }
+        });
+
+        btnReturn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(NutritionTracking.this, NutritionTrackingOverview.class);
+                startActivity(intent);
             }
         });
     }

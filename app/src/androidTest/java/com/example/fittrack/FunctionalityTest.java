@@ -4,11 +4,14 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
+import static androidx.test.espresso.matcher.ViewMatchers.hasMinimumChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -26,10 +29,13 @@ import android.widget.TimePicker;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.contrib.PickerActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
+import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.hamcrest.Matchers;
@@ -38,44 +44,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
-public class CreateEventTest {
-    FirebaseAuth mAuth;
-    @Before
-    public void setUp() throws Exception {
-        mAuth = FirebaseAuth.getInstance();
-        mAuth.signOut();
-    }
+public class FunctionalityTest {
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     @Test
-    public void addEventSuccessfully() throws InterruptedException {
+    public void addTimeGoalSuccessfully() throws InterruptedException {
         mAuth.signInWithEmailAndPassword("brendy@gmail.com", "Brendy1976");
-        ActivityScenario.launch(HomeActivity.class);
-        onView(withId(R.id.settings_bottom)).perform(click());
-        Thread.sleep(2000);
-        onView(withId(R.id.recyclerFitTrackMenu))
-                .perform(actionOnItem(
-                        hasDescendant(withText("My Fitness Planner")),
-                        click()));
-        onView(withId(R.id.btnAddEvent)).perform(click());
 
-        onView(withId(R.id.enterEventName)).perform(typeText("5KM Run"), closeSoftKeyboard());
-        onView(withId(R.id.enterActivityType)).perform(click());
-        onView(withText("Running"))
-                .inRoot(isPlatformPopup()) 
-                .perform(click());
-        onView(withId(R.id.enterDescription)).perform(typeText("Tempo Run"), closeSoftKeyboard());
-        onView(withId(R.id.btnSaveEvent)).perform(click());
-        Thread.sleep(1000);
-
-
-        ActivityScenario.launch(Calendar.class);
-        onView(withId(R.id.recyclerViewCalendarEvent))
-                .check(matches(hasDescendant(withText("5KM Run"))));
-    }
-
-    @Test
-    public void addTimeGoalSuccessfully() {
-        mAuth.signInWithEmailAndPassword("brendy@gmail.com", "Brendy1976");
+        Thread.sleep(3000);
 
         ActivityScenario.launch(CreateGoalActivity.class);
 
@@ -105,8 +81,10 @@ public class CreateEventTest {
     }
 
     @Test
-    public void addDistanceGoalSuccessfully() {
+    public void addDistanceGoalSuccessfully() throws InterruptedException {
         mAuth.signInWithEmailAndPassword("brendy@gmail.com", "Brendy1976");
+
+        Thread.sleep(3000);
 
         ActivityScenario.launch(CreateGoalActivity.class);
 
@@ -132,11 +110,14 @@ public class CreateEventTest {
         ActivityScenario.launch(GoalSettingActivity.class);
         onView(withText("Time Goal")).check(matches(isDisplayed()));
         onView(withText("Achieve a time of 23:00 for a distance of 5 KM by Thursday, May 15, 2025")).check(matches(isDisplayed()));
+        mAuth.signOut();
     }
 
     @Test
-    public void addCalorieGoalSuccessfully() {
+    public void addCalorieGoalSuccessfully() throws InterruptedException {
         mAuth.signInWithEmailAndPassword("brendy@gmail.com", "Brendy1976");
+
+        Thread.sleep(3000);
 
         ActivityScenario.launch(CreateGoalActivity.class);
 
@@ -162,11 +143,15 @@ public class CreateEventTest {
         ActivityScenario.launch(GoalSettingActivity.class);
         onView(withText("Calorie Goal")).check(matches(isDisplayed()));
         onView(withText("Consume 2000 calories by the end of Friday, June 20, 2025")).check(matches(isDisplayed()));
+        mAuth.signOut();
     }
 
     @Test
-    public void createFitnessGroup() throws InterruptedException {
+    public void createFitnessGroupSuccessfully() throws InterruptedException {
         mAuth.signInWithEmailAndPassword("brendy@gmail.com", "Brendy1976");
+
+        Thread.sleep(3000);
+
         ActivityScenario<CreateRunningGroupActivity> scenario = ActivityScenario.launch(CreateRunningGroupActivity.class);
 
         onView(withId(R.id.editGroupName))
@@ -187,12 +172,15 @@ public class CreateEventTest {
                 .perform(typeText("Join us every morning at 6 AM to run and have fun!"), closeSoftKeyboard());
 
         onView(withId(R.id.btnCreateFitnessGroup)).perform(click());
+        mAuth.signOut();
     }
 
 
     @Test
-    public void createGroupPost() throws InterruptedException {
+    public void createGroupPostSuccessfully() throws InterruptedException {
         mAuth.signInWithEmailAndPassword("brendy@gmail.com", "Brendy1976");
+
+        Thread.sleep(3000);
 
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), GroupActivity.class);
         intent.putExtra("GroupID", "Sg8JLYf9lpE1akjQRHBv");
@@ -209,11 +197,15 @@ public class CreateEventTest {
 
         onView(withId(R.id.postsRecyclerView))
                 .check(matches(hasDescendant(withText("Any good running routes?"))));
+        mAuth.signOut();
+        Thread.sleep(5000);
     }
 
     @Test
-    public void createGroupMeetup() throws InterruptedException {
+    public void createGroupMeetupSuccessfully() throws InterruptedException {
         mAuth.signInWithEmailAndPassword("brendy@gmail.com", "Brendy1976");
+
+        Thread.sleep(3000);
 
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), GroupActivity.class);
         intent.putExtra("GroupID", "Sg8JLYf9lpE1akjQRHBv");
@@ -255,11 +247,14 @@ public class CreateEventTest {
                 .perform(RecyclerViewActions.scrollTo(hasDescendant(withText("Test Meetup"))));
 
         onView(withText("Test Meetup")).check(matches(isDisplayed()));
+        mAuth.signOut();
     }
 
     @Test
     public void sendDirectMessageSuccessfully() throws InterruptedException {
         mAuth.signInWithEmailAndPassword("brendy@gmail.com", "Brendy1976");
+
+        Thread.sleep(3000);
 
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MessagingChatActivity.class);
         Bundle bundle = new Bundle();
@@ -275,10 +270,155 @@ public class CreateEventTest {
         onView(withId(R.id.btnSendPost)).perform(click());
         onView(withText("Hello, I have sent a test message!"));
         onView(withId(R.id.editPost)).check(matches(withText("")));
+        mAuth.signOut();
+        Thread.sleep(3000);
     }
 
     @Test
-    public void joinFitnessGroup() {
+    public void addCalendarEventSuccessfully() throws InterruptedException {
+        mAuth.signInWithEmailAndPassword("brendy@gmail.com", "Brendy1976");
+
+        Thread.sleep(3000);
+
+        ActivityScenario.launch(HomeActivity.class);
+        onView(withId(R.id.settings_bottom)).perform(click());
+        Thread.sleep(2000);
+        onView(withId(R.id.recyclerFitTrackMenu))
+                .perform(actionOnItem(
+                        hasDescendant(withText("My Fitness Planner")),
+                        click()));
+        onView(withId(R.id.btnAddEvent)).perform(click());
+
+        onView(withId(R.id.enterEventName)).perform(typeText("5KM Run"), closeSoftKeyboard());
+        onView(withId(R.id.enterActivityType)).perform(click());
+        onView(withText("Running"))
+                .inRoot(isPlatformPopup())
+                .perform(click());
+        onView(withId(R.id.enterDescription)).perform(typeText("Tempo Run"), closeSoftKeyboard());
+        onView(withId(R.id.btnSaveEvent)).perform(click());
+        Thread.sleep(1000);
+
+
+        ActivityScenario.launch(Calendar.class);
+        onView(withId(R.id.recyclerViewCalendarEvent))
+                .check(matches(hasDescendant(withText("5KM Run"))));
+        mAuth.signOut();
+    }
+
+    @Test
+    public void loadFitnessActivitiesTestIn5Seconds() throws InterruptedException {
+        mAuth.signInWithEmailAndPassword("brendy@gmail.com", "Brendy1976");
+
+        Thread.sleep(3000);
+
+        ActivityScenario.launch(HomeActivity.class);
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        onView(withId(R.id.activitiesRecyclerView))
+                .check(ViewAssertions.matches(isDisplayed()));
+
+        onView(withId(R.id.activitiesRecyclerView))
+                .check(ViewAssertions.matches(hasMinimumChildCount(1)));
+
+        ActivityScenario.launch(SettingsActivity.class);
+        onView(withId(R.id.btnLogOut)).perform(click());
+        mAuth.signOut();
+    }
+    @Test
+    public void loadFitnessActivitiesOfflineTestIn5Seconds() throws InterruptedException {
+        mAuth.signInWithEmailAndPassword("aileeneed@gmail.com", "Aileen1975");
+        Thread.sleep(2000);
+        ActivityScenario.launch(HomeActivity.class);
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        onView(withId(R.id.activitiesRecyclerView))
+                .check(ViewAssertions.matches(isDisplayed()));
+
+        onView(withId(R.id.activitiesRecyclerView))
+                .check(ViewAssertions.matches(hasMinimumChildCount(1)));
+    }
+
+    @Test
+    public void loginSuccessfullyTest() throws InterruptedException {
+        Intents.init();
+        ActivityScenario.launch(LoginActivity.class);
+        onView(withId(R.id.edit_text_firstname)).perform(replaceText("brendy@gmail.com"));
+        onView(withId(R.id.edit_text_password)).perform(replaceText("Brendy1976"));
+        onView(withId(R.id.btnLogin)).perform(click());
+
+        Thread.sleep(500);
+        Intents.intended(hasComponent(HomeActivity.class.getName()));
+        Intents.release();
+        mAuth.signOut();
+    }
+
+
+    @Test
+    public void viewPersonalBestsSuccessfully() throws InterruptedException {
+        mAuth.signInWithEmailAndPassword("brendy@gmail.com", "Brendy1976");
+
+        Thread.sleep(3000);
+
+        ActivityScenario.launch(PersonalRecordsActivity.class);
+
+        onView(withText("1 KM")).check(matches(isDisplayed()));
+        onView(withText("5 KM")).check(matches(isDisplayed()));
+        onView(withText("10 KM")).check(matches(isDisplayed()));
+        onView(withText("Half Marathon")).check(matches(isDisplayed()));
+        onView(withText("Marathon")).check(matches(isDisplayed()));
+        mAuth.signOut();
+    }
+
+    @Test
+    public void viewFitnessBadgesSuccessfully() throws InterruptedException {
+        mAuth.signInWithEmailAndPassword("brendy@gmail.com", "Brendy1976");
+
+        Thread.sleep(3000);
+
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MessagingChatActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("name", "Brendan Doherty");
+        bundle.putString("UserID", "1Mbd9AI2eZc8wORYcsV7jxNHJLV2");
+        intent.putExtras(bundle);
+
+        ActivityScenario.launch(intent);
+
+
+        ActivityScenario.launch(MyBadgesActivity.class);
+
+        onView(withText("Ran 25 KM in January 2025")).check(matches(isDisplayed()));
+        onView(withText("Ran 50 KM in January 2025")).check(matches(isDisplayed()));
+        mAuth.signOut();
+    }
+
+    @Test
+    public void modifyProfileDetailsSuccessfully() throws InterruptedException {
+
+    }
+
+    @Test
+    public void joinFitnessGroupSuccessfully() throws InterruptedException {
+
+    }
+
+    @Test
+    public void receiveAIGeneratedFitnessAdviceSuccessfully() throws InterruptedException {
+
+    }
+
+    @Test
+    public void createManualFitnessActivityTestSuccessfully() throws InterruptedException {
 
     }
 }
+

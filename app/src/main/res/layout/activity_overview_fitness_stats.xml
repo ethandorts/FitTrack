@@ -15,6 +15,7 @@
         android:background="@color/button_blue"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
+        android:title="Activity Overview"
         app:layout_constraintBottom_toTopOf="@+id/activityTabLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -72,17 +73,6 @@
             tools:layout_editor_absoluteX="309dp"
             tools:layout_editor_absoluteY="94dp" />
     </com.google.android.material.tabs.TabLayout>
-
-    <TextView
-        android:id="@+id/txtActivityOverview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Activity Overview"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/ActivityOverviewToolbar"
-        app:layout_constraintTop_toTopOf="@+id/ActivityOverviewToolbar"
-        tools:layout_editor_absoluteX="111dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

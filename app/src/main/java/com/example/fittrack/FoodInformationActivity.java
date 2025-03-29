@@ -3,6 +3,7 @@ package com.example.fittrack;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.InputFilter;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -44,6 +45,10 @@ public class FoodInformationActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
         editMeal.setAdapter(adapter);
 
+        editServingQuantity.setFilters(new InputFilter[] {
+                new InputFilterMinMax("1", "10")
+        });
+
         Intent intent = getIntent();
         String foodName = intent.getStringExtra("FoodName");
         double calories = intent.getDoubleExtra("Calories", 0.0);
@@ -73,18 +78,22 @@ public class FoodInformationActivity extends AppCompatActivity {
                         "<b>Sugar:</b> " + sugar + " g"
         ));
 
-
         btnLogFood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(validateCalorieInputs()) {
+                if (validateCalorieInputs()) {
+                    double servingSize = Double.parseDouble(editServingSize.getText().toString());
+                    double servingQuantity = Double.parseDouble(editServingQuantity.getText().toString());
+                    double totalGrams = servingSize * servingQuantity;
+                    double multiplier = totalGrams / 100.0;
+                    System.out.println("Multiplier value: " + multiplier);
+
                     FoodModel food = new FoodModel(
                             foodName,
-                            (calories * Double.parseDouble(editServingSize.getText().toString()) / 100
-                                    * Double.parseDouble(editServingQuantity.getText().toString())),
+                            calories * multiplier,
                             editMeal.getSelectedItem().toString(),
-                            Double.parseDouble(editServingSize.getText().toString()),
-                            Double.parseDouble(editServingQuantity.getText().toString()),
+                            totalGrams,
+                            servingQuantity,
                             fat,
                             saturated_fat,
                             protein,
@@ -95,13 +104,17 @@ public class FoodInformationActivity extends AppCompatActivity {
                             sugar,
                             false
                     );
+
                     foodUtil.saveFood(food);
                     editServingSize.setText("");
                     editServingQuantity.setText("");
+
+                    Intent intent = new Intent(FoodInformationActivity.this, NutritionTracking.class);
+                    startActivity(intent);
+                    finish();
                 }
             }
         });
-
     }
 
     private boolean validateCalorieInputs() {

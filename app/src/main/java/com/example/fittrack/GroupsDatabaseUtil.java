@@ -157,7 +157,7 @@ public class GroupsDatabaseUtil {
                 List<LikeModel> people = new ArrayList<>();
 
                 for(String accept : accepted) {
-                    LikeModel likeModel = new LikeModel(accept, 0);
+                    LikeModel likeModel = new LikeModel(accept, 0, null);
                     people.add(likeModel);
                 }
                 callback.onCallback(people);

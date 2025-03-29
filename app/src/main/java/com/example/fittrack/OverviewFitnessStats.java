@@ -3,6 +3,9 @@ package com.example.fittrack;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
+
+import androidx.appcompat.widget.Toolbar;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -11,6 +14,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.ViewPager2;
+
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -21,6 +25,10 @@ public class OverviewFitnessStats extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overview_fitness_stats);
+
+        Toolbar toolbar = findViewById(R.id.ActivityOverviewToolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(Html.fromHtml("<b>Activity Overview</b>"));
 
         Intent intent = getIntent();
         String ActivityID = intent.getStringExtra("ActivityID");

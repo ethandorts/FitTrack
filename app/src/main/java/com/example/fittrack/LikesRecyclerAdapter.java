@@ -1,6 +1,8 @@
 package com.example.fittrack;
 
 import android.content.Context;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -35,14 +38,12 @@ public class LikesRecyclerAdapter extends RecyclerView.Adapter<LikesRecyclerAdap
     @Override
     public void onBindViewHolder(@NonNull LikesViewHolder holder, int position) {
         LikeModel model = likesList.get(position);
-
-        DatabaseUtil.retrieveUserName(model.getLikeName(), new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
-            @Override
-            public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal) {
-                holder.txtLikeName.setText(FullName);
-                holder.img.setImageResource(R.drawable.profile);
-            }
-        });
+        holder.txtLikeName.setText(model.getLikeName());
+        System.out.println("URI: " + model.getProfilePicture());
+        Glide.with(holder.itemView.getContext())
+                .load(model.getProfilePicture())
+                .error(R.drawable.profile)
+                .into(holder.img);
     }
 
     @Override

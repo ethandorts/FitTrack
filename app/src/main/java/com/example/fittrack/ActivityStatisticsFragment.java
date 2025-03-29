@@ -72,10 +72,14 @@ public class ActivityStatisticsFragment extends Fragment {
 
                 addTableSection(statsTable, "Pace");
                 addRowStatsTable(statsTable, "Average Pace", (String) data.get("pace") + " /KM");
-                addRowStatsTable(statsTable, "Best Pace", bestPace + " /KM");
+                String bestPaceFormatted = bestPace.split("\\.")[0];
+                addRowStatsTable(statsTable, "Best Pace", bestPaceFormatted + " /KM");
                 addTableSection(statsTable, "Speed");
-                addRowStatsTable(statsTable, "Average Speed", String.valueOf(ActivityStatsConversionUtil.calculateAverageSpeed(distance, (int) time)) + " mph");
-                addRowStatsTable(statsTable, "Average Moving Speed", String.valueOf(ActivityStatsConversionUtil.calculateAverageSpeed(distance, (int) time)) + " mph");
+                addRowStatsTable(statsTable, "Average Speed",
+                        String.format("%.2f mph", ActivityStatsConversionUtil.calculateAverageSpeed(distance, (int) time)));
+                addRowStatsTable(statsTable, "Average Moving Speed",
+                        String.format("%.2f mph", ActivityStatsConversionUtil.calculateAverageSpeed(distance, (int) time)));
+
                 if(splits.size() > 1) {
                     addRowStatsTable(statsTable, "Maximum Speed", String.format("%.2f", ConversionUtil.convertLongToMPH(minSplit)) + " mph");
                 }
@@ -90,9 +94,9 @@ public class ActivityStatisticsFragment extends Fragment {
                     addRowStatsTable(statsTable, "Maximum Elevation", String.format("%.2f", maxElevation) + " metres");
                     addRowStatsTable(statsTable, "Minimum Elevation", String.format("%.2f", minElevation) + " metres");
                 }
-                addTableSection(statsTable, "Heart Rate");
-                addRowStatsTable(statsTable, "Average Heart Rate", " - BPM");
-                addRowStatsTable(statsTable, "Maximum Heart Rate", "- BPM");
+//                addTableSection(statsTable, "Heart Rate");
+//                addRowStatsTable(statsTable, "Average Heart Rate", " - BPM");
+//                addRowStatsTable(statsTable, "Maximum Heart Rate", "- BPM");
             }
         });
     }

@@ -18,7 +18,7 @@ import java.util.List;
 
 public class GamificationUtil {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    public void calculateUserDistancePerMonth(String UserID, UserDistancePerMonthCallback callback) {
+    public void calculateUserDistancePerMonth(String UserID, String activityType, UserDistancePerMonthCallback callback) {
 
         Calendar calendar = Calendar.getInstance();
         Date today = calendar.getTime();
@@ -31,6 +31,7 @@ public class GamificationUtil {
 
         db.collection("Activities")
                 .whereEqualTo("UserID", UserID)
+                .whereEqualTo("type", activityType)
                 .whereLessThanOrEqualTo("date", today)
                 .whereGreaterThanOrEqualTo("date", lastMonth)
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -52,7 +53,7 @@ public class GamificationUtil {
                 });
     }
 
-    public void calculateUserDistancePerWeek(String UserID, UserDistancePerMonthCallback callback) {
+    public void calculateUserDistancePerWeek(String UserID, String activityType, UserDistancePerMonthCallback callback) {
 
         Calendar calendar = Calendar.getInstance();
         Date today = calendar.getTime();
@@ -65,6 +66,7 @@ public class GamificationUtil {
 
         db.collection("Activities")
                 .whereEqualTo("UserID", UserID)
+                .whereEqualTo("type", activityType)
                 .whereLessThanOrEqualTo("date", today)
                 .whereGreaterThanOrEqualTo("date", lastWeek)
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -86,7 +88,7 @@ public class GamificationUtil {
                 });
     }
 
-    public void calculateUserActivitiesPerMonth(String UserID, UserDistancePerMonthCallback callback) {
+    public void calculateUserActivitiesPerMonth(String UserID, String activityType, UserDistancePerMonthCallback callback) {
 
         Calendar calendar = Calendar.getInstance();
         Date today = calendar.getTime();
@@ -99,6 +101,7 @@ public class GamificationUtil {
 
         db.collection("Activities")
                 .whereEqualTo("UserID", UserID)
+                .whereEqualTo("type", activityType)
                 .whereLessThanOrEqualTo("date", today)
                 .whereGreaterThanOrEqualTo("date", lastWeek)
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -115,7 +118,7 @@ public class GamificationUtil {
                 });
     }
 
-    public void calculateUserActivitiesPerWeek(String UserID, UserDistancePerMonthCallback callback) {
+    public void calculateUserActivitiesPerWeek(String UserID, String activityType, UserDistancePerMonthCallback callback) {
 
         Calendar calendar = Calendar.getInstance();
         Date today = calendar.getTime();
@@ -128,6 +131,7 @@ public class GamificationUtil {
 
         db.collection("Activities")
                 .whereEqualTo("UserID", UserID)
+                .whereEqualTo("type", activityType)
                 .whereLessThanOrEqualTo("date", today)
                 .whereGreaterThanOrEqualTo("date", lastWeek)
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -144,7 +148,7 @@ public class GamificationUtil {
                 });
     }
 
-    public void calculateAverageUserPacePerWeek(String UserID, AverageUserPaceCallback callback) {
+    public void calculateAverageUserPacePerWeek(String UserID, String activityType, AverageUserPaceCallback callback) {
         Calendar calendar = Calendar.getInstance();
         Date today = calendar.getTime();
 
@@ -156,6 +160,7 @@ public class GamificationUtil {
 
         db.collection("Activities")
                 .whereEqualTo("UserID", UserID)
+                .whereEqualTo("type", activityType)
                 .whereLessThanOrEqualTo("date", today)
                 .whereGreaterThanOrEqualTo("date", lastWeek)
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {

@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Button btnClear = findViewById(R.id.btnClearMap);
         Button btnStopStart = findViewById(R.id.stopStartBtn);
         txtRunTime = findViewById(R.id.txtRunTime);
-        speedView = findViewById(R.id.currentSpeed);
+//        speedView = findViewById(R.id.currentSpeed);
 
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakelock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Fittrack:PREVENT_DOZE_MODE");
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(this);
 
-        txtDistanceTravelled.setText(String.format("%.2f km", distanceTravelled / 1000));
+        txtDistanceTravelled.setText(String.format("%.2f KM", distanceTravelled / 1000));
 
         btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -258,12 +258,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             double distanceTravelledInterval = previousLocation.distanceTo(location);
             distanceTravelled += distanceTravelledInterval;
             String.valueOf(distanceTravelled);
-            txtDistanceTravelled.setText(String.format("%.2f KM", distanceTravelled / 1000));
+            txtDistanceTravelled.setText(String.format("%.2f", distanceTravelled / 1000) + " KM");
             LatLng prevLocation = new LatLng(previousLocation.getLatitude(), previousLocation.getLongitude());
             googleMap.addPolyline(new PolylineOptions()
                     .add(prevLocation, currentLocation)
                     .clickable(true)
-                    .width(6)
+                    .width(12)
                     .color(Color.RED));
         }
     }
@@ -495,7 +495,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             //System.out.println(newLocation);
             updateMapWithLocation(newLocation);
             previousLocation = newLocation;
-            speedView.setText(ConversionUtil.convertToMinutesPerKM(currentSpeed));
+            //speedView.setText(ConversionUtil.convertToMinutesPerKM(currentSpeed));
         }
     }
 }

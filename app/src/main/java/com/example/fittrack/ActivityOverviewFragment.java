@@ -188,7 +188,10 @@ public class ActivityOverviewFragment extends Fragment {
             public void onCallback(Map<String, Object> data) {
                 System.out.println(data);
                 txtTitle.setText(String.valueOf(data.get("type")) + " Activity");
-                txtDistance.setText(String.valueOf(data.get("distance") + " M"));
+                double distanceInMeters = Double.parseDouble(data.get("distance").toString());
+                double distanceInKm = distanceInMeters / 1000.0;
+                String formattedDistance = String.format("%.2f KM", distanceInKm);
+                txtDistance.setText(formattedDistance);
                 txtPace.setText(String.valueOf(data.get("pace") + "/KM"));
                 Timestamp date = (Timestamp) data.get("date");
                 System.out.println(date);

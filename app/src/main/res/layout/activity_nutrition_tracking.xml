@@ -49,9 +49,9 @@
         android:id="@+id/editFood"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="29dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="7dp"
         android:ems="10"
         android:hint="Enter Food Name..."
         android:inputType="text"
@@ -64,10 +64,22 @@
         android:id="@+id/recyclerViewnutrition"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginBottom="18dp"
         android:background="@drawable/runner_water"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btnNutritionOverview"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnSearchFood" />
+
+    <Button
+        android:id="@+id/btnNutritionOverview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Return to Nutrition Tracking Overview"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerViewnutrition" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

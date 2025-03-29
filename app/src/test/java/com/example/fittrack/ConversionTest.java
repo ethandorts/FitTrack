@@ -31,28 +31,30 @@ public class ConversionTest {
     }
 
     @Test
-    public void testCapitaliseFoodSingleWord() {
-        assertEquals("Apple", ConversionUtil.capitaliseFoodName("apple"));
+    public void testConvertSecondsToPace() {
+        assertEquals("6:42", ConversionUtil.convertSecondstoPace(402));
+        assertEquals("1:23", ConversionUtil.convertSecondstoPace(83));
+        assertEquals("0:54", ConversionUtil.convertSecondstoPace(54));
     }
 
     @Test
-    public void testCapitaliseFoodMultipleWords() {
-        assertEquals("Baked Beans", ConversionUtil.capitaliseFoodName("baked beans"));
+    public void testConvertSecondsToTime() {
+        assertEquals("9:00", ConversionUtil.convertSecondsToTime(540));
+        assertEquals("2:30", ConversionUtil.convertSecondsToTime(150));
+        assertEquals("0:21", ConversionUtil.convertSecondsToTime(21));
+        assertEquals("0:00", ConversionUtil.convertSecondsToTime(0));
     }
 
     @Test
-    public void testCapitaliseFoodExtraSpaces() {
-        assertEquals("Ham Sandwich", ConversionUtil.capitaliseFoodName("  ham   sandwich  "));
+    public void testStringToTimestamp() {
+        Timestamp timestamp = ConversionUtil.StringtoTimeStamp("25/12/2023 15:30");
+        assertEquals("25-12-2023 15:30", ConversionUtil.TimestamptoString(timestamp));
     }
 
     @Test
-    public void testCapitaliseMixedCase() {
-        assertEquals("Cheese Sandwich", ConversionUtil.capitaliseFoodName("cHEesE sandWICh"));
-    }
-
-    @Test
-    public void testCapitaliseEmptyString() {
-        assertEquals("", ConversionUtil.capitaliseFoodName(""));
+    public void testInvalidStringToTimestamp() {
+        Timestamp timestamp = ConversionUtil.StringtoTimeStamp("invalid");
+        assertEquals(null, timestamp);
     }
 
     @Test
@@ -89,23 +91,54 @@ public class ConversionTest {
 
     @Test
     public void testConvertLongToMPH() {
-        assertEquals(2237.0, ConversionUtil.convertLongToMPH(1000), 0.1);     // 1 second per km
-        assertEquals(223.7, ConversionUtil.convertLongToMPH(10000), 0.1);     // 10 seconds per km
+        assertEquals(2237.0, ConversionUtil.convertLongToMPH(1000), 0.1);
+        assertEquals(223.7, ConversionUtil.convertLongToMPH(10000), 0.1);
         assertEquals(37.29, ConversionUtil.convertLongToMPH(60000), 0.01);
     }
 
     @Test
-    public void testConvertSecondsToPace() {
-        assertEquals("6:42", ConversionUtil.convertSecondstoPace(402));
-        assertEquals("1:23", ConversionUtil.convertSecondstoPace(83));
-        assertEquals("0:54", ConversionUtil.convertSecondstoPace(54));
+    public void testKmToMeters() {
+        assertEquals("1000.00", ConversionUtil.kmToMeters(1.0));
+        assertEquals("123.00", ConversionUtil.kmToMeters(0.123));
+        assertEquals("0.00", ConversionUtil.kmToMeters(0.0));
+        assertEquals("-500.00", ConversionUtil.kmToMeters(-0.5));
     }
 
     @Test
-    public void testConvertSecondsToTime() {
-        assertEquals("9:00", ConversionUtil.convertSecondsToTime(540));
-        assertEquals("2:30", ConversionUtil.convertSecondsToTime(150));
-        assertEquals("0:21", ConversionUtil.convertSecondsToTime(21));
-        assertEquals("0:00", ConversionUtil.convertSecondsToTime(0));
+    public void testConvertToMinutesPerKM() {
+        assertEquals("5:00 /km", ConversionUtil.convertToMinutesPerKM(3.33f));
+        assertEquals("00:00 min/km", ConversionUtil.convertToMinutesPerKM(0));
+    }
+
+    @Test
+    public void testConvertMetersToKilometers() {
+        assertEquals("1.00 km", ConversionUtil.convertMetersToKilometers(1000));
+        assertEquals("0.50 km", ConversionUtil.convertMetersToKilometers(500));
+        assertEquals("0.00 km", ConversionUtil.convertMetersToKilometers(0));
+    }
+
+    @Test
+    public void testCapitaliseFoodSingleWord() {
+        assertEquals("Apple", ConversionUtil.capitaliseFoodName("apple"));
+    }
+
+    @Test
+    public void testCapitaliseFoodMultipleWords() {
+        assertEquals("Baked Beans", ConversionUtil.capitaliseFoodName("baked beans"));
+    }
+
+    @Test
+    public void testCapitaliseFoodExtraSpaces() {
+        assertEquals("Ham Sandwich", ConversionUtil.capitaliseFoodName("  ham   sandwich  "));
+    }
+
+    @Test
+    public void testCapitaliseMixedCase() {
+        assertEquals("Cheese Sandwich", ConversionUtil.capitaliseFoodName("cHEesE sandWICh"));
+    }
+
+    @Test
+    public void testCapitaliseEmptyString() {
+        assertEquals("", ConversionUtil.capitaliseFoodName(""));
     }
 }

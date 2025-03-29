@@ -36,7 +36,7 @@ public class MenuOptionsRecyclerAdapter extends RecyclerView.Adapter<MenuOptions
         MenuOptionModel options = optionsList.get(position);
 
         holder.txtOptions.setText(options.getOptionTitle());
-        holder.imgOptions.setImageResource(R.drawable.running);
+        holder.imgOptions.setImageResource(options.getOptionImage());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

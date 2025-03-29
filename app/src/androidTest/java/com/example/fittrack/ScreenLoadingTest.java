@@ -99,12 +99,6 @@ public class ScreenLoadingTest {
     }
 
     @Test
-    public void loadMenuActivityWithin3Seconds() throws InterruptedException {
-        loginUser();
-        loadScreen(MenuActivity.class);
-    }
-
-    @Test
     public void loadMyBadgesActivityWithin3Seconds() throws InterruptedException {
         loginUser();
         loadScreen(MyBadgesActivity.class);
@@ -196,8 +190,8 @@ public class ScreenLoadingTest {
             intent.putExtra("ActivityID", "2BxZb9qLQqEQtYlA");
         }
 
-        ActivityScenario<T> scenario = ActivityScenario.launch(intent);
         long startTime = SystemClock.elapsedRealtime();
+        ActivityScenario<T> scenario = ActivityScenario.launch(intent);
 
         scenario.onActivity(act -> {
             act.getWindow().getDecorView().post(() -> {

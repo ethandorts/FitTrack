@@ -4,9 +4,10 @@
     <string name="back4app_app_id">aCeLjWhZNnLF631pLiXSy33qc3HIRgY3KBeVgiMm</string>
     <string name="back4app_client_key">FptWH7oKcjb1nsQk0XmYAex2NIG4zAKPst5AgVsu</string>
 
-    <string-array name="graph_metric">
-        <item>By Week</item>
-        <item>By Month</item>
+    <string-array name="run_graph_metric">
+        <item>Most Distance</item>
+        <item>Fastest 5KM Ran This Week</item>
+
     </string-array>
 
     <string-array name="fitness_activities">

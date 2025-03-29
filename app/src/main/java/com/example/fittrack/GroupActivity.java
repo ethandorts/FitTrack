@@ -38,6 +38,7 @@ public class GroupActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String GroupID = intent.getStringExtra("GroupID");
         String groupName = intent.getStringExtra("GroupName");
+        String activityType = intent.getStringExtra("ActivityType");
         int GroupSize = intent.getIntExtra("MembersValue", 0);
         System.out.println("Buzz Lightyear: " + GroupSize);
         String GroupActivity = intent.getStringExtra("ActivityType");
@@ -81,6 +82,7 @@ public class GroupActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(GroupActivity.this, GamificationGraph.class);
                 intent.putExtra("GroupID", GroupID);
+                intent.putExtra("ActivityType", activityType);
                 startActivity(intent);
             }
         });

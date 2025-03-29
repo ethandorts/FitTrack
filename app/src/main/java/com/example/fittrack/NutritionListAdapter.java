@@ -42,7 +42,7 @@ public class NutritionListAdapter extends FirestoreRecyclerAdapter<FoodModel, Nu
 
         System.out.println(food.getCalories());
         holder.foodName.setText(food.getFoodName());
-        holder.calories.setText(String.valueOf(food.getCalories() + " Calories"));
+        holder.calories.setText(String.format("%.2f", food.getCalories()) + " Calories");
         holder.moreDetails.setText(Html.fromHtml(
                 "<b>Serving Size:</b> " + String.format("%.2f", food.getServingSize()) + " g<br>" +
                         "<b>Fat:</b> " + String.format("%.2f", food.getFat()) + " g<br>" +

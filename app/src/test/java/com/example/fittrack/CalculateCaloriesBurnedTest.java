@@ -47,6 +47,30 @@ public class CalculateCaloriesBurnedTest {
     }
 
     @Test
+    public void testCaseInsensitiveActivityType() {
+        int calories = calculator.calculateCalories(1800, "5:00", "running", 70);
+        assertEquals(350, calories);
+    }
+
+    @Test
+    public void testNullActivityType() {
+        try {
+            calculator.calculateCalories(1800, "5:00", null, 70);
+        } catch (Exception e) {
+            assertTrue(e instanceof NullPointerException);
+        }
+    }
+
+    @Test
+    public void testInvalidPaceFormat() {
+        try {
+            calculator.calculateCalories(1800, "5-30", "Running", 70);
+        } catch (Exception e) {
+            assertTrue(e instanceof IllegalArgumentException);
+        }
+    }
+
+    @Test
     public void testLongActivity() {
         int calories = calculator.calculateCalories(1800, "19:00", "Running", 75);
         assertEquals(86, calories);
@@ -79,30 +103,6 @@ public class CalculateCaloriesBurnedTest {
     public void testUnknownMETValue() {
         int calories = calculator.calculateCalories(1800, "5:17", "Running", 70);
         assertTrue(calories > 315 && calories < 350);
-    }
-
-    @Test
-    public void testCaseInsensitiveActivityType() {
-        int calories = calculator.calculateCalories(1800, "5:00", "running", 70);
-        assertEquals(350, calories);
-    }
-
-    @Test
-    public void testInvalidPaceFormat() {
-        try {
-            calculator.calculateCalories(1800, "5-30", "Running", 70);
-        } catch (Exception e) {
-            assertTrue(e instanceof IllegalArgumentException);
-        }
-    }
-
-    @Test
-    public void testNullActivityType() {
-        try {
-            calculator.calculateCalories(1800, "5:00", null, 70);
-        } catch (Exception e) {
-            assertTrue(e instanceof NullPointerException);
-        }
     }
 
     @Test

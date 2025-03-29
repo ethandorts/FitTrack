@@ -38,11 +38,16 @@ public class ElevationCalculator {
     }
 
     public double getMinElevation(List<Double> elevationValues) {
+        if (elevationValues == null || elevationValues.isEmpty()) {
+            return 0.0;
+        }
         return Collections.min(elevationValues);
     }
 
-    public double getMaxElevation(List<Double> elevationDouble) {
-        return Collections.max(elevationDouble);
+    public double getMaxElevation(List<Double> elevationValues) {
+        if (elevationValues == null || elevationValues.isEmpty()) {
+            return 0.0;
+        }
+        return Collections.max(elevationValues);
     }
-
 }

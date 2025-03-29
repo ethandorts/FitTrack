@@ -6,10 +6,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -19,6 +21,8 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
@@ -30,6 +34,8 @@ import com.anychart.enums.Anchor;
 import com.anychart.enums.HoverMode;
 import com.anychart.enums.Position;
 import com.anychart.enums.TooltipPositionMode;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -39,10 +45,15 @@ public class GamificationGraph extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String GroupID;
     private GamificationUtil gamificationUtil = new GamificationUtil();
+    private ViewPager2 gamificationPager;
+    private TabLayout gamificationTabs;
+    private Spinner graphMetricSpinner;
+    private RadioButton btnWeek, btnMonth;
     private GroupsDatabaseUtil groupsUtil = new GroupsDatabaseUtil(db);
     private RecyclerView leaderboardRecyclerView;
     private ArrayList<LeaderboardModel> leaderboardStats = new ArrayList<>();
     private TextView txtGraphName;
+    private String ActivityType;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,124 +61,218 @@ public class GamificationGraph extends AppCompatActivity {
 
         Intent intent = getIntent();
         GroupID = intent.getStringExtra("GroupID");
+        ActivityType = intent.getStringExtra("ActivityType");
+        System.out.println("GroupID: " + GroupID);
 
-        txtGraphName = findViewById(R.id.txtStatsTitle);
-        Spinner graphMetricSpinner = findViewById(R.id.graph_selector);
-        leaderboardRecyclerView = findViewById(R.id.leaderboard);
-        txtGraphName.setText("Distance Ran This Week");
+        gamificationPager = findViewById(R.id.gamificationPager);
+        gamificationTabs = findViewById(R.id.gamTabLayout);
+
+        graphMetricSpinner = findViewById(R.id.graph_selector);
+        btnWeek = findViewById(R.id.btnWeek);
+        btnMonth = findViewById(R.id.btnMonth);
+
+//        txtGraphName = findViewById(R.id.txtStatsTitle);
+//        leaderboardRecyclerView = findViewById(R.id.leaderboard);
+//        txtGraphName.setText("Distance Ran This Week");
+        btnWeek.setChecked(true);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter
-                .createFromResource(this, R.array.graph_metric, android.R.layout.simple_spinner_item);
+                .createFromResource(this, R.array.run_graph_metric, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
         graphMetricSpinner.setAdapter(adapter);
+
+        loadGamificationFragments();
 
         graphMetricSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String metric = adapterView.getItemAtPosition(i).toString();
-                System.out.println("Metric: " + metric);
-                if(metric.equals("By Week")) {
-                    loadByWeekFragment(GroupID);
-                } else if(metric.equals("By Month")) {
-                    loadByMonthFragment(GroupID);
-                } else {
-                    loadByWeekFragment(GroupID);
-                }
+                loadGamificationFragments();
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
         });
-    }
 
-    private void loadByWeekFragment(String GroupID) {
-        txtGraphName.setText(" Top Distance Ran This Week");
-        leaderboardStats.clear();
-        groupsUtil.retrieveUsersinGroup(GroupID, new GroupsDatabaseUtil.UsersinGroupsCallback() {
+        btnWeek.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCallback(ArrayList<String> runners) {
-                ArrayList<LeaderboardModel> leaderboardStats = new ArrayList<>();
-                int runnersSize = runners.size();
-                int[] totalCallbacks = {0};
-
-                for(String runner : runners) {
-                    System.out.println(runner);
-                    gamificationUtil.calculateUserDistancePerWeek(runner, new GamificationUtil.UserDistancePerMonthCallback() {
-                        @Override
-                        public void onCallback(double distancePerMonth) {
-                            leaderboardStats.add(new LeaderboardModel(runner, distancePerMonth));
-                            totalCallbacks[0]++;
-
-                            if(totalCallbacks[0] == runnersSize) {
-                                LeaderboardRecyclerAdapter adapter = new LeaderboardRecyclerAdapter(getApplicationContext(), leaderboardStats);
-                                leaderboardRecyclerView.setAdapter(adapter);
-                                adapter.notifyDataSetChanged();
-                                leaderboardRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                                leaderboardRecyclerView.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
-                            }
-                        }
-                    });
-                }
+            public void onClick(View view) {
+                loadGamificationFragments();
             }
         });
 
-        Fragment currentFragment = getSupportFragmentManager().findFragmentByTag("GraphFragment");
-        if (currentFragment != null) {
-            getSupportFragmentManager().beginTransaction()
-                    .remove(currentFragment)
-                    .commit();
-        }
-
-        Fragment graphFragment = new GraphFragment(true, GroupID);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.GraphFrame, graphFragment, "GraphFragment")
-                .commit();
-    }
-
-    private void loadByMonthFragment(String GroupID) {
-        txtGraphName.setText("Top Distance Ran This Month");
-        leaderboardStats.clear();
-        groupsUtil.retrieveUsersinGroup(GroupID, new GroupsDatabaseUtil.UsersinGroupsCallback() {
+        btnMonth.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCallback(ArrayList<String> runners) {
-                ArrayList<LeaderboardModel> leaderboardStats = new ArrayList<>();
-                int runnersSize = runners.size();
-                int[] totalCallbacks = {0};
-
-                for(String runner : runners) {
-                    System.out.println(runner);
-                    gamificationUtil.calculateUserDistancePerMonth(runner, new GamificationUtil.UserDistancePerMonthCallback() {
-                        @Override
-                        public void onCallback(double distancePerMonth) {
-                            leaderboardStats.add(new LeaderboardModel(runner, distancePerMonth));
-                            totalCallbacks[0]++;
-
-                            if(totalCallbacks[0] == runnersSize) {
-                                LeaderboardRecyclerAdapter adapter = new LeaderboardRecyclerAdapter(getApplicationContext(), leaderboardStats);
-                                leaderboardRecyclerView.setAdapter(adapter);
-                                adapter.notifyDataSetChanged();
-                                leaderboardRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                                leaderboardRecyclerView.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
-                            }
-                        }
-                    });
-                }
+            public void onClick(View view) {
+                loadGamificationFragments();
             }
         });
 
-        Fragment currentFragment = getSupportFragmentManager().findFragmentByTag("GraphFragment");
-        if (currentFragment != null) {
-            getSupportFragmentManager().beginTransaction()
-                    .remove(currentFragment)
-                    .commit();
-        }
 
-        Fragment graphFragmentMonth = new GraphFragment(false, GroupID);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.GraphFrame, graphFragmentMonth, "GraphFragment")
-                .commit();
+//        graphMetricSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                gamAdapter.addFragment(new GroupActivitiesFragment(GroupID));
+//                gamAdapter.addFragment(new GroupPostsFragment(GroupID));
+//                gamificationPager.setAdapter(gamAdapter);
+//                updateLeaderBoardChart(graphMetricSpinner, btnWeek);
+//            }
+//            @Override
+//            public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//            }
+//        });
+//
+//        btnWeek.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                updateLeaderBoardChart(graphMetricSpinner, btnWeek);
+//            }
+//        });
+//
+//        btnMonth.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                updateLeaderBoardChart(graphMetricSpinner, btnWeek);
+//            }
+//        });
     }
+
+    private void loadGamificationFragments() {
+        GroupActivitiesFragmentStateAdapter gamAdapter = new GroupActivitiesFragmentStateAdapter(this);
+        gamAdapter.addFragment(new LeaderboardStatsFragment(graphMetricSpinner.getSelectedItem().toString(),
+                btnWeek.isChecked(),
+                GroupID,
+                ActivityType));
+        gamAdapter.addFragment(new GraphFragment(graphMetricSpinner.getSelectedItem().toString(),
+                btnWeek.isChecked(),
+                GroupID,
+                ActivityType)
+        );
+
+        gamificationPager.setAdapter(gamAdapter);
+
+        new TabLayoutMediator(gamificationTabs, gamificationPager,
+                new TabLayoutMediator.TabConfigurationStrategy() {
+                    @Override
+                    public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+                        switch (position) {
+                            case 0:
+                                tab.setText("Leaderboards");
+                                break;
+                            case 1:
+                                tab.setText("Visual Stats");
+                                break;
+                        }
+                    }
+                }).attach();
+    }
+
+//    private void loadByWeekFragment(String GroupID) {
+//        txtGraphName.setText(" Top Distance Ran This Week");
+//        leaderboardStats.clear();
+//        groupsUtil.retrieveUsersinGroup(GroupID, new GroupsDatabaseUtil.UsersinGroupsCallback() {
+//            @Override
+//            public void onCallback(ArrayList<String> runners) {
+//                ArrayList<LeaderboardModel> leaderboardStats = new ArrayList<>();
+//                int runnersSize = runners.size();
+//                int[] totalCallbacks = {0};
+//
+//                for(String runner : runners) {
+//                    System.out.println(runner);
+//                    gamificationUtil.calculateUserDistancePerWeek(runner, new GamificationUtil.UserDistancePerMonthCallback() {
+//                        @Override
+//                        public void onCallback(double distancePerMonth) {
+//                            leaderboardStats.add(new LeaderboardModel(runner, distancePerMonth));
+//                            totalCallbacks[0]++;
+//
+//                            if(totalCallbacks[0] == runnersSize) {
+//                                LeaderboardRecyclerAdapter adapter = new LeaderboardRecyclerAdapter(getApplicationContext(), leaderboardStats);
+//                                leaderboardRecyclerView.setAdapter(adapter);
+//                                adapter.notifyDataSetChanged();
+//                                leaderboardRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+//                                leaderboardRecyclerView.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+//                            }
+//                        }
+//                    });
+//                }
+//            }
+//        });
+//
+//        Fragment currentFragment = getSupportFragmentManager().findFragmentByTag("GraphFragment");
+//        if (currentFragment != null) {
+//            getSupportFragmentManager().beginTransaction()
+//                    .remove(currentFragment)
+//                    .commit();
+//        }
+//
+//        Fragment graphFragment = new GraphFragment(true, GroupID);
+//        getSupportFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.GraphFrame, graphFragment, "GraphFragment")
+//                .commit();
+//    }
+//
+//    private void loadByMonthFragment(String GroupID) {
+//        txtGraphName.setText("Top Distance Ran This Month");
+//        leaderboardStats.clear();
+//        groupsUtil.retrieveUsersinGroup(GroupID, new GroupsDatabaseUtil.UsersinGroupsCallback() {
+//            @Override
+//            public void onCallback(ArrayList<String> runners) {
+//                ArrayList<LeaderboardModel> leaderboardStats = new ArrayList<>();
+//                int runnersSize = runners.size();
+//                int[] totalCallbacks = {0};
+//
+//                for(String runner : runners) {
+//                    System.out.println(runner);
+//                    gamificationUtil.calculateUserDistancePerMonth(runner, new GamificationUtil.UserDistancePerMonthCallback() {
+//                        @Override
+//                        public void onCallback(double distancePerMonth) {
+//                            leaderboardStats.add(new LeaderboardModel(runner, distancePerMonth));
+//                            totalCallbacks[0]++;
+//
+//                            if(totalCallbacks[0] == runnersSize) {
+//                                LeaderboardRecyclerAdapter adapter = new LeaderboardRecyclerAdapter(getApplicationContext(), leaderboardStats);
+//                                leaderboardRecyclerView.setAdapter(adapter);
+//                                adapter.notifyDataSetChanged();
+//                                leaderboardRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+//                                leaderboardRecyclerView.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+//                            }
+//                        }
+//                    });
+//                }
+//            }
+//        });
+//
+//        Fragment currentFragment = getSupportFragmentManager().findFragmentByTag("GraphFragment");
+//        if (currentFragment != null) {
+//            getSupportFragmentManager().beginTransaction()
+//                    .remove(currentFragment)
+//                    .commit();
+//        }
+//
+//        Fragment graphFragmentMonth = new GraphFragment(false, GroupID);
+//        getSupportFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.GraphFrame, graphFragmentMonth, "GraphFragment")
+//                .commit();
+//    }
+
+//    public void updateLeaderBoardChart(Spinner metric, RadioButton isWeek) {
+//        String selectedMetric = metric.getSelectedItem().toString();
+//        boolean weekSelected = isWeek.isChecked();
+//
+//        switch (selectedMetric) {
+//            case "Most Distance":
+//                if (weekSelected) {
+//                    loadByWeekFragment(GroupID);
+//                } else {
+//                    loadByMonthFragment(GroupID);
+//                }
+//                findViewById(R.id.distanceTypeGroup).setVisibility(View.GONE);
+//                break;
+//        }
+//    }
+
 }

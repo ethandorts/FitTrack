@@ -1,5 +1,6 @@
 package com.example.fittrack;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,14 +28,19 @@ import java.util.List;
 public class GraphFragment extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private GroupsDatabaseUtil groupsUtil = new GroupsDatabaseUtil(db);
+    private FirebaseDatabaseHelper userUtil = new FirebaseDatabaseHelper(db);
     private GamificationUtil gamUtil = new GamificationUtil();
     private List<DataEntry> distanceTotals;
+    private String selectedMetric;
     private boolean isWeek = true;
     private String GroupID;
+    private String ActivityType;
 
-    public GraphFragment(boolean isWeek, String GroupID) {
+    public GraphFragment(String selectedMetric, boolean isWeek, String GroupID, String ActivityType) {
+        this.selectedMetric = selectedMetric;
         this.isWeek = isWeek;
         this.GroupID = GroupID;
+        this.ActivityType = ActivityType;
     }
 
     @Nullable
@@ -53,55 +59,55 @@ public class GraphFragment extends Fragment {
             System.out.println("GroupID is filled" + GroupID);
         }
 
-        if(isWeek) {
-            groupsUtil.retrieveUsersinGroup(GroupID, new GroupsDatabaseUtil.UsersinGroupsCallback() {
-                @Override
-                public void onCallback(ArrayList<String> runners) {
-                    distanceTotals = new ArrayList<>();
-                    int runnersSize = runners.size();
-                    int[] totalCallbacks = {0};
-
-                    for(String runner : runners) {
-                        System.out.println(runner);
-                        gamUtil.calculateUserDistancePerWeek(runner, new GamificationUtil.UserDistancePerMonthCallback() {
-                            @Override
-                            public void onCallback(double distancePerMonth) {
-                                distanceTotals.add(new ValueDataEntry(runner, distancePerMonth));
-                                totalCallbacks[0]++;
-
-                                if(totalCallbacks[0] == runnersSize) {
-                                    loadColumnChart(distanceTotals);
-                                }
-                            }
-                        });
-                    }
-                }
-            });
-        } else {
-            groupsUtil.retrieveUsersinGroup(GroupID, new GroupsDatabaseUtil.UsersinGroupsCallback() {
-                @Override
-                public void onCallback(ArrayList<String> runners) {
-                    distanceTotals = new ArrayList<>();
-                    int runnersSize = runners.size();
-                    int[] totalCallbacks = {0};
-
-                    for(String runner : runners) {
-                        System.out.println(runner);
-                        gamUtil.calculateUserDistancePerMonth(runner, new GamificationUtil.UserDistancePerMonthCallback() {
-                            @Override
-                            public void onCallback(double distancePerMonth) {
-                                distanceTotals.add(new ValueDataEntry(runner, distancePerMonth));
-                                totalCallbacks[0]++;
-
-                                if(totalCallbacks[0] == runnersSize) {
-                                    loadColumnChart(distanceTotals);
-                                }
-                            }
-                        });
-                    }
-                }
-            });
+        if(selectedMetric.equals("Most Distance")) {
+            loadDistanceData();
         }
+    }
+
+    private void loadDistanceData() {
+        groupsUtil.retrieveUsersinGroup(GroupID, new GroupsDatabaseUtil.UsersinGroupsCallback() {
+            @Override
+            public void onCallback(ArrayList<String> runners) {
+                distanceTotals = new ArrayList<>();
+                int runnersSize = runners.size();
+                int[] totalCallbacks = {0};
+
+                for(String runner : runners) {
+                    userUtil.retrieveUserName(runner, new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
+                        @Override
+                        public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal) {
+                            if(isWeek) {
+                                gamUtil.calculateUserDistancePerWeek(runner, ActivityType,  new GamificationUtil.UserDistancePerMonthCallback() {
+                                    @Override
+                                    public void onCallback(double distancePerMonth) {
+                                        System.out.println("DistancePerWeek: " + distancePerMonth);
+                                        distanceTotals.add(new ValueDataEntry(FullName, distancePerMonth));
+                                        totalCallbacks[0]++;
+
+                                        if (totalCallbacks[0] == runnersSize) {
+                                            loadColumnChart(distanceTotals);
+                                        }
+                                    }
+                                });
+                            } else {
+                                gamUtil.calculateUserDistancePerMonth(runner, ActivityType, new GamificationUtil.UserDistancePerMonthCallback() {
+                                    @Override
+                                    public void onCallback(double distancePerMonth) {
+                                        System.out.println("DistancePerMonth: " + distancePerMonth);
+                                        distanceTotals.add(new ValueDataEntry(FullName, distancePerMonth));
+                                        totalCallbacks[0]++;
+
+                                        if (totalCallbacks[0] == runnersSize) {
+                                            loadColumnChart(distanceTotals);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private void loadColumnChart(List<DataEntry> distanceTotals) {

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -141,6 +142,14 @@ public class SaveActivityDialog extends DialogFragment {
                             OneTimeWorkRequest checkGoalsRequest = new OneTimeWorkRequest.Builder(GoalCompletedChecker.class).setInitialDelay(10, TimeUnit.SECONDS)
                                     .build();
                             WorkManager.getInstance(getContext()).enqueue(checkGoalsRequest);
+                            Activity activity = getActivity();
+                            if (activity != null) {
+                                System.out.println("Activity: " + activity);
+                                Intent intent = new Intent(activity, HomeActivity.class); // Use activity context
+                                startActivity(intent);
+                            } else {
+                                Log.e("SaveActivityDialog", "Activity is null, cannot start HomeActivity");
+                            }
                         }
                     })
                     .setNegativeButton("Resume Activity", new DialogInterface.OnClickListener() {
@@ -192,9 +201,7 @@ public class SaveActivityDialog extends DialogFragment {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
-                            context = getActivity() != null ? getActivity().getApplicationContext() : null;
                             Log.d("Activity Successfully Written", "Activity Successfully Written");
-
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override

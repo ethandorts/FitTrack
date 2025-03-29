@@ -63,6 +63,7 @@
                 android:id="@+id/txtUserNameValue"
                 android:layout_width="130dp"
                 android:layout_height="23dp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/profileImage"
                 app:layout_constraintEnd_toStartOf="@id/txtActivityDateValue"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -74,6 +75,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="29/06/2024"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/profileImage"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -85,11 +87,11 @@
                 android:id="@+id/txtActivityDistanceDisplay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textStyle="bold"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:text="Distance"
                 android:textSize="20sp"
-                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/profileImage" />
 
@@ -123,6 +125,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="4:30/km"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@id/txtPaceDisplay"
                 app:layout_constraintTop_toBottomOf="@id/txtPaceDisplay" />
 
@@ -132,6 +135,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="5.00km"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@id/txtActivityDistanceDisplay"
                 app:layout_constraintTop_toBottomOf="@id/txtActivityDistanceDisplay" />
 
@@ -141,6 +145,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="00:21:02"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@id/txtTimeDisplay"
                 app:layout_constraintTop_toBottomOf="@id/txtTimeDisplay" />
 

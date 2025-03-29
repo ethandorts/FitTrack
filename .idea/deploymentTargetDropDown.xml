@@ -2,29 +2,14 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="CreateEventTest">
+      <entry key="FunctionalityTest">
         <State />
       </entry>
       <entry key="ScreenLoadingTest">
         <State />
       </entry>
-      <entry key="addEventSuccessfully()">
-        <State />
-      </entry>
       <entry key="app">
         <State>
-          <targetSelectedWithDropDown>
-            <Target>
-              <type value="QUICK_BOOT_TARGET" />
-              <deviceKey>
-                <Key>
-                  <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="C:\Users\Ethan\.android\avd\Pixel_4a_API_30.avd" />
-                </Key>
-              </deviceKey>
-            </Target>
-          </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2025-03-21T16:05:39.112787800Z" />
           <targetsSelectedWithDialog>
             <Target>
               <type value="QUICK_BOOT_TARGET" />
@@ -38,10 +23,13 @@
           </targetsSelectedWithDialog>
         </State>
       </entry>
-      <entry key="createFitnessGroup()">
+      <entry key="loginSuccessfullyTest()">
         <State />
       </entry>
-      <entry key="createGroupMeetup()">
+      <entry key="viewFitnessBadgesSuccessfully()">
+        <State />
+      </entry>
+      <entry key="viewPersonalBestsSuccessfully()">
         <State />
       </entry>
     </value>

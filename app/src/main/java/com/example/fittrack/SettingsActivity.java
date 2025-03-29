@@ -41,14 +41,14 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         ArrayList<MenuOptionModel> menuOptions = new ArrayList<>();
-        menuOptions.add(new MenuOptionModel("Profile Details", 0));
-        menuOptions.add(new MenuOptionModel("My Fitness Activities", 0));
-        menuOptions.add(new MenuOptionModel("My Fitness Goals", 0));
-        menuOptions.add(new MenuOptionModel("My Fitness Planner", 0));
-        menuOptions.add(new MenuOptionModel("My Fitness Badges", 0));
-        menuOptions.add(new MenuOptionModel("Personal Bests", 0));
-        menuOptions.add(new MenuOptionModel("AI Fitness Coach", 0));
-        menuOptions.add(new MenuOptionModel("Nutrition", 0));
+        menuOptions.add(new MenuOptionModel("Profile Details", R.drawable.profile_edit));
+        menuOptions.add(new MenuOptionModel("My Fitness Activities", R.drawable.running));
+        menuOptions.add(new MenuOptionModel("My Fitness Goals", R.drawable.goals_image));
+        menuOptions.add(new MenuOptionModel("My Fitness Planner", R.drawable.planner));
+        menuOptions.add(new MenuOptionModel("My Fitness Badges", R.drawable.badges));
+        menuOptions.add(new MenuOptionModel("Personal Bests", R.drawable.trophy));
+        menuOptions.add(new MenuOptionModel("AI Fitness Coach", R.drawable.robot_ai));
+        menuOptions.add(new MenuOptionModel("Nutrition", R.drawable.nutrition));
 
 
         RecyclerView recyclerMenu = findViewById(R.id.recyclerFitTrackMenu);

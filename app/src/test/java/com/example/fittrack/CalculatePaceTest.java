@@ -40,4 +40,16 @@ public class CalculatePaceTest {
         double speed = ActivityStatsConversionUtil.calculateAverageSpeed(0, 0);
         assertEquals(0.0, speed, 0.01);
     }
+
+    @Test
+    public void testCalculateActivitySpeed_WithDecimalValues() {
+        double speed = ActivityStatsConversionUtil.calculateAverageSpeed(1000.5, 360);
+        assertEquals(6.22, speed, 0.01);
+    }
+
+    @Test
+    public void testCalculateActivitySpeed_NegativeValues() {
+        double speed = ActivityStatsConversionUtil.calculateAverageSpeed(-1000, 1500);
+        assertEquals(0.0, speed, 0.01);
+    }
 }

@@ -45,6 +45,44 @@ public class CalculateElevationTest {
     }
 
     @Test
+    public void testAllAscendingElevations() {
+        List<Double> ascendingElevations = Arrays.asList(100.0, 150.0, 200.0, 250.0, 300.0);
+        double gain = elevationCalculator.calculateElevationGain(ascendingElevations);
+        double loss = elevationCalculator.calculateElevationLoss(ascendingElevations);
+
+        assertEquals(200.0, gain, 0.001);
+        assertEquals(0.0, loss, 0.001);
+    }
+
+    @Test
+    public void testAllDescendingElevations() {
+        List<Double> descendingElevations = Arrays.asList(300.0, 250.0, 200.0, 150.0, 100.0);
+        double gain = elevationCalculator.calculateElevationGain(descendingElevations);
+        double loss = elevationCalculator.calculateElevationLoss(descendingElevations);
+
+        assertEquals(0.0, gain, 0.001);
+        assertEquals(200.0, loss, 0.001);
+    }
+
+    @Test
+    public void testEmptyElevationList() {
+        List<Double> emptyList = Arrays.asList();
+
+        assertEquals(0.0, elevationCalculator.getMaxElevation(emptyList), 0.001);
+        assertEquals(0.0, elevationCalculator.getMinElevation(emptyList), 0.001);
+        assertEquals(0.0, elevationCalculator.calculateElevationGain(emptyList), 0.001);
+        assertEquals(0.0, elevationCalculator.calculateElevationLoss(emptyList), 0.001);
+    }
+
+    @Test
+    public void testNullElevationList() {
+        assertEquals(0.0, elevationCalculator.calculateElevationGain(null), 0.001);
+        assertEquals(0.0, elevationCalculator.calculateElevationLoss(null), 0.001);
+        assertEquals(0.0, elevationCalculator.getMaxElevation(null), 0.001);
+        assertEquals(0.0, elevationCalculator.getMinElevation(null), 0.001);
+    }
+
+    @Test
     public void testNoElevationChange() {
         List<Double> constantElevations = Arrays.asList(100.0, 100.0, 100.0, 100.0);
         double gain = elevationCalculator.calculateElevationGain(constantElevations);
@@ -64,12 +102,22 @@ public class CalculateElevationTest {
     }
 
     @Test
-    public void testAllDescendingElevations() {
-        List<Double> descendingElevations = Arrays.asList(300.0, 250.0, 200.0, 150.0, 100.0);
-        double gain = elevationCalculator.calculateElevationGain(descendingElevations);
-        double loss = elevationCalculator.calculateElevationLoss(descendingElevations);
+    public void testOscillatingElevations() {
+        List<Double> elevations = Arrays.asList(100.0, 150.0, 120.0, 180.0, 160.0);
+        double gain = elevationCalculator.calculateElevationGain(elevations);
+        double loss = elevationCalculator.calculateElevationLoss(elevations);
 
-        assertEquals(0.0, gain, 0.001);
-        assertEquals(200.0, loss, 0.001);
+        assertEquals(110.0, gain, 0.001);
+        assertEquals(50.0, loss, 0.001);
     }
+
+    @Test
+    public void testHighPrecisionElevations() {
+        List<Double> elevations = Arrays.asList(100.12345, 100.54321, 100.98765);
+        double gain = elevationCalculator.calculateElevationGain(elevations);
+
+        assertEquals(0.8642, gain, 0.01);
+    }
+
+
 }

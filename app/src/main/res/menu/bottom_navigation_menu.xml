@@ -12,7 +12,7 @@
         android:id="@+id/group_bottom"
         android:icon="@drawable/baseline_groups_24"
         android:title="Groups" />
-    <item android:title="Settings"
-        android:icon="@drawable/baseline_settings_24"
+    <item android:title="Menu"
+        android:icon="@drawable/menu"
         android:id="@+id/settings_bottom"/>
 </menu>
