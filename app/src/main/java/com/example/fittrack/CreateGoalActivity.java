@@ -54,9 +54,6 @@ public class CreateGoalActivity extends AppCompatActivity {
                     case "Time Goal":
                         loadFragment(new TimeGoalFragment());
                         break;
-                    case "Calorie Goal":
-                        loadFragment(new CaloriesGoalFragment());
-                        break;
                     default:
                         Log.e("Goal Form Error", "Error showing Goal Form");
                         break;

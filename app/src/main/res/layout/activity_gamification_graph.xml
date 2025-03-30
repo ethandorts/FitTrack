@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".GamificationGraph">
 
-    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/CreatePostsToolbar"
         android:layout_width="0dp"
@@ -33,7 +32,6 @@
             android:textStyle="bold" />
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- Metric Selector -->
     <Spinner
         android:id="@+id/graph_selector"
         android:layout_width="0dp"
@@ -47,7 +45,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/CreatePostsToolbar" />
 
-    <!-- Week/Month Toggle -->
     <RadioGroup
         android:id="@+id/timeBtns"
         android:layout_width="0dp"
@@ -79,7 +76,6 @@
             android:text="This Month" />
     </RadioGroup>
 
-    <!-- Distance Type Buttons (1K/5K/10K) - only for Fastest Time -->
     <LinearLayout
         android:id="@+id/distanceTypeGroup"
         android:layout_width="0dp"
@@ -146,11 +142,4 @@
             android:text="Visual Statistics" />
 
     </com.google.android.material.tabs.TabLayout>
-
-    <!-- Graph View -->
-
-    <!-- Graph Title -->
-
-    <!-- Leaderboard List -->
-
 </androidx.constraintlayout.widget.ConstraintLayout>

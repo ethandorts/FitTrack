@@ -5,9 +5,11 @@
     <string name="back4app_client_key">FptWH7oKcjb1nsQk0XmYAex2NIG4zAKPst5AgVsu</string>
 
     <string-array name="run_graph_metric">
-        <item>Most Distance</item>
-        <item>Fastest 5KM Ran This Week</item>
-
+        <item>Distance</item>
+        <item>Activity Frequency</item>
+        <item>1 KM</item>
+        <item>5 KM</item>
+        <item>10 KM</item>
     </string-array>
 
     <string-array name="fitness_activities">
@@ -47,7 +49,6 @@
     <string-array name="goal_types">
         <item>Distance Goal</item>
         <item>Time Goal</item>
-        <item>Calorie Goal</item>
     </string-array>
 
     <string-array name="meal_types">

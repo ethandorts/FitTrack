@@ -1,23 +1,30 @@
 package com.example.fittrack;
 
+import static com.example.fittrack.ConversionUtil.convertLongtoSeconds;
+
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GamificationUtil {
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseDatabaseHelper usersUtil = new FirebaseDatabaseHelper(db);
     public void calculateUserDistancePerMonth(String UserID, String activityType, UserDistancePerMonthCallback callback) {
 
         Calendar calendar = Calendar.getInstance();
@@ -88,8 +95,7 @@ public class GamificationUtil {
                 });
     }
 
-    public void calculateUserActivitiesPerMonth(String UserID, String activityType, UserDistancePerMonthCallback callback) {
-
+    public void calculateUserActivitiesPerMonth(String UserID, String activityType, ActivityFrequencyCallback callback) {
         Calendar calendar = Calendar.getInstance();
         Date today = calendar.getTime();
 
@@ -108,6 +114,7 @@ public class GamificationUtil {
                     @Override
                     public void onSuccess(QuerySnapshot querySnapshot) {
                         int size = querySnapshot.getDocuments().size();
+                        System.out.println("Number of activity frequency: " + size);
                         callback.onCallback(size);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -118,8 +125,7 @@ public class GamificationUtil {
                 });
     }
 
-    public void calculateUserActivitiesPerWeek(String UserID, String activityType, UserDistancePerMonthCallback callback) {
-
+    public void calculateUserActivitiesPerWeek(String UserID, String activityType, ActivityFrequencyCallback callback) {
         Calendar calendar = Calendar.getInstance();
         Date today = calendar.getTime();
 
@@ -147,6 +153,93 @@ public class GamificationUtil {
                     }
                 });
     }
+
+    public void collectDistanceTime(ArrayList<String> runners, String ActivityType, double distance, boolean isWeek, FastestTimeCallback callback) {
+        Calendar calendar = Calendar.getInstance();
+        Date today = calendar.getTime();
+        Date timeFrame;
+
+        ArrayList<LeaderboardModel> timeLeaderboard = new ArrayList<>();
+        AtomicInteger timesProcessed = new AtomicInteger(0);
+        int requiredSplits = (int) (distance / 1000);
+
+        if (isWeek) {
+            calendar.add(Calendar.DAY_OF_MONTH, -7);
+            Date lastWeek = calendar.getTime();
+            timeFrame = lastWeek;
+        } else {
+            calendar.add(Calendar.MONTH, -1);
+            Date lastMonth = calendar.getTime();
+            timeFrame = lastMonth;
+        }
+
+        for (String runner : runners) {
+            db.collection("Activities")
+                    .whereEqualTo("UserID", runner)
+                    .whereEqualTo("type", ActivityType)
+                    .whereLessThanOrEqualTo("date", today)
+                    .whereGreaterThan("date", timeFrame)
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot querySnapshot) {
+                            int fastestSegmentTime = Integer.MAX_VALUE;
+                            String fastestActivityID = null;
+
+                            for (DocumentSnapshot activity : querySnapshot.getDocuments()) {
+                                String stringDistance = activity.getString("distance");
+                                String activityID = activity.getString("ActivityID");
+
+                                if (stringDistance == null || activityID == null) continue;
+
+                                double totalDistanceMeters = Double.parseDouble(stringDistance);
+                                double totalDistanceKm = totalDistanceMeters / 1000.0;
+
+                                if (totalDistanceKm < distance / 1000.0) continue;
+
+                                List<Long> splits = (List<Long>) activity.get("splits");
+                                if (splits == null || splits.size() < requiredSplits) continue;
+
+                                int validSplits = (int) Math.floor(totalDistanceKm);
+
+                                for (int i = 0; i <= validSplits - requiredSplits; i++) {
+                                    int segmentTime = 0;
+
+                                    for (int j = i; j < i + requiredSplits; j++) {
+                                        segmentTime += convertLongtoSeconds(splits.get(j));
+                                    }
+
+                                    if (segmentTime < fastestSegmentTime) {
+                                        fastestSegmentTime = segmentTime;
+                                        fastestActivityID = activityID;
+                                    }
+                                }
+                            }
+
+                            if (fastestSegmentTime != Integer.MAX_VALUE && fastestActivityID != null) {
+                                timeLeaderboard.add(new LeaderboardModel(runner, fastestSegmentTime, fastestActivityID));
+                            }
+
+                            if (timesProcessed.incrementAndGet() == runners.size()) {
+                                Collections.sort(timeLeaderboard, new Comparator<LeaderboardModel>() {
+                                    @Override
+                                    public int compare(LeaderboardModel a, LeaderboardModel b) {
+                                        return Double.compare(a.getDistance(), b.getDistance());
+                                    }
+                                });
+                                callback.onCallback(timeLeaderboard);
+                            }
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                        }
+                    });
+        }
+    }
+
+
 
     public void calculateAverageUserPacePerWeek(String UserID, String activityType, AverageUserPaceCallback callback) {
         Calendar calendar = Calendar.getInstance();
@@ -312,6 +405,14 @@ public class GamificationUtil {
 
     public interface UserDistancePerMonthCallback {
         void onCallback(double distancePerMonth);
+    }
+
+    public interface FastestTimeCallback {
+        void onCallback(ArrayList<LeaderboardModel> timeData);
+    }
+
+    public interface ActivityFrequencyCallback {
+        void onCallback(int activityNumber);
     }
 
     public interface AverageUserPaceCallback {

@@ -1,6 +1,7 @@
 package com.example.fittrack;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,13 +36,24 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
     public void onBindViewHolder(@NonNull LeaderboardViewHolder holder, int position) {
         LeaderboardModel leaderboardModel = leaderboardList.get(position);
         holder.Number.setText(String.valueOf(position + 1));
-        holder.DistanceValue.setText(String.valueOf(String.format("%.2f KM", leaderboardModel.getDistance() / 1000)));
+        holder.DistanceValue.setText(String.valueOf(leaderboardModel.getDistance()));
         userUtil.retrieveUserName(leaderboardModel.getUsername(), new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
             @Override
             public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal) {
                 holder.UserName.setText(FullName);
             }
         });
+
+        if(leaderboardModel.getActivityID() != null) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, OverviewFitnessStats.class);
+                    intent.putExtra("ActivityID", String.valueOf(leaderboardModel.getActivityID()));
+                    context.startActivity(intent);
+                }
+            });
+        }
     }
 
 
