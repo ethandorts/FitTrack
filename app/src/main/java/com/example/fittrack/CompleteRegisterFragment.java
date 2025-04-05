@@ -103,6 +103,8 @@ public class CompleteRegisterFragment extends Fragment {
                                 UserToInsert.put("Weight", Weight);
                                 UserToInsert.put("Height", Height);
                                 UserToInsert.put("FitnessGoal", Goal);
+                                UserToInsert.put("ActivityFrequency", 2);
+                                UserToInsert.put("DailyCalorieGoal", 2000);
 
 
                                 db.collection("Users")

@@ -1,6 +1,9 @@
 package com.example.fittrack;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -87,6 +90,15 @@ public class MembersRecyclerViewAdapter extends RecyclerView.Adapter<MembersRecy
                 }
             });
         }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, ActivitiesByMonthActivity.class);
+                intent.putExtra("UserID", member.getUserName());
+                context.startActivity(intent);
+            }
+        });
     }
 
 //    public void updateAdminPhoto(MembersViewHolder holder, boolean isAdmin) {

@@ -116,6 +116,7 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+
         WorkManager.getInstance(this).cancelAllWork();
 
         OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(ActivityCompletedChecker.class)
@@ -322,7 +323,8 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
         addFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, CreateManualActivity.class);
+                Intent intent = new Intent(HomeActivity.this, ActivitiesByMonthActivity.class);
+                intent.putExtra("UserID", UserID);
                 startActivity(intent);
             }
         });

@@ -85,4 +85,12 @@
         <item>Reduce Stress</item>
     </string-array>
 
+    <string-array name="activities_by_month">
+        <item>January 2025</item>
+        <item>February 2025</item>
+        <item>March 2025</item>
+        <item>April 2025</item>
+        <item>May 2025</item>
+    </string-array>
+
 </resources>
