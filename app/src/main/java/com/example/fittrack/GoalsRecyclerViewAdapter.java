@@ -1,6 +1,9 @@
 package com.example.fittrack;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +30,15 @@ public class GoalsRecyclerViewAdapter extends FirestoreRecyclerAdapter<GoalModel
 
     @Override
     protected void onBindViewHolder(@NonNull GoalsViewHolder holder, int i, @NonNull GoalModel model) {
+        String GoalID = getSnapshots().getSnapshot(i).getId();
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, GoalProgressReportActivity.class);
+                intent.putExtra("GoalID", GoalID);
+                context.startActivity(intent);
+            }
+        });
         holder.txtGoalType.setText(model.getGoalType() + " Goal");
         holder.txtGoalDescription.setText(model.getGoalDescription());
         holder.txtDeadline.setText("Completion Target Date: " + ConversionUtil.dateFormatter(model.getEndDate()));
@@ -44,7 +56,7 @@ public class GoalsRecyclerViewAdapter extends FirestoreRecyclerAdapter<GoalModel
     }
 
     public class GoalsViewHolder extends RecyclerView.ViewHolder {
-        TextView txtGoalType, txtGoalDescription, txtProgress, txtDeadline;
+        private TextView txtGoalType, txtGoalDescription, txtProgress, txtDeadline;
 
         public GoalsViewHolder(@NonNull View itemView) {
             super(itemView);

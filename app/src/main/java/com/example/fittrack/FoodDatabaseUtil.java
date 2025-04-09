@@ -18,6 +18,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -177,12 +178,51 @@ public class FoodDatabaseUtil {
         });
     }
 
+    public void retrieveTodaysMealData(String selectedDate, TodayFoodsCallback callback) {
+        db.collection("Users")
+                .document(UserID)
+                .collection("Nutrition")
+                .document(selectedDate)
+                .collection("Meals")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot querySnapshot) {
+                        ArrayList<FoodModel> todaysFood = new ArrayList<>();
+                        for (DocumentSnapshot foodDocument : querySnapshot) {
+                            String foodName = foodDocument.getString("foodName");
+                            double calories = foodDocument.getDouble("calories") != null ? foodDocument.getDouble("calories") : 0.0;
+                            String mealType = foodDocument.getString("mealType");
+                            int servingSize = foodDocument.getLong("servingSize") != null ? foodDocument.getLong("servingSize").intValue() : 100;
+                            int quantity = foodDocument.getLong("servingQuantity") != null ? foodDocument.getLong("servingQuantity").intValue() : 1;
+                            double fat = foodDocument.getDouble("fat") != null ? foodDocument.getDouble("fat") : 0.0;
+                            double saturatedFat = foodDocument.getDouble("saturated_fat") != null ? foodDocument.getDouble("saturated_fat") : 0.0;
+                            double protein = foodDocument.getDouble("protein") != null ? foodDocument.getDouble("protein") : 0.0;
+                            double sodium = foodDocument.getDouble("sodium") != null ? foodDocument.getDouble("sodium") : 0.0;
+                            double potassium = foodDocument.getDouble("potassium") != null ? foodDocument.getDouble("potassium") : 0.0;
+                            double carbs = foodDocument.getDouble("carbs") != null ? foodDocument.getDouble("carbs") : 0.0;
+                            double fiber = foodDocument.getDouble("fiber") != null ? foodDocument.getDouble("fiber") : 0.0;
+                            double sugar = foodDocument.getDouble("sugar") != null ? foodDocument.getDouble("sugar") : 0.0;
 
-    public void saveFood(FoodModel food) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        Date today = new Date();
-        String date = dateFormat.format(today);
+                            FoodModel food = new FoodModel(
+                                    foodName, calories, mealType, servingSize, quantity,
+                                    fat, saturatedFat, protein, sodium, potassium,
+                                    carbs, fiber, sugar, false
+                            );
+                            todaysFood.add(food);
+                        }
+                        callback.onCallback(todaysFood);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Failure Retrieving Today's Foods", e.getMessage());
+                    }
+                });
+    }
 
+
+    public void saveFood(FoodModel food, String selectedDate) {
         double servingMultiplier = food.getServingSize() / 100.0;
 
         Map<String, Object> FoodMap = new HashMap<>();
@@ -204,7 +244,7 @@ public class FoodDatabaseUtil {
         CollectionReference collectionRef = db.collection("Users")
                 .document(UserID)
                 .collection("Nutrition")
-                .document(date)
+                .document(selectedDate)
                 .collection("Meals");
 
 //        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -314,5 +354,9 @@ public class FoodDatabaseUtil {
 
     public interface DayCaloriesCallback {
         void onCallback(double calories);
+    }
+
+    public interface TodayFoodsCallback {
+        void onCallback(ArrayList<FoodModel> todaysFood);
     }
 }

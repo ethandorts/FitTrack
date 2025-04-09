@@ -13,6 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -166,17 +167,31 @@ public class GoalsUtil {
                 .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        String description = (String) documentSnapshot.get("goalDescription");
-                        callback.onCallback(description);
+                        Double targetDistance = documentSnapshot.getDouble("targetDistance");
+                        Double targetTimeDouble = documentSnapshot.getDouble("targetTime");
+                        Double currentProgressDouble = documentSnapshot.getDouble("currentProgress");
+
+                        String status = documentSnapshot.getString("status");
+                        String goalType = documentSnapshot.getString("goalType");
+                        Timestamp startDate = documentSnapshot.getTimestamp("startDate");
+                        Timestamp endDate = documentSnapshot.getTimestamp("endDate");
+                        String description = documentSnapshot.getString("goalDescription");
+
+                        double targetDist = targetDistance != null ? targetDistance : 0.0;
+                        int targetTime = targetTimeDouble != null ? targetTimeDouble.intValue() : 0;
+                        int currentProgress = currentProgressDouble != null ? currentProgressDouble.intValue() : 0;
+
+                        callback.onCallback(targetDist, targetTime, status, goalType,
+                                currentProgress, startDate, endDate, description);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        callback.onCallback(null);
                         System.out.println(e.getMessage());
                     }
                 });
     }
+
 
     public void retrieveUserCalorieGoals(String UserID, GoalsCallback callback) {
         db.collection("Users")
@@ -211,6 +226,7 @@ public class GoalsUtil {
     }
 
     public interface SpecificGoalCallback {
-        void onCallback(String description);
+        void onCallback(double targetDistance, int targetTime, String status, String goalType,
+                        int currentProgress, Timestamp startDate, Timestamp endDate, String description);
     }
 }

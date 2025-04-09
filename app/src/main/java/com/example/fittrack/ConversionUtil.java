@@ -119,6 +119,14 @@ public class ConversionUtil {
         return date.format(formatter);
     }
 
+    public static String AltTimestamptoString(Timestamp timestamp) {
+        if (timestamp == null) return "";
+
+        Date date = timestamp.toDate();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        return sdf.format(date);
+    }
+
     public static String convertToMinutesPerKM(float metresPerSecondSpeed) {
         if(metresPerSecondSpeed > 0) {
             float minutesPerKMPace = (1000 / metresPerSecondSpeed) / 60;

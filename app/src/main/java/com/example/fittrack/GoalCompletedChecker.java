@@ -69,15 +69,15 @@ public class GoalCompletedChecker extends Worker {
             public void onCallback(boolean notify, String GoalID) {
                 if(notify) {
                     goalsUtil.retrieveGoalSpecificDescription(UserID, GoalID, new GoalsUtil.SpecificGoalCallback() {
-                        @Override
-                        public void onCallback(String description) {
-                            NotificationUtil.showTimeGoalSuccessfulNotification(getApplicationContext(), description);
-                        }
-                    });
-                    DocumentReference docRef = db.collection("Users")
-                            .document(UserID)
-                            .collection("Goals")
-                            .document(GoalID);
+                                @Override
+                                public void onCallback(double targetDistance, int targetTime, String status, String goalType, int currentProgress, Timestamp startDate, Timestamp endDate, String description) {
+                                    NotificationUtil.showTimeGoalSuccessfulNotification(getApplicationContext(), description);
+                                }
+                            });
+                            DocumentReference docRef = db.collection("Users")
+                                    .document(UserID)
+                                    .collection("Goals")
+                                    .document(GoalID);
 
                     docRef.update("status", "Completed").addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -98,15 +98,15 @@ public class GoalCompletedChecker extends Worker {
             public void onCallback(boolean notify, String GoalID) {
                 if(notify) {
                     goalsUtil.retrieveGoalSpecificDescription(UserID, GoalID, new GoalsUtil.SpecificGoalCallback() {
-                        @Override
-                        public void onCallback(String description) {
-                            NotificationUtil.showDistanceGoalSuccessfulNotification(getApplicationContext(), description);
-                        }
-                    });
-                    DocumentReference docRef = db.collection("Users")
-                            .document(UserID)
-                            .collection("Goals")
-                            .document(GoalID);
+                                @Override
+                                public void onCallback(double targetDistance, int targetTime, String status, String goalType, int currentProgress, Timestamp startDate, Timestamp endDate, String description) {
+                                    NotificationUtil.showDistanceGoalSuccessfulNotification(getApplicationContext(), description);
+                                }
+                            });
+                            DocumentReference docRef = db.collection("Users")
+                                    .document(UserID)
+                                    .collection("Goals")
+                                    .document(GoalID);
 
                     docRef.update("status", "Completed").addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -127,15 +127,15 @@ public class GoalCompletedChecker extends Worker {
             public void onCallback(boolean notify, String GoalID) {
                 if(notify) {
                     goalsUtil.retrieveGoalSpecificDescription(UserID, GoalID, new GoalsUtil.SpecificGoalCallback() {
-                        @Override
-                        public void onCallback(String description) {
-                            NotificationUtil.showCalorieGoalSuccessfulNotification(getApplicationContext(), description);
-                        }
-                    });
-                    DocumentReference docRef = db.collection("Users")
-                            .document(UserID)
-                            .collection("Goals")
-                            .document(GoalID);
+                                @Override
+                                public void onCallback(double targetDistance, int targetTime, String status, String goalType, int currentProgress, Timestamp startDate, Timestamp endDate, String description) {
+                                    NotificationUtil.showCalorieGoalSuccessfulNotification(getApplicationContext(), description);
+                                }
+                            });
+                            DocumentReference docRef = db.collection("Users")
+                                    .document(UserID)
+                                    .collection("Goals")
+                                    .document(GoalID);
 
                     docRef.update("status", "Completed").addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override

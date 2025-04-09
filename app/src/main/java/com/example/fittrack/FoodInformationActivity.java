@@ -53,6 +53,7 @@ public class FoodInformationActivity extends AppCompatActivity {
         String foodName = intent.getStringExtra("FoodName");
         double calories = intent.getDoubleExtra("Calories", 0.0);
         String mealType = intent.getStringExtra("MealType");
+        String selectedDate = intent.getStringExtra("selectedDate");
         double fat = intent.getDoubleExtra("Fat", 0.0);
         double saturated_fat = intent.getDoubleExtra("Saturated Fat", 0.0);
         double protein = intent.getDoubleExtra("Protein", 0.0);
@@ -105,7 +106,7 @@ public class FoodInformationActivity extends AppCompatActivity {
                             false
                     );
 
-                    foodUtil.saveFood(food);
+                    foodUtil.saveFood(food, selectedDate);
                     editServingSize.setText("");
                     editServingQuantity.setText("");
 

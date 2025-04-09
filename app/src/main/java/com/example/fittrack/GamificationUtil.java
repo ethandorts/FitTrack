@@ -282,6 +282,10 @@ public class GamificationUtil {
                 });
     }
 
+    public void getActivityProgressData(String UserID, Timestamp startDate, Timestamp endDate, ProgressCallback callback) {
+
+    }
+
     public void calculateAverageUserPacePerMonth(String UserID, AverageUserPaceCallback callback) {
         Calendar calendar = Calendar.getInstance();
         Date today = calendar.getTime();
@@ -425,5 +429,9 @@ public class GamificationUtil {
 
     public interface ActivityElevationCallback {
         void onCallback(List<Double> elevationStats, double time);
+    }
+
+    public interface ProgressCallback {
+        void onCallback(ArrayList<ActivityModel> activities);
     }
 }

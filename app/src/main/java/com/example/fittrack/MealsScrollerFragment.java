@@ -81,6 +81,7 @@ public class MealsScrollerFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), NutritionTracking.class);
                 intent.putExtra("mealType", mealType);
+                intent.putExtra("selectedDate", selectedDateViewModel.getSelectedDate().getValue());
                 startActivity(intent);
             }
         });

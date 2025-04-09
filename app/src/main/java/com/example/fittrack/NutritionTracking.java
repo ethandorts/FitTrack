@@ -73,6 +73,7 @@ public class NutritionTracking extends AppCompatActivity {
         setContentView(R.layout.activity_nutrition_tracking);
         Intent intent = getIntent();
         String mealTime = intent.getStringExtra("mealType");
+        String selectedDate = intent.getStringExtra("selectedDate");
 
         EditText editFood = findViewById(R.id.editFood);
         Button btnSearchFood = findViewById(R.id.btnSearchFood);
@@ -80,7 +81,7 @@ public class NutritionTracking extends AppCompatActivity {
         Button btnReturn = findViewById(R.id.btnNutritionOverview);
         RecyclerView recyclerNutrition = findViewById(R.id.recyclerViewnutrition);
 
-        foodAdapter = new NutritionSearchRecyclerViewAdapter(getApplicationContext(), foodlist);
+        foodAdapter = new NutritionSearchRecyclerViewAdapter(getApplicationContext(), foodlist, selectedDate);
         recyclerNutrition.setAdapter(foodAdapter);
         recyclerNutrition.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 

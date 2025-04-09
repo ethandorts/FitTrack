@@ -30,6 +30,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AdditionalNutrtionalInformationActivity extends AppCompatActivity {
@@ -78,7 +79,12 @@ public class AdditionalNutrtionalInformationActivity extends AppCompatActivity {
                         foodUtil.retrieveCaloriesBurnedToday(selectedDate, new FoodDatabaseUtil.DayCaloriesBurnedCallback() {
                             @Override
                             public void onCallback(long caloriesBurned) {
-                                GetNutritionalAdvice("", 0, 0, 0, new ArrayList<>());
+                                foodUtil.retrieveTodaysMealData(selectedDate, new FoodDatabaseUtil.TodayFoodsCallback() {
+                                    @Override
+                                    public void onCallback(ArrayList<FoodModel> todaysFood) {
+                                        GetNutritionalAdvice((int) dailyCalorieGoal, (int) caloriesConsumed, (int) caloriesBurned, todaysFood);
+                                    }
+                                });
                             }
                         });
                     }
@@ -87,16 +93,42 @@ public class AdditionalNutrtionalInformationActivity extends AppCompatActivity {
         });
     }
 
-    public void GetNutritionalAdvice(String question, int dailyCaloricGoal, int dailyConsumption, int caloriesBurned, ArrayList<String> foods) {
+    public void GetNutritionalAdvice(int dailyCaloricGoal, int dailyConsumption, int caloriesBurned, ArrayList<FoodModel> foods) {
         JSONObject body = new JSONObject();
         JSONArray messagesArray = new JSONArray();
+
+        String question = "You are an AI Fitness Nutrition Coaching Assistant." +
+                " My daily caloric goal is " + dailyCaloricGoal + " kcal. I have consumed " + dailyConsumption + " kcal so far and burned " + caloriesBurned + " kcal through exercise." +
+                " The foods I have eaten today are listed below:\n\n" +
+                displayFoods(foods) + "\n\n" +
+                "Based on this, please:\n" +
+                "1. Calculate and state how many calories I have remaining to reach my goal.\n" +
+                "2. Identify which meals I have already logged today (breakfast, lunch, dinner, snacks).\n" +
+                "3. Suggest meals only for the remaining ones in the day. For example, if I've already logged breakfast and lunch, only suggest dinner and snacks.\n" +
+                "4. For each remaining meal, suggest 2-3 food items with their calorie count and explain briefly what nutrients they provide or how they help balance my intake.\n\n" +
+                "Format your response like this:\n" +
+                "---------------------------\n" +
+                "Calorie Summary:\n" +
+                "- Goal: X kcal\n" +
+                "- Consumed: Y kcal\n" +
+                "- Burned: Z kcal\n" +
+                "- Remaining: N kcal\n\n" +
+                "Meal Plan Suggestions:\n\n" +
+                "Lunch:\n" +
+                "- Grilled chicken breast – 300 kcal: High in protein to support muscle maintenance.\n" +
+                "- Quinoa – 220 kcal: Provides complex carbs and fiber.\n\n" +
+                "Dinner:\n" +
+                "- Steamed salmon – 350 kcal: Rich in omega-3s and protein.\n" +
+                "- Brown rice – 200 kcal: Slow-digesting carbs for sustained energy.\n" +
+                "- Steamed broccoli – 50 kcal: High in fiber and antioxidants.\n" +
+                "---------------------------\n" +
+                "Only suggest realistic, common foods that align with a healthy fitness-based diet.";
+
 
         try {
             JSONObject aiDescription = new JSONObject();
             aiDescription.put("role", "system");
-            aiDescription.put("content", "You are an AI Fitness Nutrition Coaching Assistant. My daily caloric goal is " + dailyCaloricGoal +
-                    " and currently I have eaten " + dailyConsumption + ". I have burned " + caloriesBurned + ". Here is what I have already eaten today: " + "\n" + foods + ". " +
-                    "Can you advise me on what I should eat to meet my calorie goals.");
+            aiDescription.put("content", question);
             messagesArray.put(aiDescription);
             if (lastMessage != null && !lastMessage.isEmpty()) {
                 JSONObject previousMessage = new JSONObject();
@@ -164,6 +196,15 @@ public class AdditionalNutrtionalInformationActivity extends AppCompatActivity {
         requestQueue.add(request);
     }
 
+    private String displayFoods(ArrayList<FoodModel> foods) {
+        if (foods == null || foods.isEmpty()) return "No foods logged yet today.";
 
-
+        StringBuilder formatted = new StringBuilder();
+        for (FoodModel food : foods) {
+            formatted.append("- ").append(food.getMealType()).append(": ")
+                    .append(food.getFoodName()).append(" (")
+                    .append(food.getCalories()).append(" calories)\n");
+        }
+        return formatted.toString();
+    }
 }

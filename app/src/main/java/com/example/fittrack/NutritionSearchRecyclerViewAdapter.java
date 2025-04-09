@@ -16,16 +16,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class NutritionSearchRecyclerViewAdapter extends RecyclerView.Adapter<NutritionSearchRecyclerViewAdapter.NutritionSearchViewHolder> {
     private Context context;
     private ArrayList<SearchFoodModel> searchFoodList = new ArrayList<>();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FoodDatabaseUtil foodUtil = new FoodDatabaseUtil(db);
+    private String selectedDate;
 
-    public NutritionSearchRecyclerViewAdapter(Context context, ArrayList<SearchFoodModel> searchFoodList) {
+    public NutritionSearchRecyclerViewAdapter(Context context, ArrayList<SearchFoodModel> searchFoodList, String date) {
         this.context = context;
         this.searchFoodList = searchFoodList;
+        this.selectedDate = date;
     }
 
     @NonNull
@@ -61,7 +64,7 @@ public class NutritionSearchRecyclerViewAdapter extends RecyclerView.Adapter<Nut
                         false
                 );
                 System.out.println(model.getMealType());
-                foodUtil.saveFood(food);
+                foodUtil.saveFood(food, selectedDate);
                 Toast.makeText(view.getContext(), "Logged food successfully", Toast.LENGTH_SHORT).show();
             }
         });
@@ -82,6 +85,7 @@ public class NutritionSearchRecyclerViewAdapter extends RecyclerView.Adapter<Nut
                 intent.putExtra("Carbs", model.getCarbs());
                 intent.putExtra("Fiber", model.getFiber());
                 intent.putExtra("Sugar", model.getSugar());
+                intent.putExtra("selectedDate", selectedDate);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }

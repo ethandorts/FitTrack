@@ -33,7 +33,7 @@ public class NutritionTrackingOverview extends AppCompatActivity {
         EditText editSelectedDate = findViewById(R.id.editSelectedDate);
 
         Date date = new Date();
-        String format = String.valueOf(date.getDate()) + "-" + String.format("%02d", date.getMonth() + 1) + "-" + String.valueOf(date.getYear() + 1900);
+        String format = String.format("%02d-%02d-%04d", date.getDate(), date.getMonth() + 1, date.getYear() + 1900);
         editSelectedDate.setText(format);
 
         selectedDateViewModel.setSelectedDate(format);
