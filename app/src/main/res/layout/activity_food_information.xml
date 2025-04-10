@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F8F8F8"
     tools:context=".MainActivity">
 
+    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/CreatePostsToolbar"
         android:layout_width="0dp"
-        android:layout_height="69dp"
+        android:layout_height="wrap_content"
+        android:minHeight="56dp"
         android:background="@color/button_blue"
         android:elevation="4dp"
         android:theme="?attr/actionBarTheme"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/txtPersonalBestTitle"
@@ -25,139 +29,171 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:text="Food Information"
-            android:textColor="@color/white"
-            android:textSize="24sp"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
             android:textStyle="bold" />
     </androidx.appcompat.widget.Toolbar>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/foodInfoLayout"
+    <!-- Scrollable Section -->
+    <ScrollView
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/CreatePostsToolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:id="@+id/txtIndividualFood"
-            android:layout_width="0dp"
-            android:layout_height="36dp"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:background="@android:color/white">
 
-        <TextView
-            android:id="@+id/txtTotalCalories"
-            android:layout_width="wrap_content"
-            android:layout_height="29dp"
-            android:layout_marginTop="4dp"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <!-- Food Title + Calories -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
 
-    <TextView
-        android:id="@+id/txtServingSize"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Serving Size (in grams)"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.013"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/foodInfoLayout" />
+                <TextView
+                    android:id="@+id/txtIndividualFood"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Chicken Breast"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/txtTotalCalories" />
 
-    <EditText
-        android:id="@+id/editServingSize"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Enter serving size"
-        android:inputType="number"
-        app:layout_constraintTop_toBottomOf="@id/txtServingSize"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:padding="12dp" />
+                <TextView
+                    android:id="@+id/txtTotalCalories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="165 kcal"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="@+id/txtIndividualFood"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/txtNoServings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Number of Servings"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.011"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editServingSize" />
+            <!-- Serving Size -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Serving Size (g)"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+            <EditText
+                android:id="@+id/editServingSize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="e.g. 100"
+                android:inputType="number"
+                android:padding="12dp"
+                android:background="@android:drawable/editbox_background" />
 
-    <EditText
-        android:id="@+id/editNoServings"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Enter number of servings"
-        android:inputType="number"
-        app:layout_constraintTop_toBottomOf="@id/txtNoServings"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:padding="12dp" />
+            <!-- Number of Servings (Stepper UI) -->
+            <TextView
+                android:layout_marginTop="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Number of Servings"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/txtMeal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Meal"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.008"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editNoServings" />
+            <LinearLayout
+                android:id="@+id/servingStepperLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp">
 
-    <Spinner
-        android:id="@+id/editMealType"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Enter meal type"
-        android:inputType="text"
-        app:layout_constraintTop_toBottomOf="@id/txtMeal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:padding="12dp" />
+                <ImageButton
+                    android:id="@+id/btnDecreaseServing"
+                    android:layout_width="61dp"
+                    android:layout_height="69dp"
+                    android:elevation="2dp"
+                    android:src="@drawable/minus"
+                    android:text="-"
+                    android:background="#FFFFFF"
+                    android:scaleType="fitXY"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" />
 
-    <TextView
-        android:id="@+id/txtNutritionalInformation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=" Nutritional Information (per 100g)"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editMealType" />
+                <TextView
+                    android:id="@+id/editNoServings"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:padding="8dp" />
 
-    <TextView
-        android:id="@+id/txtNutritionalFacts"
-        android:layout_width="406dp"
-        android:layout_height="257dp"
-        android:padding="16dp"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtNutritionalInformation" />
+                <ImageButton
+                    android:id="@+id/btnIncreaseServing"
+                    android:layout_width="55dp"
+                    android:layout_height="match_parent"
+                    android:background="#FFFFFF"
+                    android:elevation="2dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/add"
+                    android:text="+"
+                    android:textColor="@android:color/black"
+                    android:textSize="24sp" />
+            </LinearLayout>
 
-    <Button
-        android:id="@+id/btnLogFood"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Log Food"
-        app:layout_constraintTop_toBottomOf="@id/txtNutritionalFacts"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp" />
+            <!-- Meal Type -->
+            <TextView
+                android:layout_marginTop="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Meal"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+            <Spinner
+                android:id="@+id/editMealType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp" />
 
+            <!-- Nutritional Info Header -->
+            <TextView
+                android:layout_marginTop="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nutritional Information (per 100g)"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- Nutrition Breakdown -->
+            <TextView
+                android:id="@+id/txtNutritionalFacts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/darker_gray"
+                android:padding="12dp"
+                android:text="• Protein: 31g\n• Fat: 3.6g\n• Carbs: 0g"
+                android:textColor="@android:color/white"
+                android:textSize="24sp" />
+
+            <!-- Log Button -->
+            <Button
+                android:id="@+id/btnLogFood"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Log Food"
+                android:backgroundTint="@color/button_blue"
+                android:textColor="@android:color/white"
+                android:textAllCaps="false"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

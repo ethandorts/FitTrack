@@ -45,6 +45,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private String originalWeight, originalHeight, originalCalories, originalActivitiesNo;
     private Button btnSaveDetails;
     private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
+    private Spinner editFitnessLevel;
     private Uri imageUri;
 
     @Override
@@ -59,6 +60,12 @@ public class EditProfileActivity extends AppCompatActivity {
         editCalories = findViewById(R.id.editProfileCalories);
         editActivitiesNo = findViewById(R.id.editActivitiesNo);
         btnSaveDetails = findViewById(R.id.btnSaveFitnessDetails);
+        editFitnessLevel = findViewById(R.id.spinnerFitnessLevel);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter
+                .createFromResource(getApplicationContext(), R.array.fitness_levels, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
+        editFitnessLevel.setAdapter(adapter);
 
         DatabaseUtil.retrieveProfilePicture(UserID + ".jpeg", new FirebaseDatabaseHelper.ProfilePictureCallback() {
             @Override

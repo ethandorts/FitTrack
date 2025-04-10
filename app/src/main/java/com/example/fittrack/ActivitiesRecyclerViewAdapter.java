@@ -232,6 +232,7 @@ public class ActivitiesRecyclerViewAdapter extends FirestoreRecyclerAdapter<Acti
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(view.getContext(), OverviewFitnessStats.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.putExtra("ActivityID", String.valueOf(view.getTag()));
                     view.getContext().startActivity(intent);
                 }

@@ -8,8 +8,10 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,12 +22,15 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class FoodInformationActivity extends AppCompatActivity {
-    private TextView txtNutritionalFacts, txtFoodName, txtCalories;
-    private EditText editServingSize, editServingQuantity;
+    private TextView txtNutritionalFacts, txtFoodName, txtCalories, editServingQuantity;
+    private EditText editServingSize;
     private Spinner editMeal;
     private Button btnLogFood;
+    private ImageButton btnIncrease, btnDecrease;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FoodDatabaseUtil foodUtil = new FoodDatabaseUtil(db);
+    private int servings = 1;
+    private int maxServings = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,15 +44,15 @@ public class FoodInformationActivity extends AppCompatActivity {
         editServingQuantity = findViewById(R.id.editNoServings);
         editMeal = findViewById(R.id.editMealType);
         btnLogFood = findViewById(R.id.btnLogFood);
+        btnIncrease = findViewById(R.id.btnIncreaseServing);
+        btnDecrease = findViewById(R.id.btnDecreaseServing);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter
                 .createFromResource(this, R.array.meal_types, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
         editMeal.setAdapter(adapter);
 
-        editServingQuantity.setFilters(new InputFilter[] {
-                new InputFilterMinMax("1", "10")
-        });
+        editServingQuantity.setText(String.valueOf(servings));
 
         Intent intent = getIntent();
         String foodName = intent.getStringExtra("FoodName");
@@ -78,6 +83,28 @@ public class FoodInformationActivity extends AppCompatActivity {
                         "<b>Fiber:</b> " + fiber + " g<br>" +
                         "<b>Sugar:</b> " + sugar + " g"
         ));
+
+        btnIncrease.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (servings < maxServings) {
+                    servings++;
+                    editServingQuantity.setText(String.valueOf(servings));
+                } else {
+                    Toast.makeText(FoodInformationActivity.this, "Maximum of 20 servings allowed", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        btnDecrease.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (servings > 1) {
+                    servings--;
+                    editServingQuantity.setText(String.valueOf(servings));
+                }
+            }
+        });
 
         btnLogFood.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -283,7 +283,34 @@ public class GamificationUtil {
     }
 
     public void getActivityProgressData(String UserID, Timestamp startDate, Timestamp endDate, ProgressCallback callback) {
+        db.collection("Activities")
+                .whereEqualTo("UserID", UserID)
+                .whereGreaterThanOrEqualTo("date", startDate)
+                .whereLessThanOrEqualTo("date", endDate)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot querySnapshot) {
+                        ArrayList<ActivityModel> activitiesList = new ArrayList<>();
+                        for(DocumentSnapshot activityDocument : querySnapshot.getDocuments()) {
+                            String activityID = (String) activityDocument.get("ActivityID");
+                            String type = (String) activityDocument.get("type");
+                            Timestamp date = (Timestamp) activityDocument.get("date");
+                            String pace = (String) activityDocument.get("pace");
+                            String distance = (String) activityDocument.get("distance");
+                            double time = activityDocument.getDouble("time") != null ? activityDocument.getDouble("time") : 0.0;
 
+                            ActivityModel model = new ActivityModel(type, null, date, String.valueOf(distance), time, pace, UserID, null, null, activityID);
+                            activitiesList.add(model);
+                        }
+                        callback.onCallback(activitiesList);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Error retrieving progress data", e.getMessage());
+                    }
+                });
     }
 
     public void calculateAverageUserPacePerMonth(String UserID, AverageUserPaceCallback callback) {

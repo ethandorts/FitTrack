@@ -93,4 +93,11 @@
         <item>May 2025</item>
     </string-array>
 
+    <string-array name="fitness_levels">
+        <item>Beginner</item>
+        <item>Intermediate</item>
+        <item>Advanced</item>
+        <item>Athlete</item>
+    </string-array>
+
 </resources>

@@ -42,7 +42,7 @@ public class NutritionSearchRecyclerViewAdapter extends RecyclerView.Adapter<Nut
     public void onBindViewHolder(@NonNull NutritionSearchViewHolder holder, int position) {
         SearchFoodModel model = searchFoodList.get(position);
         holder.foodName.setText(model.getFoodName());
-        holder.calorieCount.setText(String.valueOf(model.getCalories() + " calories"));
+        holder.calorieCount.setText(String.valueOf(model.getCalories() + " kcal"));
         holder.furtherDetails.setText(String.valueOf(model.getCarbs()));
         holder.btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override

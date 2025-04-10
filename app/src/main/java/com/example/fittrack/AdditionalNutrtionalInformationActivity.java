@@ -3,6 +3,7 @@ package com.example.fittrack;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -40,6 +41,7 @@ public class AdditionalNutrtionalInformationActivity extends AppCompatActivity {
     private FoodDatabaseUtil foodUtil = new FoodDatabaseUtil(db);
     private FirebaseDatabaseHelper userUtil = new FirebaseDatabaseHelper(db);
     private TextView txtAdvice;
+    private ProgressBar aiNutritionProgress;
     private String lastMessage;
 
     @Override
@@ -52,6 +54,7 @@ public class AdditionalNutrtionalInformationActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView2);
         txtAdvice = findViewById(R.id.txtAINutrientAdvice);
+        aiNutritionProgress = findViewById(R.id.progressBar);
         ArrayList<NutrientModel> nutrientList = new ArrayList<>();
         foodUtil.getTodayNutrient(selectedDate, new FoodDatabaseUtil.NutrientCallback() {
             @Override
@@ -94,6 +97,8 @@ public class AdditionalNutrtionalInformationActivity extends AppCompatActivity {
     }
 
     public void GetNutritionalAdvice(int dailyCaloricGoal, int dailyConsumption, int caloriesBurned, ArrayList<FoodModel> foods) {
+        aiNutritionProgress.setVisibility(View.VISIBLE);
+        txtAdvice.setText("");
         JSONObject body = new JSONObject();
         JSONArray messagesArray = new JSONArray();
 
@@ -157,6 +162,8 @@ public class AdditionalNutrtionalInformationActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         try {
+                            aiNutritionProgress.setVisibility(View.GONE);
+                            txtAdvice.setText("");
                             JSONArray choicesArray = jsonObject.getJSONArray("choices");
                             JSONObject choiceObject = choicesArray.getJSONObject(0);
                             JSONObject messageObject = choiceObject.getJSONObject("message");
