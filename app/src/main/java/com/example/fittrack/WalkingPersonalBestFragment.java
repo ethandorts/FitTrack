@@ -9,8 +9,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.ArrayList;
 
 public class WalkingPersonalBestFragment extends Fragment {
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -31,38 +35,46 @@ public class WalkingPersonalBestFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        TextView txt1KM, txt5KM, txt10KM, txt20KM;
-        txt1KM = view.findViewById(R.id.OneKMWalkValue);
-        txt5KM = view.findViewById(R.id.FiveKMWalkValue);
-        txt10KM = view.findViewById(R.id.TenKMWalkValue);
-        txt20KM = view.findViewById(R.id.TwentyKMWalkValue);
+        RecyclerView personalRecordsRecycler = view.findViewById(R.id.PersonalRecordWalkingRecycler);
+        ArrayList<PersonalRecord> records = new ArrayList<>();
+        PersonalRecordRecyclerAdapter adapter = new PersonalRecordRecyclerAdapter(records);
+        personalRecordsRecycler.setAdapter(adapter);
+        personalRecordsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
         PBUtil.findFastestDistanceTime(UserID, 1000, "Walking", new PersonalBestUtil.PersonalBestCallback() {
             @Override
-            public void onCallback(String PB) {
-                txt1KM.setText(PB);
+            public void onCallback(String PB, String date) {
+                PersonalRecord record = new PersonalRecord("1KM", PB, date, R.drawable.walking_icon);
+                records.add(record);
+                adapter.notifyItemInserted(records.size() - 1);
             }
         });
 
         PBUtil.findFastestDistanceTime(UserID, 5000, "Walking", new PersonalBestUtil.PersonalBestCallback() {
             @Override
-            public void onCallback(String PB) {
-                txt5KM.setText(PB);
+            public void onCallback(String PB, String date) {
+                PersonalRecord record = new PersonalRecord("5KM", PB, date, R.drawable.walking_icon);
+                records.add(record);
+                adapter.notifyItemInserted(records.size() - 1);
             }
         });
 
         PBUtil.findFastestDistanceTime(UserID, 10000, "Walking", new PersonalBestUtil.PersonalBestCallback() {
             @Override
-            public void onCallback(String PB) {
-                txt10KM.setText(PB);
+            public void onCallback(String PB, String date) {
+                PersonalRecord record = new PersonalRecord("10KM", PB, date, R.drawable.walking_icon);
+                records.add(record);
+                adapter.notifyItemInserted(records.size() - 1);
             }
         });
 
         PBUtil.findFastestDistanceTime(UserID, 20000, "Walking", new PersonalBestUtil.PersonalBestCallback() {
             @Override
-            public void onCallback(String PB) {
-                txt20KM.setText(PB);
+            public void onCallback(String PB, String date) {
+                PersonalRecord record = new PersonalRecord("20KM", PB, date, R.drawable.walking_icon);
+                records.add(record);
+                adapter.notifyItemInserted(records.size() - 1);
             }
         });
     }

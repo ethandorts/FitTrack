@@ -5,54 +5,55 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:backgroundTintMode="src_in"
     tools:context=".PersonalRecordsActivity">
 
+    <!-- Sleek Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/PersonalBestToolbar"
-        android:layout_width="414dp"
-        android:layout_height="76dp"
-        android:layout_marginBottom="9dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:background="@color/button_blue"
         android:elevation="4dp"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintBottom_toTopOf="@+id/spinnerActivityPB"
+        android:minHeight="?attr/actionBarSize"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Personal Bests"
+        app:titleTextAppearance="@style/TextAppearance.AppCompat.Large"
+        app:titleTextColor="@color/white" />
 
-        <TextView
-            android:id="@+id/txtPersonalBestTitle"
-            android:layout_width="wrap_content"
+    <!-- Material Spinner (Activity Selection) -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutSpinner"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        app:boxBackgroundMode="outline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/PersonalBestToolbar">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/spinnerActivityPB"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="Personal Bests"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            tools:layout_editor_absoluteX="147dp"
-            tools:layout_editor_absoluteY="16dp" />
+            android:dropDownHeight="wrap_content"
+            android:hint="Select Activity"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    </androidx.appcompat.widget.Toolbar>
-
+    <!-- Fragment Container -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerPB"
         android:name="com.example.fittrack.RunningPersonalBestFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerActivityPB" />
+        app:layout_constraintTop_toBottomOf="@id/textInputLayoutSpinner" />
 
-    <Spinner
-        android:id="@+id/spinnerActivityPB"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="14dp"
-        app:layout_constraintBottom_toTopOf="@+id/fragmentContainerPB"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/PersonalBestToolbar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

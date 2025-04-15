@@ -6,4 +6,6 @@
     <color name="button_blue">#03A9F4</color>
     <color name="green">#50C878</color>
     <color name="red">#FF0000</color>
+    <color name="row_background_light">#FAFAFA</color>
+    <color name="row_background_alt">#EEEEEE</color>
 </resources>

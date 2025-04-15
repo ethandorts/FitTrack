@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -42,6 +44,7 @@ public class Calendar extends AppCompatActivity {
     private EventUtil eventUtil = new EventUtil(db);
     private EventsRecyclerViewAdapter eventsAdapter;
     private RecyclerView recyclerView;
+    private ImageButton btnAddEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +55,7 @@ public class Calendar extends AppCompatActivity {
 
         MaterialCalendarView calendarView = findViewById(R.id.calendarView);
         recyclerView = findViewById(R.id.recyclerViewCalendarEvent);
-        Button btnAddEvent = findViewById(R.id.btnAddEvent);
+        btnAddEvent = findViewById(R.id.btnAddEvent);
         calendarView.state().edit()
                 .setCalendarDisplayMode(CalendarMode.WEEKS)
                 .commit();
@@ -110,7 +113,6 @@ public class Calendar extends AppCompatActivity {
             eventsAdapter = new EventsRecyclerViewAdapter(options, getApplicationContext());
             recyclerView.setAdapter(eventsAdapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         } else {
             eventsAdapter.notifyDataSetChanged();
             eventsAdapter.updateOptions(options);

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".GroupOverviewActivity">
 
-    <!-- Toolbar for Group Overview -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/GroupsMenuToolbar"
         android:layout_width="0dp"
@@ -15,90 +16,136 @@
         android:background="@color/button_blue"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        app:layout_constraintBottom_toTopOf="@+id/membersListLogo"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/txtGroupOverview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
             android:text="Group Overview"
             android:textColor="@color/white"
-            android:textSize="24sp" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- Image for Group -->
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/membersListLogo"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/contentWrapper"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="3dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/fit_track_background"
-        app:layout_constraintBottom_toTopOf="@+id/btnAdminRequests"
-        app:layout_constraintEnd_toStartOf="@+id/txtClubNameOverview"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/GroupsMenuToolbar" />
-
-    <!-- Group Name -->
-
-    <!-- Button for Join Requests -->
-
-    <!-- Members Label -->
-    <TextView
-        android:id="@+id/txtClubNameOverview"
-        android:layout_width="252dp"
-        android:layout_height="203dp"
-        android:layout_marginEnd="1dp"
-        android:paddingLeft="10dp"
-        android:text="Derry Running Club"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btnAdminRequests"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/membersListLogo"
-        app:layout_constraintTop_toBottomOf="@+id/GroupsMenuToolbar"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/btnAdminRequests"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="118dp"
-        android:layout_marginEnd="118dp"
-        android:layout_marginBottom="10dp"
-        android:text="View Join Requests"
-        app:layout_constraintBottom_toTopOf="@+id/txtMembersOverview"
-        app:layout_constraintEnd_toEndOf="@+id/txtClubNameOverview"
-        app:layout_constraintStart_toStartOf="@+id/membersListLogo"
-        app:layout_constraintTop_toBottomOf="@+id/membersListLogo" />
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/GroupsMenuToolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- RecyclerView for Group Members -->
+        <ImageView
+            android:id="@+id/membersListLogo"
+            android:layout_width="135dp"
+            android:layout_height="180dp"
+            android:layout_marginEnd="8dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/fit_track_background"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/txtClubNameOverview"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.35" />
+
+        <TextView
+            android:id="@+id/txtClubNameOverview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Derry Running Club"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            app:layout_constraintTop_toTopOf="@id/membersListLogo"
+            app:layout_constraintStart_toEndOf="@id/membersListLogo"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/txtGroupType"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Beginner Friendly"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:paddingStart="8dp"
+            android:paddingTop="4dp"
+            app:layout_constraintTop_toBottomOf="@id/txtClubNameOverview"
+            app:layout_constraintStart_toStartOf="@id/txtClubNameOverview"
+            app:layout_constraintEnd_toEndOf="@id/txtClubNameOverview" />
+
+        <TextView
+            android:id="@+id/txtMemberSize"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="28 members"
+            android:textColor="#666666"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:paddingStart="8dp"
+            android:paddingTop="2dp"
+            app:layout_constraintTop_toBottomOf="@id/txtGroupType"
+            app:layout_constraintStart_toStartOf="@id/txtClubNameOverview"
+            app:layout_constraintEnd_toEndOf="@id/txtClubNameOverview" />
+
+        <TextView
+            android:id="@+id/txtGroupDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="A friendly community of runners meeting every Saturday morning. Great for beginners and seasoned runners alike!"
+            android:textColor="#444444"
+            android:textSize="14sp"
+            android:lineSpacingExtra="4dp"
+            android:paddingStart="8dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="8dp"
+            app:layout_constraintTop_toBottomOf="@id/txtMemberSize"
+            app:layout_constraintStart_toStartOf="@id/txtClubNameOverview"
+            app:layout_constraintEnd_toEndOf="@id/txtClubNameOverview" />
+
+        <Button
+            android:id="@+id/btnAdminRequests"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/button_blue"
+            android:text="View Join Requests"
+            android:textColor="@android:color/white"
+            app:layout_constraintTop_toBottomOf="@id/membersListLogo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/txtMembersOverview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginBottom="4dp"
         android:text="Members"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/membersRecyclerView"
-        app:layout_constraintStart_toStartOf="@+id/btnAdminRequests"
-        app:layout_constraintTop_toBottomOf="@+id/btnAdminRequests" />
+        android:textColor="@color/black"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintTop_toBottomOf="@id/contentWrapper"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/membersRecyclerView"
-        android:layout_width="415dp"
-        android:layout_height="362dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp"
+        app:layout_constraintTop_toBottomOf="@id/txtMembersOverview"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtMembersOverview" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

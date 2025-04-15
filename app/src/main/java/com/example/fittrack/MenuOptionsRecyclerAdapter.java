@@ -13,10 +13,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 
 public class MenuOptionsRecyclerAdapter extends RecyclerView.Adapter<MenuOptionsRecyclerAdapter.MenuOptionHolder> {
     private Context context;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private String UserID = mAuth.getUid();
     private ArrayList<MenuOptionModel> optionsList = new ArrayList<>();
 
     public MenuOptionsRecyclerAdapter(Context context, ArrayList<MenuOptionModel> optionsList) {
@@ -46,6 +50,11 @@ public class MenuOptionsRecyclerAdapter extends RecyclerView.Adapter<MenuOptions
                 switch(option) {
                     case "My Fitness Goals":
                         intent = new Intent(view.getContext(), GoalSettingActivity.class);
+                        context.startActivity(intent);
+                        break;
+                    case "My Fitness Activities":
+                        intent = new Intent(view.getContext(), ActivitiesByMonthActivity.class);
+                        intent.putExtra("UserID", UserID);
                         context.startActivity(intent);
                         break;
                     case "My Fitness Planner":

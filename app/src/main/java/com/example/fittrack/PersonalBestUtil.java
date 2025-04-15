@@ -6,13 +6,17 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class PersonalBestUtil {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -30,11 +34,11 @@ public class PersonalBestUtil {
 
         query.get().addOnSuccessListener(querySnapshot -> {
             Log.d("Personal Best", "Activities Found: " + querySnapshot.getDocuments().size());
+
             int fastestTime = Integer.MAX_VALUE;
+            DocumentSnapshot fastestActivityDoc = null;
 
-            List<DocumentSnapshot> activityDocuments = querySnapshot.getDocuments();
-
-            for (DocumentSnapshot activity : activityDocuments) {
+            for (DocumentSnapshot activity : querySnapshot.getDocuments()) {
                 String stringDistance = (String) activity.get("distance");
                 double totalDistanceMeters = Double.parseDouble(stringDistance);
                 double totalDistanceKm = totalDistanceMeters / 1000.0;
@@ -54,8 +58,10 @@ public class PersonalBestUtil {
                                 for (int j = i; j < i + requiredSplits; j++) {
                                     segmentTime += convertLongtoSeconds(splits.get(j));
                                 }
+
                                 if (segmentTime < fastestTime) {
                                     fastestTime = segmentTime;
+                                    fastestActivityDoc = activity;
                                     Log.d("New Fastest", "Updated Fastest Time: " + formatTime(fastestTime));
                                 }
                             }
@@ -67,17 +73,29 @@ public class PersonalBestUtil {
                     }
                 }
             }
-            if (fastestTime == Integer.MAX_VALUE) {
-                System.out.println("Distance requirements not met or no valid splits found");
-                callback.onCallback("-");
+
+            if (fastestTime == Integer.MAX_VALUE || fastestActivityDoc == null) {
+                callback.onCallback("-", "-");
             } else {
-                System.out.println("Fastest Time: " + formatTime(fastestTime));
-                callback.onCallback(formatTime(fastestTime));
+                String formattedTime = formatTime(fastestTime);
+                String formattedDate = "-";
+
+                if (fastestActivityDoc.contains("date")) {
+                    Timestamp timestamp = fastestActivityDoc.getTimestamp("date");
+                    if (timestamp != null) {
+                        Date date = timestamp.toDate();
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                        formattedDate = sdf.format(date);
+                    }
+                }
+                callback.onCallback(formattedTime, formattedDate);
             }
         }).addOnFailureListener(e -> {
-            System.out.println("Error fetching activities: " + e.getMessage());
+            Log.e("Personal Best", "Error fetching activities: " + e.getMessage());
+            callback.onCallback("-", "-");
         });
     }
+
 
     // Based on Firstbeat Analytics (also used by Garmin)
     // Seiler, S. (2010) "Quantifying Training Load for Endurance Athletes"
@@ -100,6 +118,6 @@ public class PersonalBestUtil {
     }
 
     public interface PersonalBestCallback {
-        void onCallback(String PB);
+        void onCallback(String PB, String date);
     }
 }

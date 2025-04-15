@@ -1,9 +1,9 @@
 package com.example.fittrack;
 
-import android.app.Activity;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ActivityStatisticsFragment extends Fragment {
+
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseDatabaseHelper activityUtil = new FirebaseDatabaseHelper(db);
     TableLayout statsTable;
@@ -43,6 +44,7 @@ public class ActivityStatisticsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         statsTable = view.findViewById(R.id.activityStatsTable);
+
         activityUtil.retrieveSpecificActivity(ActivityID, new FirebaseDatabaseHelper.SpecificActivityCallback() {
             @Override
             public void onCallback(Map<String, Object> data) {
@@ -59,58 +61,61 @@ public class ActivityStatisticsFragment extends Fragment {
                             minSplit = splits.get(i);
                         }
                     }
-                } else {
+                } else if (splits != null && !splits.isEmpty()) {
                     minSplit = splits.get(0);
                 }
-                String bestPace = ConversionUtil.longToTimeConversion(minSplit);
 
+                String bestPace = ConversionUtil.longToTimeConversion(minSplit);
                 List<Double> elevationStats = (data.get("Elevation") != null) ? (List<Double>) data.get("Elevation") : new ArrayList<>();
-                double gain = (elevationStats.isEmpty()) ? 0.0 : elevationCalculator.calculateElevationGain(elevationStats);
-                double loss = (elevationStats.isEmpty()) ? 0.0 : elevationCalculator.calculateElevationLoss(elevationStats);
-                double maxElevation = (elevationStats.isEmpty()) ? 0.0 : elevationCalculator.getMaxElevation(elevationStats);
-                double minElevation = (elevationStats.isEmpty()) ? 0.0 : elevationCalculator.getMinElevation(elevationStats);
+                double gain = elevationStats.isEmpty() ? 0.0 : elevationCalculator.calculateElevationGain(elevationStats);
+                double loss = elevationStats.isEmpty() ? 0.0 : elevationCalculator.calculateElevationLoss(elevationStats);
+                double maxElevation = elevationStats.isEmpty() ? 0.0 : elevationCalculator.getMaxElevation(elevationStats);
+                double minElevation = elevationStats.isEmpty() ? 0.0 : elevationCalculator.getMinElevation(elevationStats);
 
                 addTableSection(statsTable, "Pace");
-                addRowStatsTable(statsTable, "Average Pace", (String) data.get("pace") + " /KM");
-                String bestPaceFormatted = bestPace.split("\\.")[0];
-                addRowStatsTable(statsTable, "Best Pace", bestPaceFormatted + " /KM");
-                addTableSection(statsTable, "Speed");
-                addRowStatsTable(statsTable, "Average Speed",
-                        String.format("%.2f mph", ActivityStatsConversionUtil.calculateAverageSpeed(distance, (int) time)));
-                addRowStatsTable(statsTable, "Average Moving Speed",
-                        String.format("%.2f mph", ActivityStatsConversionUtil.calculateAverageSpeed(distance, (int) time)));
+                addRowStatsTable("Average Pace", pace + " /KM");
+                addRowStatsTable("Best Pace", bestPace.split("\\.")[0] + " /KM");
 
-                if(splits.size() > 1) {
-                    addRowStatsTable(statsTable, "Maximum Speed", String.format("%.2f", ConversionUtil.convertLongToMPH(minSplit)) + " mph");
+                addTableSection(statsTable, "Speed");
+                addRowStatsTable("Average Speed", String.format("%.2f mph", ActivityStatsConversionUtil.calculateAverageSpeed(distance, time)));
+                addRowStatsTable("Average Moving Speed", String.format("%.2f mph", ActivityStatsConversionUtil.calculateAverageSpeed(distance, time)));
+
+                if (splits != null && splits.size() > 1) {
+                    addRowStatsTable("Maximum Speed", String.format("%.2f mph", ConversionUtil.convertLongToMPH(minSplit)));
                 }
+
                 addTableSection(statsTable, "Time");
-                addRowStatsTable(statsTable, "Total Time", ConversionUtil.convertSecondsToTime(time));
+                addRowStatsTable("Total Time", ConversionUtil.convertSecondsToTime(time));
+
                 addTableSection(statsTable, "Calories");
-                addRowStatsTable(statsTable, "Calories Burned", String.valueOf((long) data.get("caloriesBurned")));
+                addRowStatsTable("Calories Burned", String.valueOf((long) data.get("caloriesBurned")));
+
                 if (!elevationStats.isEmpty()) {
                     addTableSection(statsTable, "Elevation");
-                    addRowStatsTable(statsTable, "Elevation Gain", String.format("%.2f", gain) + " metres");
-                    addRowStatsTable(statsTable, "Elevation Loss", String.format("%.2f", loss) + " metres");
-                    addRowStatsTable(statsTable, "Maximum Elevation", String.format("%.2f", maxElevation) + " metres");
-                    addRowStatsTable(statsTable, "Minimum Elevation", String.format("%.2f", minElevation) + " metres");
+                    addRowStatsTable("Elevation Gain", String.format("%.2f metres", gain));
+                    addRowStatsTable("Elevation Loss", String.format("%.2f metres", loss));
+                    addRowStatsTable("Maximum Elevation", String.format("%.2f metres", maxElevation));
+                    addRowStatsTable("Minimum Elevation", String.format("%.2f metres", minElevation));
                 }
-//                addTableSection(statsTable, "Heart Rate");
-//                addRowStatsTable(statsTable, "Average Heart Rate", " - BPM");
-//                addRowStatsTable(statsTable, "Maximum Heart Rate", "- BPM");
+
+                // Optionally add heart rate section if needed
+                // addTableSection(statsTable, "Heart Rate");
+                // addRowStatsTable("Average Heart Rate", "— BPM");
+                // addRowStatsTable("Max Heart Rate", "— BPM");
             }
         });
     }
 
-    public void addTableSection(TableLayout statTable, String sectionTitle) {
+    private void addTableSection(TableLayout statTable, String sectionTitle) {
         TableRow titleRow = new TableRow(requireContext());
 
         TextView txtSectionTitle = new TextView(requireContext());
         txtSectionTitle.setText(sectionTitle);
-        txtSectionTitle.setBackgroundColor(getResources().getColor(R.color.button_blue));
+        txtSectionTitle.setBackgroundResource(R.drawable.section_header);
         txtSectionTitle.setTextColor(getResources().getColor(R.color.white));
         txtSectionTitle.setTypeface(null, Typeface.BOLD);
-        txtSectionTitle.setPadding(10, 10, 10, 10);
-        txtSectionTitle.setTextSize(30);
+        txtSectionTitle.setPadding(24, 24, 24, 24);
+        txtSectionTitle.setTextSize(18);
 
         TableRow.LayoutParams params = new TableRow.LayoutParams();
         params.span = 2;
@@ -121,20 +126,31 @@ public class ActivityStatisticsFragment extends Fragment {
         statTable.addView(titleRow);
     }
 
-    private void addRowStatsTable(TableLayout statsTable, String label, String value) {
+    private void addRowStatsTable(String label, String value) {
         TableRow row = new TableRow(requireContext());
+
+
+        int rowIndex = statsTable.getChildCount();
+        if (rowIndex % 2 == 0) {
+            row.setBackgroundColor(getResources().getColor(R.color.row_background_light));
+        } else {
+            row.setBackgroundColor(getResources().getColor(R.color.row_background_alt));
+        }
 
         TextView txtLabel = new TextView(requireContext());
         txtLabel.setText(label);
-        txtLabel.setPadding(20, 20, 20, 20);
+        txtLabel.setPadding(24, 20, 8, 20);
         txtLabel.setTextSize(16);
         txtLabel.setTypeface(null, Typeface.BOLD);
+        txtLabel.setTextColor(Color.DKGRAY);
         row.addView(txtLabel);
 
         TextView txtValue = new TextView(requireContext());
         txtValue.setText(value);
-        txtValue.setPadding(20, 20, 20, 20);
+        txtValue.setPadding(8, 20, 24, 20);
         txtValue.setTextSize(16);
+        txtValue.setTextColor(Color.BLACK);
+        txtValue.setGravity(Gravity.END);
         row.addView(txtValue);
 
         statsTable.addView(row);

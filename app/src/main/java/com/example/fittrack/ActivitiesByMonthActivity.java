@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -25,7 +26,7 @@ public class ActivitiesByMonthActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private RecyclerView recyclerMonthActivities;
     private ActivitiesRecyclerViewAdapter activitiesAdapter;
-    private Spinner monthSpinner;
+    private MaterialAutoCompleteTextView monthSpinner;
     private String UserID;
 
     @Override
@@ -36,26 +37,23 @@ public class ActivitiesByMonthActivity extends AppCompatActivity {
         Intent intent = getIntent();
         UserID = intent.getStringExtra("UserID");
 
-
         recyclerMonthActivities = findViewById(R.id.recyclerActivitiesMonth);
         monthSpinner = findViewById(R.id.monthSpinner);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter
-                .createFromResource(this, R.array.activities_by_month, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        String[] monthsArray = getResources().getStringArray(R.array.activities_by_month);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, monthsArray);
         monthSpinner.setAdapter(adapter);
 
         String currentMonth = new DateFormatSymbols().getMonths()[Calendar.getInstance().get(Calendar.MONTH)] +
                 " " + Calendar.getInstance().get(Calendar.YEAR);
-        int currentPosition = adapter.getPosition(currentMonth);
-        if (currentPosition >= 0) {
-            monthSpinner.setSelection(currentPosition);
+        if (adapter.getPosition(currentMonth) >= 0) {
+            monthSpinner.setText(currentMonth, false);
         }
 
-        monthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        monthSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String selected = adapterView.getItemAtPosition(i).toString().trim();
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                String selected = adapterView.getItemAtPosition(position).toString().trim();
                 String[] parts = selected.split(" ");
                 if (parts.length != 2) return;
 
@@ -64,10 +62,8 @@ public class ActivitiesByMonthActivity extends AppCompatActivity {
 
                 loadActivitiesForMonth(month, year);
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {}
         });
+
         recyclerMonthActivities.setLayoutManager(new LinearLayoutManager(this));
         recyclerMonthActivities.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
@@ -90,7 +86,6 @@ public class ActivitiesByMonthActivity extends AppCompatActivity {
         calendar.set(Calendar.MILLISECOND, 999);
         Date endDate = calendar.getTime();
 
-
         Query query = db.collection("Activities")
                 .whereEqualTo("UserID", UserID)
                 .whereGreaterThanOrEqualTo("date", startDate)
@@ -103,13 +98,14 @@ public class ActivitiesByMonthActivity extends AppCompatActivity {
                 .build();
 
         if (activitiesAdapter != null) {
-            activitiesAdapter.stopListening();
+            activitiesAdapter.updateOptions(options);
+        } else {
+            activitiesAdapter = new ActivitiesRecyclerViewAdapter(options, this);
+            activitiesAdapter.updateOptions(options);
+            recyclerMonthActivities.setAdapter(activitiesAdapter);
         }
-
-        activitiesAdapter = new ActivitiesRecyclerViewAdapter(options, this);
-        recyclerMonthActivities.setAdapter(activitiesAdapter);
-        activitiesAdapter.startListening();
     }
+
 
     private int getSelectedMonth(String month) {
         String[] months = new DateFormatSymbols().getMonths();

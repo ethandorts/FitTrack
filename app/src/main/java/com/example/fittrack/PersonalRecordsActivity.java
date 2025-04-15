@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentContainer;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class PersonalRecordsActivity extends AppCompatActivity {
@@ -28,24 +29,25 @@ public class PersonalRecordsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_records);
 
-        Spinner activitySpinner = findViewById(R.id.spinnerActivityPB);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter
-                .createFromResource(this, R.array.activity_types_PB, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
-        activitySpinner.setAdapter(adapter);
+        MaterialAutoCompleteTextView activitySpinner = findViewById(R.id.spinnerActivityPB);
 
-        activitySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        String[] activities = {"Running", "Walking", "Cycling"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_dropdown_item_1line,
+                activities
+        );
+        activitySpinner.setAdapter(adapter);
+        activitySpinner.setText("Running", false);
+
+        activitySpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String option = adapterView.getItemAtPosition(i).toString();
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String option = parent.getItemAtPosition(position).toString();
                 updateFragment(option);
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
         });
+
     }
 
     private void updateFragment(String activityType) {

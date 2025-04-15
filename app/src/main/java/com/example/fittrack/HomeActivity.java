@@ -91,7 +91,7 @@ import java.util.concurrent.TimeUnit;
 public class HomeActivity extends AppCompatActivity implements DataClient.OnDataChangedListener {
 
     private ImageView profileImage, addFriend, btnMessageFriends;
-    private TextView UserName;
+    private TextView UserName, NoActivities;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private FirebaseUser mAuth;
@@ -115,7 +115,6 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
 
         WorkManager.getInstance(this).cancelAllWork();
 
@@ -156,6 +155,7 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
         loadingActivities = findViewById(R.id.LoadingActivitiesProgressBar);
         btnMessageFriends = findViewById(R.id.btnMessageFriends);
         addFriend = findViewById(R.id.btnAddActivity);
+        NoActivities = findViewById(R.id.noActivitiesMessage);
 
         Wearable.getNodeClient(this).getConnectedNodes()
                 .addOnSuccessListener(new OnSuccessListener<List<Node>>() {
@@ -312,13 +312,13 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
             }
         });
 
-//        btnMessageFriends.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(HomeActivity.this, DirectMessagingMenu.class);
-//                startActivity(intent);
-//            }
-//        });
+        btnMessageFriends.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, NutritionTrackingOverview.class);
+                startActivity(intent);
+            }
+        });
 
         addFriend.setOnClickListener(new View.OnClickListener() {
             @Override

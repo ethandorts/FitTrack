@@ -26,6 +26,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -45,7 +46,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private String originalWeight, originalHeight, originalCalories, originalActivitiesNo;
     private Button btnSaveDetails;
     private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
-    private Spinner editFitnessLevel;
+    private MaterialAutoCompleteTextView editFitnessLevel;
     private Uri imageUri;
 
     @Override
@@ -62,10 +63,13 @@ public class EditProfileActivity extends AppCompatActivity {
         btnSaveDetails = findViewById(R.id.btnSaveFitnessDetails);
         editFitnessLevel = findViewById(R.id.spinnerFitnessLevel);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter
-                .createFromResource(getApplicationContext(), R.array.fitness_levels, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_dropdown_item_1line,
+                getResources().getStringArray(R.array.fitness_levels)
+        );
         editFitnessLevel.setAdapter(adapter);
+        editFitnessLevel.setText("Intermediate", false);
 
         DatabaseUtil.retrieveProfilePicture(UserID + ".jpeg", new FirebaseDatabaseHelper.ProfilePictureCallback() {
             @Override

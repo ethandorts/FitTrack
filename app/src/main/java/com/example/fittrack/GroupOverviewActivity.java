@@ -9,21 +9,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,7 +24,7 @@ import java.util.HashSet;
 public class GroupOverviewActivity extends AppCompatActivity {
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private String currentUser = mAuth.getUid();
-    private TextView txtRunningGroupInfo;
+    private TextView txtRunningGroupInfo, txtGroupType, txtMembersSize, txtDescription;
     private ImageView imgGroupProfile;
     private Button btnAdminJoinRequests;
     private RecyclerView membersRecyclerView;
@@ -43,6 +36,9 @@ public class GroupOverviewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group_overview);
 
         txtRunningGroupInfo = findViewById(R.id.txtClubNameOverview);
+        txtGroupType = findViewById(R.id.txtGroupType);
+        txtMembersSize = findViewById(R.id.txtMemberSize);
+        txtDescription = findViewById(R.id.txtGroupDescription);
         btnAdminJoinRequests = findViewById(R.id.btnAdminRequests);
         membersRecyclerView = findViewById(R.id.membersRecyclerView);
         imgGroupProfile = findViewById(R.id.membersListLogo);
@@ -52,8 +48,13 @@ public class GroupOverviewActivity extends AppCompatActivity {
         int GroupSize = intent.getIntExtra("GroupSize", 0);
         String GroupActivity = intent.getStringExtra("GroupActivity");
         String GroupID = intent.getStringExtra("GroupID");
+        String GroupShortDescription = intent.getStringExtra("GroupShortDescription");
 
-        txtRunningGroupInfo.setText(GroupName + "\n\n" + String.valueOf(GroupSize) + " Members" + "\n\n" + GroupActivity);
+        txtRunningGroupInfo.setText(GroupName);
+        txtGroupType.setText(GroupActivity);
+        txtMembersSize.setText(GroupSize + " members");
+        txtDescription.setText(GroupShortDescription);
+
         groupUtil.retrieveGroupProfileImage(GroupID + ".jpg", new GroupsDatabaseUtil.GroupPictureCallback() {
             @Override
             public void onCallback(Uri PicturePath) {

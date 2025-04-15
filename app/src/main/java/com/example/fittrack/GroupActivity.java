@@ -40,6 +40,7 @@ public class GroupActivity extends AppCompatActivity {
         String groupName = intent.getStringExtra("GroupName");
         String activityType = intent.getStringExtra("ActivityType");
         int GroupSize = intent.getIntExtra("MembersValue", 0);
+        String GroupShortDescription = intent.getStringExtra("GroupShortDescription");
         System.out.println("Buzz Lightyear: " + GroupSize);
         String GroupActivity = intent.getStringExtra("ActivityType");
         txtGroupName.setText(groupName);
@@ -96,6 +97,7 @@ public class GroupActivity extends AppCompatActivity {
                 intent.putExtra("GroupSize", GroupSize);
                 intent.putExtra("GroupName", groupName);
                 intent.putExtra("GroupActivity", GroupActivity);
+                intent.putExtra("GroupShortDescription", GroupShortDescription);
                 startActivity(intent);
             }
         });
