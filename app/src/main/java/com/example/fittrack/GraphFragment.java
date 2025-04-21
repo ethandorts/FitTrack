@@ -85,7 +85,7 @@ public class GraphFragment extends Fragment {
                 for (String runner : runners) {
                     userUtil.retrieveUserName(runner, new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
                         @Override
-                        public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal) {
+                        public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal, String level, String fitnessGoal) {
                             if(isWeek) {
                                 System.out.println("Name is: " + runner);
                                 gamUtil.calculateUserActivitiesPerWeek(runner, ActivityType, new GamificationUtil.ActivityFrequencyCallback() {
@@ -131,7 +131,7 @@ public class GraphFragment extends Fragment {
                 for(String runner : runners) {
                     userUtil.retrieveUserName(runner, new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
                         @Override
-                        public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal) {
+                        public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal, String level, String fitnessGoal) {
                             if(isWeek) {
                                 gamUtil.calculateUserDistancePerWeek(runner, ActivityType,  new GamificationUtil.UserDistancePerMonthCallback() {
                                     @Override
@@ -187,7 +187,7 @@ public class GraphFragment extends Fragment {
                         for (LeaderboardModel model : timeData) {
                             userUtil.retrieveUserName(model.getUsername(), new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
                                 @Override
-                                public void onCallback(String fullName, long weight, long height, long activityFrequency, long dailyCalorieGoal) {
+                                public void onCallback(String fullName, long weight, long height, long activityFrequency, long dailyCalorieGoal, String level, String fitnessGoal) {
                                     fastestData.add(new ValueDataEntry(fullName, model.getDistance()));
                                     resolved[0]++;
 
@@ -248,7 +248,6 @@ public class GraphFragment extends Fragment {
             tooltipFormat = "{%Value}{groupsSeparator: } km";
         }
 
-        // Tooltip formatting
         if (isTimeBased) {
             column.tooltip()
                     .titleFormat("{%X}")

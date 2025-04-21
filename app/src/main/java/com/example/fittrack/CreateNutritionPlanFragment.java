@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -41,6 +42,7 @@ public class CreateNutritionPlanFragment extends Fragment {
     private TextView txtResponse;
     private ImageButton btnSendRequest;
     private EditText editMessage;
+    private ProgressBar progressBarNP;
     private GoalsUtil goalsUtil = new GoalsUtil(db);
     private String goalsList = " ";
     @Nullable
@@ -56,12 +58,13 @@ public class CreateNutritionPlanFragment extends Fragment {
         txtResponse = view.findViewById(R.id.txtAIResponseNP);
         btnSendRequest = view.findViewById(R.id.btnSendRequestNP);
         editMessage = view.findViewById(R.id.editModifyNP);
+        progressBarNP = view.findViewById(R.id.progressBarNP);
 
         editMessage.setVisibility(View.GONE);
         btnSendRequest.setVisibility(View.GONE);
 
                 AskFitTrackCoachingAssistant("Create me a nutrition plan for tomorrow. I have a goal to eat" + getDailyCalorieGoal() + " calories a day. " +
-                        "I weigh" + getUserWeight() + "kg and I am " + getUserWeight() +"cm tall. Provide me with a nutritional plan.\n" +
+                        "I weigh" + getUserWeight() + "kg and I am " + getUserHeight() +"cm tall. Provide me with a nutritional plan.\n" +
                         "\n" +
                         "Provide the Nutritional Plan in this format, for example:\n" +
                         "\n" +
@@ -106,6 +109,9 @@ public class CreateNutritionPlanFragment extends Fragment {
         JSONObject body = new JSONObject();
         JSONArray messagesArray = new JSONArray();
 
+        txtResponse.setText("");
+        progressBarNP.setVisibility(View.VISIBLE);
+
         try {
             JSONObject aiDescription = new JSONObject();
             aiDescription.put("role", "system");
@@ -146,6 +152,7 @@ public class CreateNutritionPlanFragment extends Fragment {
                             txtResponse.setText(message);
                             lastMessage = message;
 
+                            progressBarNP.setVisibility(View.GONE);
                             editMessage.setVisibility(View.VISIBLE);
                             btnSendRequest.setVisibility(View.VISIBLE);
 

@@ -46,7 +46,7 @@ public class PostsRecyclerViewAdapter extends FirestoreRecyclerAdapter<PostModel
         String PostID = getSnapshots().getSnapshot(i).getId();
         DatabaseUtil.retrieveUserName(post.getUserID(), new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
             @Override
-            public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal) {
+            public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal, String level, String fitnessGoal) {
                 holder.txtName.setText(FullName);
             }
         });

@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -38,12 +39,27 @@ public class LikesRecyclerAdapter extends RecyclerView.Adapter<LikesRecyclerAdap
     @Override
     public void onBindViewHolder(@NonNull LikesViewHolder holder, int position) {
         LikeModel model = likesList.get(position);
-        holder.txtLikeName.setText(model.getLikeName());
+        DatabaseUtil.retrieveChatName(model.getLikeName(), new FirebaseDatabaseHelper.ChatUserCallback() {
+            @Override
+            public void onCallback(String Chatname) {
+                holder.txtLikeName.setText(Chatname);
+            }
+        });
         System.out.println("URI: " + model.getProfilePicture());
-        Glide.with(holder.itemView.getContext())
-                .load(model.getProfilePicture())
-                .error(R.drawable.profile)
-                .into(holder.img);
+
+        DatabaseUtil.retrieveProfilePicture(model.getLikeName() + ".jpeg", new FirebaseDatabaseHelper.ProfilePictureCallback() {
+            @Override
+            public void onCallback(Uri PicturePath) {
+                if (PicturePath != null) {
+                    Glide.with(holder.itemView.getContext())
+                            .load(model.getProfilePicture())
+                            .error(R.drawable.profile)
+                            .into(holder.img);
+                } else {
+                    Log.e("No profile picture found", "No profile picture found.");
+                }
+            }
+        });
     }
 
     @Override

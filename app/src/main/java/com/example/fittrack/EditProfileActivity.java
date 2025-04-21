@@ -42,8 +42,8 @@ public class EditProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private TextView txtName;
     private ImageView imgProfile;
-    private EditText editWeight, editHeight, editCalories, editActivitiesNo;
-    private String originalWeight, originalHeight, originalCalories, originalActivitiesNo;
+    private EditText editWeight, editHeight, editCalories, editActivitiesNo, editFitnessGoalDescription;
+    private String originalWeight, originalHeight, originalCalories, originalActivitiesNo, originalLevel, originalGoal;
     private Button btnSaveDetails;
     private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
     private MaterialAutoCompleteTextView editFitnessLevel;
@@ -62,14 +62,22 @@ public class EditProfileActivity extends AppCompatActivity {
         editActivitiesNo = findViewById(R.id.editActivitiesNo);
         btnSaveDetails = findViewById(R.id.btnSaveFitnessDetails);
         editFitnessLevel = findViewById(R.id.spinnerFitnessLevel);
+        editFitnessGoalDescription = findViewById(R.id.editFitnessGoalDescription);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+        ArrayAdapter<CharSequence> fitnessAdapter = ArrayAdapter.createFromResource(
                 this,
-                android.R.layout.simple_dropdown_item_1line,
-                getResources().getStringArray(R.array.fitness_levels)
+                R.array.fitness_levels,
+                android.R.layout.simple_dropdown_item_1line
         );
-        editFitnessLevel.setAdapter(adapter);
-        editFitnessLevel.setText("Intermediate", false);
+
+        editFitnessLevel.setAdapter(fitnessAdapter);
+        editFitnessLevel.setText("Beginner", false);
+        editFitnessLevel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editFitnessLevel.showDropDown();
+            }
+        });
 
         DatabaseUtil.retrieveProfilePicture(UserID + ".jpeg", new FirebaseDatabaseHelper.ProfilePictureCallback() {
             @Override
@@ -87,17 +95,21 @@ public class EditProfileActivity extends AppCompatActivity {
 
         DatabaseUtil.retrieveUserName(UserID, new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
             @Override
-            public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal) {
+            public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal, String level, String fitnessGoal) {
                 originalWeight = String.valueOf(weight);
                 originalHeight = String.valueOf(height);
                 originalCalories = String.valueOf(dailyCalorieGoal);
                 originalActivitiesNo = String.valueOf(activityFrequency);
+                originalGoal = String.valueOf(fitnessGoal);
+                originalLevel = String.valueOf(level);
 
                 txtName.setText(FullName);
                 editWeight.setText(String.valueOf(weight));
                 editHeight.setText(String.valueOf(height));
                 editCalories.setText(String.valueOf(dailyCalorieGoal));
                 editActivitiesNo.setText(String.valueOf(activityFrequency));
+                editFitnessGoalDescription.setText(fitnessGoal);
+                editFitnessLevel.setText(level, false);
             }
         });
 
@@ -122,6 +134,8 @@ public class EditProfileActivity extends AppCompatActivity {
         editHeight.addTextChangedListener(textWatcher);
         editCalories.addTextChangedListener(textWatcher);
         editActivitiesNo.addTextChangedListener(textWatcher);
+        editFitnessGoalDescription.addTextChangedListener(textWatcher);
+        editFitnessLevel.addTextChangedListener(textWatcher);
 
         imgProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,6 +168,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
                 if (TextUtils.isEmpty(editHeight.getText().toString().trim())) {
                     editHeight.setError("No value for height!");
+                    return;
                 }
 
                 if (TextUtils.isEmpty(editWeight.getText().toString().trim())) {
@@ -166,11 +181,26 @@ public class EditProfileActivity extends AppCompatActivity {
                     return;
                 }
 
+                String fitnessGoal = editFitnessGoalDescription.getText().toString().trim();
+                String fitnessLevel = editFitnessLevel.getText().toString().trim();
+
+                if (TextUtils.isEmpty(fitnessGoal)) {
+                    editFitnessGoalDescription.setError("Please enter your fitness goal.");
+                    return;
+                }
+
+                if (TextUtils.isEmpty(fitnessLevel)) {
+                    editFitnessLevel.setError("Please select your fitness level.");
+                    return;
+                }
+
                 Map<String, Object> updatedData = new HashMap<>();
                 updatedData.put("Weight", weight);
                 updatedData.put("Height", height);
                 updatedData.put("ActivityFrequency", activityFrequency);
                 updatedData.put("DailyCalorieGoal", calories);
+                updatedData.put("FitnessGoal", fitnessGoal);
+                updatedData.put("Level", fitnessLevel);
 
                 db.collection("Users").document(UserID)
                         .update(updatedData)
@@ -189,6 +219,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         });
             }
         });
+
     }
 
     private void isChanged() {
@@ -196,13 +227,16 @@ public class EditProfileActivity extends AppCompatActivity {
         boolean heightChanged = !editHeight.getText().toString().trim().equals(originalHeight);
         boolean caloriesChanged = !editCalories.getText().toString().trim().equals(originalCalories);
         boolean activitiesChanged = !editActivitiesNo.getText().toString().trim().equals(originalActivitiesNo);
+        boolean goalChanged = !editFitnessGoalDescription.getText().toString().trim().equals(originalGoal);
+        boolean levelChanged = !editFitnessLevel.getText().toString().trim().equals(originalLevel);
 
-        if (weightChanged || heightChanged || caloriesChanged || activitiesChanged) {
+        if (weightChanged || heightChanged || caloriesChanged || activitiesChanged || goalChanged || levelChanged) {
             btnSaveDetails.setVisibility(View.VISIBLE);
         } else {
             btnSaveDetails.setVisibility(View.GONE);
         }
     }
+
 
     private void selectImage() {
         Intent intent = new Intent();

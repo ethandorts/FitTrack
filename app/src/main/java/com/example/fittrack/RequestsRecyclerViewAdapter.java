@@ -1,6 +1,7 @@
 package com.example.fittrack;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ArrayList<RequestModel> requestList = new ArrayList<>();
     private GroupsDatabaseUtil groupsDatabaseUtil = new GroupsDatabaseUtil(db);
+    private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
     private String GroupID;
 
     public RequestsRecyclerViewAdapter(Context context, ArrayList<RequestModel> requestList, String GroupID) {
@@ -38,7 +41,22 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
     @Override
     public void onBindViewHolder(@NonNull RequestsViewHolder holder, int position) {
         RequestModel request = requestList.get(position);
-        holder.txtRequestUsername.setText(request.getUserName());
+        DatabaseUtil.retrieveChatName(request.getUserName(), new FirebaseDatabaseHelper.ChatUserCallback() {
+            @Override
+            public void onCallback(String Chatname) {
+                holder.txtRequestUsername.setText(Chatname);
+            }
+        });
+
+        DatabaseUtil.retrieveProfilePicture(request.getUserName() + ".jpeg", new FirebaseDatabaseHelper.ProfilePictureCallback() {
+            @Override
+            public void onCallback(Uri PicturePath) {
+                Glide.with(holder.itemView.getContext())
+                        .load(PicturePath)
+                        .error(R.drawable.profile)
+                        .into(holder.UserImage);
+            }
+        });
 
         holder.btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,7 +98,7 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
             UserImage = itemView.findViewById(R.id.imgLikeProfile);
             btnAccept = itemView.findViewById(R.id.btnRequestAccept);
             btnReject = itemView.findViewById(R.id.btnRequestReject);
-            RequestMessage = itemView.findViewById(R.id.txtRequestMessage);
+//            RequestMessage = itemView.findViewById(R.id.txtRequestMessage);
         }
     }
 }

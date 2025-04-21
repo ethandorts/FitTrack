@@ -113,7 +113,7 @@ public class ActivitiesRecyclerViewAdapter extends FirestoreRecyclerAdapter<Acti
         holder.activityPace.setText(activity.getPace() + " /km");
         userUtil.retrieveUserName(activity.getUserID(), new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
             @Override
-            public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal) {
+            public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal, String level, String fitnessGoal) {
                 holder.activityUser.setText(FullName);
             }
         });

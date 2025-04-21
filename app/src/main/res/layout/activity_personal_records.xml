@@ -8,7 +8,6 @@
     android:backgroundTintMode="src_in"
     tools:context=".PersonalRecordsActivity">
 
-    <!-- Sleek Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/PersonalBestToolbar"
         android:layout_width="0dp"
@@ -18,19 +17,27 @@
         android:minHeight="?attr/actionBarSize"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="Personal Bests"
-        app:titleTextAppearance="@style/TextAppearance.AppCompat.Large"
-        app:titleTextColor="@color/white" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <!-- Material Spinner (Activity Selection) -->
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Personal Bests"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_gravity="center" />
+    </androidx.appcompat.widget.Toolbar>
+
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayoutSpinner"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="0dp"
         app:boxBackgroundMode="outline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +52,6 @@
             android:inputType="none" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Fragment Container -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerPB"
         android:name="com.example.fittrack.RunningPersonalBestFragment"

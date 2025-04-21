@@ -71,7 +71,7 @@ public class MeetupsRecyclerViewAdapter extends FirestoreRecyclerAdapter<MeetupM
         holder.Title.setText(meetup.getTitle());
         DatabaseUtil.retrieveUserName(meetup.getUser(), new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
             @Override
-            public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal) {
+            public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal, String level, String fitnessGoal) {
                 holder.Username.setText("Event Organiser: " + FullName);
             }
         });

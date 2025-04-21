@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -41,6 +42,7 @@ public class GeneralFitnessAdviceFragment extends Fragment {
     private ImageButton btnSendRequest;
     private EditText editMessage;
     private String lastMessage;
+    private ProgressBar progressBarGFA;
     private GoalsUtil goalsUtil = new GoalsUtil(db);
     private String goalsList = " ";
     @Nullable
@@ -54,8 +56,10 @@ public class GeneralFitnessAdviceFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         txtResponse = view.findViewById(R.id.txtAIResponseGF);
+        txtResponse.setText("Hi I am FitBot, your fitness tracking AI coach ask me any question.");
         btnSendRequest = view.findViewById(R.id.btnSendRequestGF);
         editMessage = view.findViewById(R.id.editModifyGF);
+        progressBarGFA = view.findViewById(R.id.progressBarGF);
 
         editMessage.setClickable(false);
 
@@ -86,6 +90,10 @@ public class GeneralFitnessAdviceFragment extends Fragment {
     public void AskFitTrackCoachingAssistant(String question) {
         JSONObject body = new JSONObject();
         JSONArray messagesArray = new JSONArray();
+
+        txtResponse.setText("");
+        txtResponse.setTextSize(24);
+        progressBarGFA.setVisibility(View.VISIBLE);
 
         try {
             JSONObject aiDescription = new JSONObject();
@@ -127,6 +135,7 @@ public class GeneralFitnessAdviceFragment extends Fragment {
                             txtResponse.setText(message);
                             lastMessage = message;
 
+                            progressBarGFA.setVisibility(View.GONE);
                             editMessage.setVisibility(View.VISIBLE);
                             btnSendRequest.setVisibility(View.VISIBLE);
 

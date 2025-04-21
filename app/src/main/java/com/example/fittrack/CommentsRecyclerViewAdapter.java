@@ -27,7 +27,7 @@ public class CommentsRecyclerViewAdapter extends FirestoreRecyclerAdapter<Commen
     protected void onBindViewHolder(@NonNull CommentHolder holder, int i, @NonNull CommentModel comment) {
         DatabaseUtil.retrieveUserName(comment.getUserID(), new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
             @Override
-            public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal) {
+            public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal, String level, String fitnessGoal) {
                 holder.txtUser.setText(FullName);
             }
         });

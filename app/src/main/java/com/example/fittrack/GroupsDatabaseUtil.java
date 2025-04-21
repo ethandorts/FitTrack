@@ -160,6 +160,7 @@ public class GroupsDatabaseUtil {
                     LikeModel likeModel = new LikeModel(accept, 0, null);
                     people.add(likeModel);
                 }
+                System.out.println("Meetup Count " + people.size());
                 callback.onCallback(people);
             }
         }).addOnFailureListener(new OnFailureListener() {

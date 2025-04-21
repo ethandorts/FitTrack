@@ -13,10 +13,11 @@ public class ActivityModel {
     private String pace;
     private String UserID;
     private String activityUserImage;
+    private List<Long> splits;
     private List<Object> activityCoordinates;
     private String ActivityID;
 
-    public ActivityModel(String type, String activityTypeImage, Timestamp date, String distance, double time, String pace, String userID, String activityUserImage, List<Object> activityCoordinates, String activityID) {
+    public ActivityModel(String type, String activityTypeImage, Timestamp date, String distance, double time, String pace, String userID, String activityUserImage, List<Object> activityCoordinates, String activityID, List<Long> splits) {
         this.type = type;
         this.activityTypeImage = activityTypeImage;
         this.date = date;
@@ -27,6 +28,7 @@ public class ActivityModel {
         this.activityUserImage = activityUserImage;
         this.activityCoordinates = activityCoordinates;
         ActivityID = activityID;
+        this.splits = splits;
     }
 
     public ActivityModel() {
@@ -111,6 +113,14 @@ public class ActivityModel {
 
     public void setActivityID(String activityID) {
         ActivityID = activityID;
+    }
+
+    public List<Long> getSplits() {
+        return splits;
+    }
+
+    public void setSplits(List<Long> splits) {
+        this.splits = splits;
     }
 
     @Override

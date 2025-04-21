@@ -44,7 +44,7 @@
                 android:layout_marginEnd="12dp"
                 android:background="@color/button_blue"
                 android:scaleType="fitXY"
-                android:src="@drawable/gamification_icon" />
+                android:src="@drawable/gam_icon" />
 
             <ImageButton
                 android:id="@+id/btnGroupMessage"

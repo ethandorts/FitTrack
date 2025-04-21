@@ -118,9 +118,9 @@ public class FirebaseDatabaseHelper {
                         if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
                             Map<String, Object> data = documentSnapshot.getData();
                             System.out.println("Data: " + data);
-                            callback.onCallback((String) data.get("FullName"), (long) data.get("Weight"), (long) data.get("Height"), (long) data.get("ActivityFrequency"), (long) data.get("DailyCalorieGoal"));
+                            callback.onCallback((String) data.get("FullName"), (long) data.get("Weight"), (long) data.get("Height"), (long) data.get("ActivityFrequency"), (long) data.get("DailyCalorieGoal"), (String) data.get("Level"), (String) data.get("FitnessGoal"));
                         } else {
-                            callback.onCallback(null, 0, 0, 0, 0);
+                            callback.onCallback(null, 0, 0, 0, 0, null, null);
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -128,7 +128,7 @@ public class FirebaseDatabaseHelper {
                     public void onFailure(@NonNull Exception e) {
                         System.out.println("Couldn't fetch user details");
                         System.out.println(e.getMessage());
-                        callback.onCallback(null, 0, 0, 0, 0);
+                        callback.onCallback(null, 0, 0, 0, 0, null, null);
                     }
                 });
     }
@@ -198,7 +198,7 @@ public class FirebaseDatabaseHelper {
     }
 
     public interface FirestoreUserNameCallback {
-        void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal);
+        void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal, String level, String fitnessGoal);
     }
 
 

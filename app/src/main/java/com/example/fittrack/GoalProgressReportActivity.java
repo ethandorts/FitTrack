@@ -1,11 +1,14 @@
 package com.example.fittrack;
 
+import android.app.people.ConversationStatus;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,18 +33,25 @@ import com.anychart.core.cartesian.series.Line;
 import com.anychart.enums.Anchor;
 import com.anychart.enums.TooltipPositionMode;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,13 +64,14 @@ public class GoalProgressReportActivity extends AppCompatActivity {
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private String UserID = mAuth.getUid();
     private TextView txtGoalDescription, txtTarget, txtProgress, txtDeadline, txtGoalType;
-    private TextView txtTotalProgress, txtDaysRemaining, txtProgressNumber, txtAIAdvice;
+    private TextView txtTotalProgress, txtBestPace, txtDaysRemaining, txtProgressNumber, txtAIAdvice;
     private ActivitiesRecyclerViewAdapter activitiesAdapter;
     private RecyclerView recyclerGoalEfforts;
     private ProgressBar aiProgressBar;
     private Cartesian cartesian;
     private AnyChartView progressLine;
     private String lastMessage;
+    private ArrayList<ActivityModel> activitiesList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +84,7 @@ public class GoalProgressReportActivity extends AppCompatActivity {
         txtProgress = findViewById(R.id.txtProgress);
         txtDeadline = findViewById(R.id.txtDeadline);
         txtTotalProgress = findViewById(R.id.txtTotalProgress);
+        txtBestPace = findViewById(R.id.txtAveragePace);
         txtDaysRemaining = findViewById(R.id.txtDaysRemaining);
         txtProgressNumber = findViewById(R.id.txtProgressPercentage);
         txtAIAdvice = findViewById(R.id.txtAIAdvice);
@@ -90,7 +102,7 @@ public class GoalProgressReportActivity extends AppCompatActivity {
         cartesian.xAxis(0).title("Date");
 
         Linear yAxis = cartesian.yAxis(0);
-        cartesian.yScale().minimum(0); // Always start from 0
+        cartesian.yScale().minimum(0);
 
         cartesian.tooltip()
                 .positionMode(TooltipPositionMode.POINT)
@@ -99,7 +111,6 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                 .offsetY(5d);
 
         cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
-        cartesian.tooltip(false);
         progressLine.setChart(cartesian);
 
         Intent intent = getIntent();
@@ -108,95 +119,226 @@ public class GoalProgressReportActivity extends AppCompatActivity {
         goalsUtil.retrieveGoalSpecificDescription(UserID, GoalID, new GoalsUtil.SpecificGoalCallback() {
             @Override
             public void onCallback(double targetDistance, int targetTime, String status, String goalType, int currentProgress, Timestamp startDate, Timestamp endDate, String description) {
-                txtGoalType.setText("🛣️ Distance Goal");
+                System.out.println(goalType + " goal");
+                if(goalType.equals("Distance")) {
+                    txtGoalType.setText("🛣️ Distance Goal");
+                } else if (goalType.equals("Time")) {
+                    txtGoalType.setText("⏰ Time Goal");
+                }
                 txtProgress.setText("\uD83D\uDCC8 Progress: " + status);
                 txtGoalDescription.setText(description);
                 txtTarget.setText(String.format("\uD83C\uDFAF Target: %.2f KM", targetDistance / 1000));
                 txtDeadline.setText("⏳ Deadline: " + ConversionUtil.AltTimestamptoString(endDate));
 
-                Query query = db.collection("Activities")
-                        .whereEqualTo("UserID", UserID)
-                        .whereEqualTo("type", "Running")
-                        .whereGreaterThanOrEqualTo("date", startDate)
-                        .whereLessThanOrEqualTo("date", endDate)
-                        .orderBy("date", Query.Direction.DESCENDING);
 
-                FirestoreRecyclerOptions<ActivityModel> options = new FirestoreRecyclerOptions.Builder<ActivityModel>()
-                        .setQuery(query, ActivityModel.class)
-                        .build();
+                if(goalType.equals("Time")) {
+                    Query timeQuery = db.collection("Activities")
+                            .whereEqualTo("UserID", UserID)
+                            .whereEqualTo("type", "Running")
+                            .whereGreaterThanOrEqualTo("date", startDate)
+                            .whereLessThanOrEqualTo("date", endDate)
+                            .orderBy("date", Query.Direction.DESCENDING);
 
-                activitiesAdapter = new ActivitiesRecyclerViewAdapter(options, GoalProgressReportActivity.this);
-                recyclerGoalEfforts.setAdapter(activitiesAdapter);
+                    timeQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot querySnapshot) {
+                            ArrayList<ActivityModel> activitiesList = new ArrayList<>();
+                            System.out.println("Queries: " + querySnapshot.size());
+                            for(DocumentSnapshot doc : querySnapshot) {
+                                if(Double.parseDouble((String) doc.get("distance")) > targetDistance) {
+                                    String activityID = (String) doc.get("ActivityID");
+                                    String type = (String) doc.get("type");
+                                    Timestamp date = (Timestamp) doc.get("date");
+                                    String pace = (String) doc.get("pace");
+                                    String distance = (String) doc.get("distance");
+                                    List<Long> splits = (List<Long>) doc.get("splits");
+                                    List<Object> activityCoordinates = (List<Object>) doc.get("activityCoordinates");
+                                    double time = doc.getDouble("time") != null ? doc.getDouble("time") : 0.0;
 
-                LinearLayoutManager layout = new LinearLayoutManager(getApplicationContext());
-                recyclerGoalEfforts.setLayoutManager(layout);
-                recyclerGoalEfforts.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.HORIZONTAL));
-                activitiesAdapter.startListening();
+                                    ActivityModel model = new ActivityModel(type, null, date, String.valueOf(distance), time, pace, UserID, null, activityCoordinates, activityID, splits);
+                                    activitiesList.add(model);
+                                }
+                            }
+                            ManualActivityRecyclerAdapter adapter = new ManualActivityRecyclerAdapter(GoalProgressReportActivity.this, activitiesList);
+                            recyclerGoalEfforts.setAdapter(adapter);
+                            recyclerGoalEfforts.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                            recyclerGoalEfforts.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.HORIZONTAL));
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            System.out.println("Error lfc: " + e.getMessage());
+                        }
+                    });
+                } else if (goalType.equals("Distance")) {
+                    Query query = db.collection("Activities")
+                            .whereEqualTo("UserID", UserID)
+                            .whereEqualTo("type", "Running")
+                            .whereGreaterThanOrEqualTo("date", startDate)
+                            .whereLessThanOrEqualTo("date", endDate)
+                            .orderBy("date", Query.Direction.DESCENDING);
+
+
+                    FirestoreRecyclerOptions<ActivityModel> options = new FirestoreRecyclerOptions.Builder<ActivityModel>()
+                            .setQuery(query, ActivityModel.class)
+                            .build();
+
+                    activitiesAdapter = new ActivitiesRecyclerViewAdapter(options, GoalProgressReportActivity.this);
+                    recyclerGoalEfforts.setAdapter(activitiesAdapter);
+
+                    LinearLayoutManager layout = new LinearLayoutManager(getApplicationContext());
+                    recyclerGoalEfforts.setLayoutManager(layout);
+                    recyclerGoalEfforts.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.HORIZONTAL));
+                    activitiesAdapter.startListening();
+                }
 
                 gamUtil.getActivityProgressData(UserID, startDate, endDate, new GamificationUtil.ProgressCallback() {
                     @Override
                     public void onCallback(ArrayList<ActivityModel> activities) {
                         double totalDistance = 0;
-                        for(ActivityModel activity : activities) {
-                            totalDistance = totalDistance + Double.parseDouble(activity.getDistance());
+
+                        if(goalType.equals("Distance")) {
+                            for(ActivityModel activity : activities) {
+                                totalDistance = totalDistance + Double.parseDouble(activity.getDistance());
+                            }
+                            txtTotalProgress.setText("Total Progress: " + String.format("%.2f", totalDistance / 1000) + " / " + String.format("%.2f", targetDistance / 1000) + " KM");
+                            txtBestPace.setVisibility(View.GONE);
+                            double totalDistanceKm = totalDistance / 1000;
+                            double targetDistanceKm = targetDistance / 1000;
+
+                            double rawPercentage = (totalDistanceKm / targetDistanceKm) * 100;
+                            int progressPercentage = (int) Math.min(rawPercentage, 100);
+                            txtProgressNumber.setText("Progress: " + progressPercentage + "%");
+                        } else if(goalType.equals("Time")) {
+
+                            long bestTime = Long.MAX_VALUE;
+                            for(ActivityModel activity : activities) {
+                                if (Double.parseDouble(activity.getDistance()) >= targetDistance) {
+                                    List<Long> splits = activity.getSplits();
+                                    long splitTime = 0;
+                                    for (Long split : splits) {
+                                        splitTime = splitTime + split;
+                                    }
+                                    if (splitTime < bestTime) {
+                                        bestTime = splitTime;
+                                    }
+                                }
+                            }
+                            txtTotalProgress.setText("Best Time: " + ConversionUtil.longToTimeConversion(bestTime));
+                            long target = targetTime * 1000L;
+                            long timeDifference = bestTime - target;
+                            String label;
+                            if (timeDifference <= 0) {
+                                label = "Faster by " + ConversionUtil.convertSecondsToTime((int)(-timeDifference / 1000));
+                            } else {
+                                label = "Slower by " + ConversionUtil.convertSecondsToTime((int)(timeDifference / 1000));
+                            }
+                            txtBestPace.setText(label);
+
+                            double doubleTarget = Double.parseDouble(String.valueOf(target));
+                            double doubleBest = Double.parseDouble(String.valueOf(bestTime));
+                            double progress = doubleTarget / doubleBest * 100;
+                            String formattedProgress = String.valueOf((int) progress);
+                            if (progress > 100) {
+                                progress = 100;
+                            }
+                            txtProgressNumber.setText("Progress: " + formattedProgress + "%");
                         }
-                        txtTotalProgress.setText("Total Progress: " + String.format("%.2f", totalDistance / 1000) + " / " + String.format("%.2f", targetDistance / 1000) + " KM");
 
                         Timestamp now = Timestamp.now();
 
                         long millisNow = now.toDate().getTime();
                         long millisEnd = endDate.toDate().getTime();
 
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                        String formattedDate = sdf.format(new Date(millisEnd));
+
                         long diffInMillis = millisEnd - millisNow;
                         long daysRemaining = Math.max(diffInMillis / (1000 * 60 * 60 * 24), 0);
 
                         txtDaysRemaining.setText("Days Remaining: " + daysRemaining + " Days");
-                        double totalDistanceKm = totalDistance / 1000;
-                        double targetDistanceKm = targetDistance / 1000;
-
-                        double rawPercentage = (totalDistanceKm / targetDistanceKm) * 100;
-                        int progressPercentage = (int) Math.min(rawPercentage, 100);
-
-                        txtProgressNumber.setText("Progress: " + progressPercentage + "%");
 
                         userUtil.retrieveFitnessLevel(UserID, new FirebaseDatabaseHelper.ChatUserCallback() {
                             @Override
                             public void onCallback(String fitnessLevel) {
-                                GetFitnessAdvice(fitnessLevel, description, activities);
+                                GetFitnessAdvice(fitnessLevel, description, formattedDate, activities);
                             }
                         });
 
-//                        System.out.println(activities.toString());
-//                        if (activities.isEmpty()) return;
-//
-//                        List<DataEntry> data = new ArrayList<>();
-//                        List<String> xLabels = new ArrayList<>();
-//                        double totalDistance = 0;
-//                        double maxDistanceReached = 0;
-//
-//                        // Sort by date
-//                        Collections.sort(activities, Comparator.comparing(ActivityModel::getDate));
-//
-//                        for (ActivityModel activity : activities) {
-//                            double distance = Double.parseDouble(activity.getDistance());
-//                            totalDistance += distance;
-//
-//                            String date = ConversionUtil.dateFormatter(activity.getDate());
-//                            xLabels.add(date);
-//                            data.add(new ValueDataEntry(date, totalDistance));
-//
-//                            if (totalDistance > maxDistanceReached) {
-//                                maxDistanceReached = totalDistance;
-//                            }
-//                        }
-//
-//                        cartesian.data(data);
-//
-//                        // Dynamically set Y-axis max to max(user progress, goal)
-//                        double goalKm = targetDistance / 1000;
-//                        double yAxisMax = Math.max(goalKm, maxDistanceReached);
-//                        cartesian.yScale().maximum(yAxisMax);
-//
+                        System.out.println(activities.toString());
+                        if (activities.isEmpty()) return;
+
+                        System.out.println( "Activities :" + activities.size());
+
+                        if(goalType.equals("Distance")) {
+                            List<DataEntry> data = new ArrayList<>();
+                            List<String> xLabels = new ArrayList<>();
+                            double cummulativeDistance = 0;
+                            double maxDistanceReached = 0;
+
+                            Collections.sort(activities, Comparator.comparing(ActivityModel::getDate));
+
+                            for (ActivityModel activity : activities) {
+                                double distance = Double.parseDouble(activity.getDistance());
+                                cummulativeDistance += distance;
+
+                                String date = ConversionUtil.dateFormatter(activity.getDate());
+                                xLabels.add(date);
+                                data.add(new ValueDataEntry(date, cummulativeDistance / 1000));
+                                System.out.println(cummulativeDistance + "TotalDistance ");
+
+                                if (cummulativeDistance > maxDistanceReached) {
+                                    maxDistanceReached = cummulativeDistance;
+                                }
+                            }
+                            cartesian.data(data);
+                            double goalKm = targetDistance / 1000;
+                            double yAxisMax = Math.max(goalKm, maxDistanceReached / 1000);
+                            cartesian.yScale().maximum(yAxisMax);
+                            cartesian.legend().enabled(true);
+                        } else if (goalType.equals("Time")) {
+                            cartesian = AnyChart.column(); // Vertical bars
+                            cartesian.animation(true);
+                            cartesian.title("Top 5 Quickest Times");
+                            cartesian.yAxis(0).title("Time (mm:ss)");
+                            cartesian.xAxis(0).title("Date");
+
+                            List<ActivityModel> qualifyingActivities = new ArrayList<>();
+                            for (ActivityModel activity : activities) {
+                                if (Double.parseDouble(activity.getDistance()) >= targetDistance) {
+                                    qualifyingActivities.add(activity);
+                                }
+                            }
+
+                            qualifyingActivities.sort((a, b) -> {
+                                long timeA = a.getSplits().stream().mapToLong(Long::longValue).sum();
+                                long timeB = b.getSplits().stream().mapToLong(Long::longValue).sum();
+                                return Long.compare(timeA, timeB);
+                            });
+
+                            List<ActivityModel> top5 = qualifyingActivities.subList(0, Math.min(5, qualifyingActivities.size()));
+
+                            List<DataEntry> data = new ArrayList<>();
+                            for (ActivityModel activity : top5) {
+                                long splitTime = activity.getSplits().stream().mapToLong(Long::longValue).sum();
+                                int timeInSeconds = (int) (splitTime / 1000);
+                                String date = ConversionUtil.dateFormatter(activity.getDate());
+                                data.add(new ValueDataEntry(date, timeInSeconds));
+                            }
+
+                            cartesian.data(data);
+
+                            cartesian.tooltip()
+                                    .format("function() { var m = Math.floor(this.value / 60); var s = ('0' + (this.value % 60)).slice(-2); return 'Time: ' + m + ':' + s; }");
+
+                            cartesian.yAxis(0).labels()
+                                    .format("function() { return Math.floor(this.value / 60) + ':' + ('0' + (this.value % 60)).slice(-2); }");
+
+                            cartesian.yScale().minimum(0);
+                            cartesian.legend().enabled(false);
+
+                            progressLine.setChart(cartesian);
+                        }
 //                        // Add red target line at the goal
 //                        if (!xLabels.isEmpty()) {
 //                            Line targetLine = cartesian.line(new ArrayList<DataEntry>() {{
@@ -208,26 +350,32 @@ public class GoalProgressReportActivity extends AppCompatActivity {
 //                            targetLine.hovered().markers().enabled(false);
 //                            targetLine.name("🎯 Target");
 //                        }
-//
-//                        cartesian.legend().enabled(true);
                     }
                 });
             }
         });
     }
 
-    public void GetFitnessAdvice(String fitnessLevel, String goalDescription, ArrayList<ActivityModel> activitiesInfo) {
+    public void GetFitnessAdvice(String fitnessLevel, String goalDescription, String endDate,  ArrayList<ActivityModel> activitiesInfo) {
         aiProgressBar.setVisibility(View.VISIBLE);
         txtAIAdvice.setText(" ");
         JSONObject body = new JSONObject();
         JSONArray messagesArray = new JSONArray();
 
-        String question = "You are an AI Fitness Coach. Based on the following information I have provided of activities I have completed: \n " +
+                String question = "You are an AI Fitness Coach. Based on the following information I have provided of activities I have completed: \n" +
                 activitiesInfo.toString() +
                 "My fitness level type is: " + fitnessLevel +
-                ". Please suggest ways in which such as a training plan or technique to achieve my fitness goal which is " +
-                goalDescription + ". " +
-                "";
+                ". Please suggest ways in which I can achieve my fitness goal which is " +
+                goalDescription + ", before the date of " + endDate +
+                ".";
+
+
+//        String question = "You are an AI Fitness Coach. Based on the following information I have provided of activities I have completed: \n" +
+//                activitiesInfo.toString() +
+//                "My fitness level type is: " + fitnessLevel +
+//                ". Please suggest ways in which such as a training plan or technique to achieve my fitness goal which is " +
+//                goalDescription + ", before the date of " + endDate +
+//                ". Please provide me a plan from today to the date provided here: " + endDate;
 
 
         try {

@@ -3,36 +3,45 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/button_blue">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/LikesCardView"
         android:layout_width="409dp"
         android:layout_height="137dp"
-        tools:layout_editor_absoluteX="1dp">
+        tools:layout_editor_absoluteX="1dp"
+        android:background="@color/button_blue">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="137dp">
+            android:layout_height="137dp"
+            android:background="@color/button_blue"
+            android:paddingStart="10dp">
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/imgLikeProfile"
-                android:layout_width="80dp"
-                android:layout_height="136dp"
-                android:layout_marginEnd="6dp"
-                app:layout_constraintEnd_toStartOf="@+id/txtRequestMessage"
-                app:layout_constraintStart_toStartOf="parent"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginEnd="12dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile"
+                app:shapeAppearanceOverlay="@style/CircleImage"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/profile" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
 
             <TextView
                 android:id="@+id/txtLikeName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:layout_marginTop="28dp"
+                android:layout_marginTop="52dp"
                 android:text="Ethan Doherty"
+                android:textColor="@color/white"
                 android:textSize="24sp"
+                android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@id/imgLikeProfile"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -58,18 +67,6 @@
                 android:textColorLink="#FFFFFF"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/btnRequestAccept" />
-
-            <TextView
-                android:id="@+id/txtRequestMessage"
-                android:layout_width="203dp"
-                android:layout_height="36dp"
-                android:layout_marginEnd="116dp"
-                android:layout_marginBottom="23dp"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imgLikeProfile"
-                app:layout_constraintTop_toBottomOf="@+id/txtLikeName" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

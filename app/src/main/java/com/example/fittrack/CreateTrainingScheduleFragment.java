@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -51,6 +52,7 @@ public class CreateTrainingScheduleFragment extends Fragment {
     private ImageButton btnSendRequest;
     private Button btnSaveTrainingSchedule;
     private EditText editMessage;
+    private ProgressBar progressBarTS;
     private GoalsUtil goalsUtil = new GoalsUtil(db);
     private String goalsList = " ";
     @Override
@@ -61,6 +63,7 @@ public class CreateTrainingScheduleFragment extends Fragment {
         btnSendRequest = view.findViewById(R.id.btnSendRequest);
         editMessage = view.findViewById(R.id.editModify);
         btnSaveTrainingSchedule = view.findViewById(R.id.btnSaveScheduleToCalendar);
+        progressBarTS = view.findViewById(R.id.progressBarTS);
 
         editMessage.setVisibility(View.GONE);
         btnSendRequest.setVisibility(View.GONE);
@@ -113,6 +116,7 @@ public class CreateTrainingScheduleFragment extends Fragment {
                         "Activity Title: 5KM Run\n" +
                         "Details: Tempo Run\n");
                 editMessage.setText("");
+                btnSaveTrainingSchedule.setVisibility(View.GONE);
             }
         });
     }
@@ -126,6 +130,10 @@ public class CreateTrainingScheduleFragment extends Fragment {
     public void AskFitTrackCoachingAssistant(String question) {
         JSONObject body = new JSONObject();
         JSONArray messagesArray = new JSONArray();
+
+        txtResponse.setText("");
+        txtResponse.setTextSize(24);
+        progressBarTS.setVisibility(View.VISIBLE);
 
         try {
             JSONObject aiDescription = new JSONObject();
@@ -170,6 +178,7 @@ public class CreateTrainingScheduleFragment extends Fragment {
 
                             editMessage.setVisibility(View.VISIBLE);
                             btnSendRequest.setVisibility(View.VISIBLE);
+                            progressBarTS.setVisibility(View.GONE);
                             //btnSaveTrainingSchedule.setVisibility(View.VISIBLE);
 
                             if(txtResponse.getText().length() > 0) {

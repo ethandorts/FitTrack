@@ -73,11 +73,22 @@ public class ConversionUtil {
     }
 
     public static int convertTimeToSeconds(String time) {
-        String[] parts = time.split(":");
-        int minutes = Integer.parseInt(parts[0]);
-        int seconds = Integer.parseInt(parts[1]);
-        return minutes * 60 + seconds;
+        try {
+            if (!time.contains(":")) {
+                double minutes = Double.parseDouble(time);
+                return (int) (minutes * 60);
+            } else {
+                String[] parts = time.split(":");
+                int minutes = Integer.parseInt(parts[0]);
+                int seconds = Integer.parseInt(parts[1]);
+                return minutes * 60 + seconds;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
+
 
     public static double convertLongToMPH(long millisecondsperKM) {
         Double seconds = millisecondsperKM / 1000.0;

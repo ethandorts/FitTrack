@@ -21,7 +21,7 @@ import java.util.List;
 public class AdminGroupRequestsActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private GroupsDatabaseUtil groupsUtil = new GroupsDatabaseUtil(db);
-    private TextView txtRequestMessage;
+//    private TextView txtRequestMessage;
     private RecyclerView requestsRecyclerView;
 
     @Override
@@ -33,7 +33,7 @@ public class AdminGroupRequestsActivity extends AppCompatActivity {
         String GroupID = intent.getStringExtra("GroupID");
 
         requestsRecyclerView = findViewById(R.id.requestRecyclerView);
-        txtRequestMessage = findViewById(R.id.txtRequestMessage);
+//        txtRequestMessage = findViewById(R.id.txtRequestMessage);
 
 
         groupsUtil.retrieveGroupRequests(GroupID, new GroupsDatabaseUtil.GroupRequestsCallback() {

@@ -298,9 +298,10 @@ public class GamificationUtil {
                             Timestamp date = (Timestamp) activityDocument.get("date");
                             String pace = (String) activityDocument.get("pace");
                             String distance = (String) activityDocument.get("distance");
+                            List<Long> splits = (List<Long>) activityDocument.get("splits");
                             double time = activityDocument.getDouble("time") != null ? activityDocument.getDouble("time") : 0.0;
 
-                            ActivityModel model = new ActivityModel(type, null, date, String.valueOf(distance), time, pace, UserID, null, null, activityID);
+                            ActivityModel model = new ActivityModel(type, null, date, String.valueOf(distance), time, pace, UserID, null, null, activityID, splits);
                             activitiesList.add(model);
                         }
                         callback.onCallback(activitiesList);

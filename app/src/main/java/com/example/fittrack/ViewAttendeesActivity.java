@@ -3,11 +3,7 @@ package com.example.fittrack;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,8 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ViewAttendeesActivity extends AppCompatActivity {
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-    GroupsDatabaseUtil groupsUtil = new GroupsDatabaseUtil(db);
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final GroupsDatabaseUtil groupsUtil = new GroupsDatabaseUtil(db);
+    private String GroupID;
+    private String MeetupID;
+    private RecyclerView recyclerAttendees;
+    private LikesRecyclerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,16 +26,26 @@ public class ViewAttendeesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_attendees);
 
         Intent intent = getIntent();
-        String GroupID = intent.getStringExtra("GroupID");
-        String MeetupID = intent.getStringExtra("MeetupID");
+        GroupID = intent.getStringExtra("GroupID");
+        MeetupID = intent.getStringExtra("MeetupID");
 
-        RecyclerView recyclerAttendees = findViewById(R.id.recyclerAttendees);
+        recyclerAttendees = findViewById(R.id.recyclerAttendees);
+        recyclerAttendees.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadAttendees();
+    }
+
+    private void loadAttendees() {
         groupsUtil.getMeetupAccepted(GroupID, MeetupID, new GroupsDatabaseUtil.AcceptedCallback() {
             @Override
             public void onCallback(List<LikeModel> accepted) {
-                LikesRecyclerAdapter adapter = new LikesRecyclerAdapter(getApplicationContext(), (ArrayList<LikeModel>) accepted);
+                System.out.println(accepted.size());
+                adapter = new LikesRecyclerAdapter(ViewAttendeesActivity.this, new ArrayList<>(accepted));
                 recyclerAttendees.setAdapter(adapter);
-                recyclerAttendees.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
             }
         });
     }

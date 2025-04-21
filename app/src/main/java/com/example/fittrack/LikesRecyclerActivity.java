@@ -40,7 +40,7 @@ public class LikesRecyclerActivity extends AppCompatActivity {
                 for(String like : likesList) {
                     userUtil.retrieveUserName(like, new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
                         @Override
-                        public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal) {
+                        public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal, String level, String fitnessGoal) {
                             userUtil.retrieveProfilePicture(like + ".jpeg", new FirebaseDatabaseHelper.ProfilePictureCallback() {
                                 @Override
                                 public void onCallback(Uri PicturePath) {

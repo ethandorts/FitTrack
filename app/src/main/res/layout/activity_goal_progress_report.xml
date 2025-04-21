@@ -123,7 +123,7 @@
                     android:text="Total Progress: 4.5 / 5 KM" />
 
                 <TextView
-                    android:id="@+id/txtAverageRate"
+                    android:id="@+id/txtAveragePace"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Average Pace: 5:30 / km" />

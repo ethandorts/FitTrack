@@ -48,7 +48,7 @@
 
         <EditText
             android:id="@+id/editModify"
-            android:layout_width="353dp"
+            android:layout_width="0dp"
             android:layout_height="54dp"
             android:layout_weight="1"
             android:background="@android:color/white"
@@ -64,5 +64,15 @@
             android:contentDescription="Send"
             android:src="@drawable/baseline_send_24" />
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBarTS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

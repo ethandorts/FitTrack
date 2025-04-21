@@ -52,7 +52,6 @@ public class AIAssistantActivity extends AppCompatActivity {
         btnCreateTrainingSchedule = findViewById(R.id.btnCreateTrainingSchedule);
         btnCreateNutritionPlan = findViewById(R.id.btnCreateNutritionPlan);
         btnFitnessAdvice = findViewById(R.id.btnFitnessAdvice);
-        btnNutritionAdvice = findViewById(R.id.btnNutritionAdvice);
 
         loadFragment(new IntroductionFragment());
 
@@ -74,13 +73,6 @@ public class AIAssistantActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 loadFragment(new GeneralFitnessAdviceFragment());
-            }
-        });
-
-        btnNutritionAdvice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loadFragment(new GeneralNutritionAdvice());
             }
         });
 

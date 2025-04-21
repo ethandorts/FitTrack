@@ -90,6 +90,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     style="@style/CustomTextInputStyle"
                     android:id="@+id/editProfileWeight"
+                    app:boxBackgroundMode="outline"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
@@ -178,18 +179,27 @@
                     android:background="@android:color/white" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:layout_marginTop="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fitness Level"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                android:textStyle="bold" />
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/CustomTextInputStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp">
+                android:layout_marginTop="5dp">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/spinnerFitnessLevel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rounded_text"
-                    android:hint="Fitness Level"
+                    android:focusable="true"
+                    android:clickable="true"
                     android:inputType="none"
                     android:textColor="#000000" />
                 />

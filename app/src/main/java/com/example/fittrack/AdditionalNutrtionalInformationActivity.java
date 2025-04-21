@@ -6,11 +6,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,7 +27,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class AdditionalNutrtionalInformationActivity extends AppCompatActivity {
@@ -54,7 +49,7 @@ public class AdditionalNutrtionalInformationActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView2);
         txtAdvice = findViewById(R.id.txtAINutrientAdvice);
-        aiNutritionProgress = findViewById(R.id.progressBar);
+        aiNutritionProgress = findViewById(R.id.progressBarNP);
         ArrayList<NutrientModel> nutrientList = new ArrayList<>();
         foodUtil.getTodayNutrient(selectedDate, new FoodDatabaseUtil.NutrientCallback() {
             @Override
@@ -75,7 +70,7 @@ public class AdditionalNutrtionalInformationActivity extends AppCompatActivity {
 
         userUtil.retrieveUserName(UserID, new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
             @Override
-            public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal) {
+            public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal, String level, String fitnessGoal) {
                 foodUtil.getTotalCalories(selectedDate, new FoodDatabaseUtil.DayCaloriesCallback() {
                     @Override
                     public void onCallback(double caloriesConsumed) {
