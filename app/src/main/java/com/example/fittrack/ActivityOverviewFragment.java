@@ -44,7 +44,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ActivityOverviewFragment extends Fragment {
-    private TextView txtTitle,txtDistance, txtPace, txtHeartRate, txtTime, txtDate, txtCalories, txtLikeStat;
+    private TextView txtTitle,txtDistance, txtPace, txtHeartRate, txtTime, txtDate, txtCalories, txtLikeStat, txtNoGeoData;
     private ImageButton btnLike, btnComments;
     private MapView mapView;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -126,6 +126,7 @@ public class ActivityOverviewFragment extends Fragment {
         txtTime = view.findViewById(R.id.txtActivityOverviewTotalTime);
         txtDate = view.findViewById(R.id.txtOverviewActivityDate);
         txtCalories = view.findViewById(R.id.txtActivityOverviewCalories);
+        txtNoGeoData = view.findViewById(R.id.txtNoGeoData);
         mapView = view.findViewById(R.id.OverviewMapView);
         btnLike = view.findViewById(R.id.btnActivityLike);
         btnComments = view.findViewById(R.id.btnActivityComments);
@@ -195,7 +196,7 @@ public class ActivityOverviewFragment extends Fragment {
                 txtPace.setText(String.valueOf(data.get("pace") + "/KM"));
                 Timestamp date = (Timestamp) data.get("date");
                 System.out.println(date);
-                txtTime.setText(String.valueOf(formatRunTime((Double) data.get("time"))));
+                txtTime.setText(formatRunTime(getTimeAsDouble(data, "time")));
                 txtDate.setText(String.valueOf(dateFormatter((Timestamp) data.get("date"))));
                 if (data.get("caloriesBurned") != null) {
                     txtCalories.setText(String.valueOf(data.get("caloriesBurned")));
@@ -234,6 +235,8 @@ public class ActivityOverviewFragment extends Fragment {
                             }
                         } else {
                             System.out.println("GeoData object is null");
+                            txtNoGeoData.setVisibility(View.VISIBLE);
+                            mapView.setVisibility(View.GONE);
                         }
                     }
                 });
@@ -306,5 +309,16 @@ public class ActivityOverviewFragment extends Fragment {
 //        );
 //        requestQueue.add(teamRequest);
 //    }
+
+    private double getTimeAsDouble(Map<String, Object> data, String key) {
+        Object value = data.get(key);
+        if (value instanceof Long) {
+            return ((Long) value).doubleValue();
+        } else if (value instanceof Double) {
+            return (Double) value;
+        }
+        return 0;
+    }
+
 
 }

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/button_blue">
 
     <ImageView
         android:id="@+id/imgOverviewActivity"
@@ -30,12 +31,27 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/txtNoGeoData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:text="No GeoData Available"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="italic"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/OverviewMapView" />
+
+    <TextView
         android:id="@+id/txtActivityOverviewTitle"
         android:layout_width="382dp"
         android:layout_height="38dp"
         android:layout_marginStart="14dp"
         android:layout_marginEnd="14dp"
         android:layout_marginBottom="80dp"
+        android:textColor="#FFFFFF"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/imageButton"
@@ -62,10 +78,11 @@
         android:layout_marginTop="14dp"
         android:layout_marginEnd="14dp"
         android:layout_marginBottom="13dp"
+        android:paddingLeft="0dp"
         android:text="Date of Activity"
+        android:textColor="#FFFFFF"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:paddingLeft="10dp"
         app:layout_constraintBottom_toTopOf="@+id/imageButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imgOverviewActivity"
@@ -78,6 +95,7 @@
         android:layout_marginStart="17dp"
         android:layout_marginBottom="14dp"
         android:text="Distance "
+        android:textColor="#FFFFFF"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/txtActivityOverviewDistanceValue"
@@ -90,6 +108,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="11dp"
         android:text="Average Pace"
+        android:textColor="#FFFFFF"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -101,6 +120,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="57dp"
         android:text="Total Time"
+        android:textColor="#FFFFFF"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/txtActivityOverviewHeartRate"
@@ -113,6 +133,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="56dp"
         android:text="4.02 KM"
+        android:textColor="#FFFFFF"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -125,6 +146,7 @@
         android:layout_marginStart="17dp"
         android:layout_marginTop="10dp"
         android:text="9:02/KM"
+        android:textColor="#FFFFFF"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtActivityOverviewPace" />
@@ -135,6 +157,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="36:09"
+        android:textColor="#FFFFFF"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/txtActivityOverviewTime"
         app:layout_constraintTop_toBottomOf="@+id/txtActivityOverviewTime" />
@@ -146,6 +169,7 @@
         android:layout_marginStart="1dp"
         android:layout_marginBottom="7dp"
         android:text="Total Calories"
+        android:textColor="#FFFFFF"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/txtActivityOverviewCalories"
@@ -159,6 +183,7 @@
         android:layout_marginEnd="29dp"
         android:layout_marginBottom="122dp"
         android:text="Average Heart Rate"
+        android:textColor="#FFFFFF"
         android:textSize="16sp"
         android:textStyle="bold"
         android:visibility="invisible"
@@ -172,10 +197,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="398"
+        android:textColor="#FFFFFF"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@+id/txtActivityOverviewHeartRateValue"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/txtActivityOverviewHeartRateValue" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/txtActivityOverviewHeartRateValue"
@@ -183,6 +208,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="7dp"
         android:text="182 bpm "
+        android:textColor="#FFFFFF"
         android:textSize="20sp"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="@+id/txtActivityOverviewHeartRate"

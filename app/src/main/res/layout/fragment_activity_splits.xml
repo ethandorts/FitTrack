@@ -14,62 +14,80 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/stats_table"
-            android:elevation="4dp"
-            android:padding="8dp">
+            android:orientation="vertical">
 
-            <TableRow
+            <TextView
+                android:id="@+id/txtNoSplitsMessage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/button_blue"
-                android:padding="12dp">
+                android:text="No splits data available"
+                android:textStyle="italic"
+                android:textColor="@color/red"
+                android:textSize="24sp"
+                android:gravity="center"
+                android:padding="24dp"
+                android:visibility="gone" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Lap"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold"
-                    android:gravity="center" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="⏰ Time"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold"
-                    android:gravity="center" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="🛣️ Distance"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold"
-                    android:gravity="center" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="⏲️ Pace"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold"
-                    android:gravity="center" />
-            </TableRow>
-
-            <TableLayout
-                android:id="@+id/splitsTable"
+            <LinearLayout
+                android:id="@+id/tableContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:stretchColumns="*"
-                android:divider="?android:attr/dividerHorizontal"
-                android:showDividers="middle">
-            </TableLayout>
+                android:orientation="vertical"
+                android:background="@drawable/stats_table"
+                android:elevation="4dp"
+                android:padding="8dp">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/button_blue"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Lap"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="⏰ Time"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="🛣️ Distance"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="⏲️ Pace"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold"
+                        android:gravity="center" />
+                </TableRow>
+
+                <TableLayout
+                    android:id="@+id/splitsTable"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="*"
+                    android:divider="?android:attr/dividerHorizontal"
+                    android:showDividers="middle"/>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

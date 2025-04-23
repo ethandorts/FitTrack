@@ -219,30 +219,28 @@ public class BadgesUtil {
         }
     }
 
-    public void retrieveUserBadges(String UserID, BadgesCallback callback) {
-        String month = new SimpleDateFormat("MMMM yyyy").format(Calendar.getInstance().getTime());
+    public void retrieveUserBadges(String UserID, String selectedMonth, BadgesCallback callback) {
 
         db.collection("Users")
                 .document(UserID)
                 .collection("Badges")
+                .document(selectedMonth)
                 .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
-                    public void onSuccess(QuerySnapshot querySnapshot) {
-                        List<String> allBadges = new ArrayList<>();
-                        for(DocumentSnapshot document : querySnapshot.getDocuments()) {
-                            List<String> badges = (List<String>) document.get("Badges");
-                            if (badges != null) {
-                                allBadges.addAll(badges);
-                            }
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            List<String> badges = (List<String>) documentSnapshot.get("Badges");
+                            if (badges == null) badges = new ArrayList<>();
+                            callback.onCallback(badges);
+                        } else {
+                            callback.onCallback(new ArrayList<>());
                         }
-
-                        callback.onCallback(allBadges);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.e("Badges Retrieval Error: ", e.getMessage());
+                        Log.e("Badge Querying Error: ", e.getMessage());
                     }
                 });
     }

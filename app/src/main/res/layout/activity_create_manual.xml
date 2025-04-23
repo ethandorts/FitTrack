@@ -9,16 +9,14 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/ManualActivityToolbar"
-        android:layout_width="414dp"
-        android:layout_height="89dp"
-        android:layout_marginBottom="18dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:background="@color/button_blue"
         android:elevation="4dp"
         android:theme="?attr/actionBarTheme"
-        app:layout_constraintBottom_toTopOf="@+id/txtManualActivityType"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/txtCreateManualActivityToolbar"
@@ -30,39 +28,15 @@
             android:textColor="@color/white"
             android:textSize="24sp"
             android:textStyle="bold" />
-
     </androidx.appcompat.widget.Toolbar>
-
-    <TextView
-        android:id="@+id/txtManualActivityType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginBottom="6dp"
-        android:text="Activity Type"
-        app:layout_constraintBottom_toTopOf="@+id/spinnerManualActivityTypes"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ManualActivityToolbar" />
-
-    <Spinner
-        android:id="@+id/spinnerManualActivityTypes"
-        android:layout_width="381dp"
-        android:layout_height="37dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="12dp"
-        app:layout_constraintBottom_toTopOf="@+id/fragmentManualActivity"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtManualActivityType" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentManualActivity"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ManualActivityToolbar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerManualActivityTypes" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

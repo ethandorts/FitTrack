@@ -32,10 +32,24 @@ public class BadgesRecyclerViewAdapter extends RecyclerView.Adapter<BadgesRecycl
     public void onBindViewHolder(@NonNull BadgesRecyclerViewAdapter.BadgeViewHolder holder, int position) {
         BadgeModel badge = badgeList.get(position);
         holder.txtBadgeDescription.setText(badge.getBadgeName());
-        if(badge.getBadgeName().contains("Ran")) {
+        if(badge.getBadgeName().contains("KM")) {
             holder.badgeActivityType.setImageResource(R.drawable.distance_goal);
         } else if (badge.getBadgeName().contains("First")) {
             holder.badgeActivityType.setImageResource(R.drawable.first_activity);
+        } else if (badge.getBadgeName().contains("hour")) {
+            holder.badgeActivityType.setImageResource(R.drawable.time_completed);
+        } else if (badge.getBadgeName().contains("minutes")) {
+            holder.badgeActivityType.setImageResource(R.drawable.time_completed);
+        } else if(badge.getBadgeName().contains("Completed a 5KM")) {
+            holder.badgeActivityType.setImageResource(R.drawable.fivekm_badge);
+        } else if(badge.getBadgeName().contains("Completed a 10KM")) {
+            holder.badgeActivityType.setImageResource(R.drawable.ten_km_badge);
+        } else if(badge.getBadgeName().contains("Completed a Half Marathon")) {
+            holder.badgeActivityType.setImageResource(R.drawable.half_marathon);
+        } else if(badge.getBadgeName().contains("Completed a Marathon")) {
+            holder.badgeActivityType.setImageResource(R.drawable.marathon_badge);
+        } else {
+            holder.badgeActivityType.setImageResource(R.drawable.fitness_badge);
         }
     }
 

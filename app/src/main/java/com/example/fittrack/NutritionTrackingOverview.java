@@ -25,6 +25,7 @@ public class NutritionTrackingOverview extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nutrition_tracking_overview);
+        System.out.println("Context: " + getApplicationContext());
 
         selectedDateViewModel = new ViewModelProvider(this).get(SelectedDateViewModel.class);
 

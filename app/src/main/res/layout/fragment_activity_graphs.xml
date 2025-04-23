@@ -12,7 +12,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Title TextView -->
         <TextView
             android:id="@+id/txtPaceGraphs"
             android:layout_width="match_parent"
@@ -23,21 +22,32 @@
             android:textStyle="bold"
             android:paddingBottom="16dp"/>
 
-        <!-- First Graph (Bar Graph) -->
+
+        <TextView
+            android:id="@+id/txtNoGraphs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Activity Graphs are unavailable"
+            android:textSize="24sp"
+            android:textColor="@color/red"
+            android:textStyle="italic"
+            android:gravity="center"
+            android:visibility="gone"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp"/>
+
         <com.anychart.AnyChartView
             android:id="@+id/paceBarGraph"
             android:layout_width="match_parent"
             android:layout_height="333dp"
             android:layout_marginBottom="16dp"/>
 
-        <!-- Second Graph (Line Graph) -->
         <com.anychart.AnyChartView
             android:id="@+id/paceLineGraph"
             android:layout_width="match_parent"
             android:layout_height="261dp"
             android:layout_marginBottom="32dp"/>
 
-        <!-- Elevation TextView -->
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
@@ -49,13 +59,10 @@
             android:paddingBottom="16dp"
             android:layout_marginTop="16dp"/>
 
-        <!-- Elevation Chart -->
         <com.anychart.AnyChartView
             android:id="@+id/elevationChart"
             android:layout_width="match_parent"
             android:layout_height="213dp"
             android:layout_marginBottom="16dp"/>
-
     </LinearLayout>
-
 </ScrollView>

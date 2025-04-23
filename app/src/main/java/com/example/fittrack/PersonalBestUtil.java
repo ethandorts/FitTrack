@@ -112,9 +112,15 @@ public class PersonalBestUtil {
     }
 
     public String formatTime(int seconds) {
-        int minutes = seconds / 60;
+        int hours = seconds / 3600;
+        int minutes = (seconds % 3600) / 60;
         int remainingSeconds = seconds % 60;
-        return String.format("%d:%02d", minutes, remainingSeconds);
+
+        if (hours > 0) {
+            return String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds);
+        } else {
+            return String.format("%02d:%02d", minutes, remainingSeconds);
+        }
     }
 
     public interface PersonalBestCallback {

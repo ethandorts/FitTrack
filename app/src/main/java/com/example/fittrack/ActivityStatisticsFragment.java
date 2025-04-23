@@ -22,11 +22,10 @@ import java.util.List;
 import java.util.Map;
 
 public class ActivityStatisticsFragment extends Fragment {
-
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-    FirebaseDatabaseHelper activityUtil = new FirebaseDatabaseHelper(db);
-    TableLayout statsTable;
-    String ActivityID;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseDatabaseHelper activityUtil = new FirebaseDatabaseHelper(db);
+    private TableLayout statsTable;
+    private String ActivityID;
     private ElevationCalculator elevationCalculator = new ElevationCalculator();
 
     public ActivityStatisticsFragment(String ActivityID) {
@@ -63,6 +62,8 @@ public class ActivityStatisticsFragment extends Fragment {
                     }
                 } else if (splits != null && !splits.isEmpty()) {
                     minSplit = splits.get(0);
+                } else {
+                    minSplit = 0L;
                 }
 
                 String bestPace = ConversionUtil.longToTimeConversion(minSplit);
@@ -74,7 +75,9 @@ public class ActivityStatisticsFragment extends Fragment {
 
                 addTableSection(statsTable, "Pace");
                 addRowStatsTable("Average Pace", pace + " /KM");
-                addRowStatsTable("Best Pace", bestPace.split("\\.")[0] + " /KM");
+                if(minSplit != 0L) {
+                    addRowStatsTable("Best Pace", bestPace.split("\\.")[0] + " /KM");
+                }
 
                 addTableSection(statsTable, "Speed");
                 addRowStatsTable("Average Speed", String.format("%.2f mph", ActivityStatsConversionUtil.calculateAverageSpeed(distance, time)));
@@ -98,7 +101,6 @@ public class ActivityStatisticsFragment extends Fragment {
                     addRowStatsTable("Minimum Elevation", String.format("%.2f metres", minElevation));
                 }
 
-                // Optionally add heart rate section if needed
                 // addTableSection(statsTable, "Heart Rate");
                 // addRowStatsTable("Average Heart Rate", "— BPM");
                 // addRowStatsTable("Max Heart Rate", "— BPM");

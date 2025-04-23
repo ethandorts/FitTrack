@@ -393,7 +393,14 @@ public class GamificationUtil {
                         double time = 0;
                         for(DocumentSnapshot snapshot : documents) {
                             List<Double> stats = (List<Double>) snapshot.get("Elevation");
-                            time = (double) snapshot.get("time");
+                            Object timeObj = snapshot.get("time");
+                            if (timeObj instanceof Long) {
+                                time = ((Long) timeObj).doubleValue();
+                            } else if (timeObj instanceof Double) {
+                                time = (Double) timeObj;
+                            } else {
+                                time = 0.0;
+                            }
                             if(stats != null) {
                                 for(Double stat : stats) {
                                     elevationValues.add(stat);

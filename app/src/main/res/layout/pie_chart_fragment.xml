@@ -1,192 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/nutrition_image">
+    android:background="@drawable/nutrition_image"
+    android:padding="16dp">
 
-    <TextView
-        android:id="@+id/txtChartTitle"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/rounded_text"
-        android:backgroundTint="#03A9F4"
-        android:gravity="center"
-        android:text="Calories Consumed Per Meal"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="vertical"
+        android:background="@drawable/stats_table"
+        android:elevation="4dp"
+        android:padding="8dp">
 
-    <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/paceGraph"
-        android:layout_width="0dp"
-        android:layout_height="305dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtChartTitle" />
+        <TextView
+            android:id="@+id/txtChartTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_text"
+            android:backgroundTint="#03A9F4"
+            android:gravity="center"
+            android:text="Calories Consumed Per Meal"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:padding="12dp" />
 
-    <TextView
-        android:id="@+id/txtNoChartData"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="No chart data available"
-        android:textColor="#888888"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/paceGraph"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/paceGraph" />
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/paceGraph"
+            android:layout_width="match_parent"
+            android:layout_height="305dp"
+            android:layout_marginTop="8dp" />
 
-    <TableLayout
-        android:id="@+id/statsTable"
-        android:layout_width="410dp"
-        android:layout_height="209dp"
-        android:layout_marginBottom="167dp"
-        android:stretchColumns="1"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/paceGraph">
+        <TextView
+            android:id="@+id/txtNoChartData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="No chart data available"
+            android:textColor="#888888"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp" />
 
+        <TableLayout
+            android:id="@+id/statsTable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:stretchColumns="1"
+            android:background="@drawable/stats_table"
+            android:elevation="2dp">
 
-        <TableRow>
+            <TableRow
+                android:background="@color/button_blue"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/cell_border"
-                android:padding="8dp"
-                android:text="Nutrition Stats"
-                android:textAlignment="center"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Metric"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:textSize="16sp" />
 
-            <TextView
-                android:layout_width="117dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/cell_border"
-                android:padding="8dp"
-                android:text="Value"
-                android:textAlignment="center"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </TableRow>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Amount"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:textSize="16sp" />
+            </TableRow>
 
-        <TableRow>
+            <TableRow>
+                <TextView
+                    android:text="Calorie Goal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAlignment="center"
+                    android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/txtCalorieGoalLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/cell_border"
-                android:padding="8dp"
-                android:text="Calorie Goal"
-                android:textAlignment="center"
-                android:textSize="16sp" />
+                <TextView
+                    android:id="@+id/txtCalorieGoal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:textSize="16sp" />
+            </TableRow>
 
-            <TextView
-                android:id="@+id/txtCalorieGoal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/cell_border"
-                android:padding="8dp"
-                android:text="0"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-        </TableRow>
+            <TableRow>
+                <TextView
+                    android:text="Calories Consumed"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAlignment="center"
+                    android:textSize="16sp" />
 
-        <TableRow>
+                <TextView
+                    android:id="@+id/txtDailyCaloriesConsumed"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:textSize="16sp" />
+            </TableRow>
 
-            <TextView
-                android:id="@+id/txtCaloriesConsumedLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/cell_border"
-                android:padding="8dp"
-                android:text="Calories Consumed"
-                android:textAlignment="center"
-                android:textSize="16sp" />
+            <TableRow>
+                <TextView
+                    android:text="Calories Burned"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAlignment="center"
+                    android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/txtDailyCaloriesConsumed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/cell_border"
-                android:padding="8dp"
-                android:text="0"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-        </TableRow>
+                <TextView
+                    android:id="@+id/txtDailyCaloriesBurned"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:textSize="16sp" />
+            </TableRow>
 
-        <TableRow>
+            <TableRow>
+                <TextView
+                    android:text="Calories Remaining"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAlignment="center"
+                    android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/txtCaloriesBurnedLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/cell_border"
-                android:padding="8dp"
-                android:text="Calories Burned"
-                android:textAlignment="center"
-                android:textSize="16sp" />
+                <TextView
+                    android:id="@+id/txtDailyCaloriesRemaining"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:textSize="16sp" />
+            </TableRow>
+        </TableLayout>
 
-            <TextView
-                android:id="@+id/txtDailyCaloriesBurned"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/cell_border"
-                android:padding="8dp"
-                android:text="0"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-        </TableRow>
+        <Button
+            android:id="@+id/btnFurtherNutritionalStats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center"
+            android:text="View Daily Nutritional Information"
+            android:backgroundTint="@color/button_blue" />
 
-        <TableRow>
-
-            <TextView
-                android:id="@+id/txtCaloriesRemainingLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/cell_border"
-                android:padding="8dp"
-                android:text="Calories Remaining"
-                android:textAlignment="center"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/txtDailyCaloriesRemaining"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/cell_border"
-                android:padding="8dp"
-                android:text="0"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-        </TableRow>
-
-    </TableLayout>
-
-    <Button
-        android:id="@+id/btnFurtherNutritionalStats"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:text="View Daily Nutritional Information"
-        android:backgroundTint="@color/button_blue"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/statsTable" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</ScrollView>

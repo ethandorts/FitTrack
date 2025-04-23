@@ -57,6 +57,13 @@ public class ActivityGraphs extends Fragment {
 
                 if (!splits.isEmpty()) {
                     splits.remove(splits.size() - 1);
+                } else {
+                    view.findViewById(R.id.txtPaceGraphs).setVisibility(View.GONE);
+                    view.findViewById(R.id.paceLineGraph).setVisibility(View.GONE);
+                    view.findViewById(R.id.paceBarGraph).setVisibility(View.GONE);
+                    view.findViewById(R.id.textView).setVisibility(View.GONE);
+                    view.findViewById(R.id.elevationChart).setVisibility(View.GONE);
+                    view.findViewById(R.id.txtNoGraphs).setVisibility(View.VISIBLE);
                 }
 
                 APIlib.getInstance().setActiveAnyChartView(paceGraph);

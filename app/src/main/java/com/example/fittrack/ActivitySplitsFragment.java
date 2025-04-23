@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import java.util.Map;
 public class ActivitySplitsFragment extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
+    private TextView txtNoSplits;
     private String ActivityID;
 
     public ActivitySplitsFragment(String activityID) {
@@ -38,6 +40,8 @@ public class ActivitySplitsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         TableLayout splitsTable = view.findViewById(R.id.splitsTable);
+        txtNoSplits = view.findViewById(R.id.txtNoSplitsMessage);
+        LinearLayout tableContainer = view.findViewById(R.id.tableContainer);
         TableRow tableHeaders = new TableRow(view.getContext());
 
         DatabaseUtil.retrieveSpecificActivity(ActivityID, new FirebaseDatabaseHelper.SpecificActivityCallback() {
@@ -48,8 +52,9 @@ public class ActivitySplitsFragment extends Fragment {
                 double overDistance = formattedDistance % 1000;
                 List<Long> splits = (List<Long>) data.get("splits");
                 System.out.println(splits);
+                if(splits != null) {
                     for (int i = 0; i < splits.size(); i++) {
-                        if(i == splits.size() - 1) {
+                        if (i == splits.size() - 1) {
                             TableRow row = new TableRow(getContext());
                             addInfo(row, String.valueOf(i + 1));
                             addInfo(row, longToTimeConversion(splits.get(i)));
@@ -67,6 +72,12 @@ public class ActivitySplitsFragment extends Fragment {
                             splitsTable.addView(row);
                         }
                     }
+                } else {
+                    splitsTable.setVisibility(View.GONE);
+                    tableHeaders.setVisibility(View.GONE);
+                    tableContainer.setVisibility(View.GONE);
+                    txtNoSplits.setVisibility(View.VISIBLE);
+                }
             }
         });
     }

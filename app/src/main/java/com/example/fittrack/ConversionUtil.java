@@ -72,19 +72,21 @@ public class ConversionUtil {
     }
 
     public static int convertTimeToSeconds(String time) {
-        try {
-            if (!time.contains(":")) {
-                double minutes = Double.parseDouble(time);
-                return (int) (minutes * 60);
-            } else {
-                String[] parts = time.split(":");
-                int minutes = Integer.parseInt(parts[0]);
-                int seconds = Integer.parseInt(parts[1]);
-                return minutes * 60 + seconds;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
+        String[] parts = time.split(":");
+
+        if (parts.length == 2) {
+            int minutes = Integer.parseInt(parts[0]);
+            int seconds = Integer.parseInt(parts[1]);
+            return minutes * 60 + seconds;
+
+        } else if (parts.length == 3) {
+            int hours = Integer.parseInt(parts[0]);
+            int minutes = Integer.parseInt(parts[1]);
+            int seconds = Integer.parseInt(parts[2]);
+            return hours * 3600 + minutes * 60 + seconds;
+
+        } else {
+            throw new IllegalArgumentException("Invalid time format. Must be mm:ss or HH:mm:ss");
         }
     }
 

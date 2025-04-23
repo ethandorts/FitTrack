@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -42,8 +44,7 @@ public class ManualActivityFragment extends Fragment {
     private static final DecimalFormat TwoDecimalRounder = new DecimalFormat("0.00");
     private String activityType;
 
-    public ManualActivityFragment(String activityType) {
-        this.activityType = activityType;
+    public ManualActivityFragment() {
     }
 
     @Nullable
@@ -56,40 +57,73 @@ public class ManualActivityFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        EditText editDate = view.findViewById(R.id.editManualDate);
-        EditText editDistance = view.findViewById(R.id.editManualDistance);
-        EditText editTime = view.findViewById(R.id.editManualTime);
-        Button btnSaveActivity = view.findViewById(R.id.btnSaveActivity);
+        final EditText editDate = view.findViewById(R.id.editManualDate);
+        final EditText editDistance = view.findViewById(R.id.editManualDistance);
+        final EditText editTime = view.findViewById(R.id.editManualTime);
+        final AutoCompleteTextView spinnerManual = view.findViewById(R.id.editManualType);
+        final Button btnSaveActivity = view.findViewById(R.id.btnSaveManualActivity);
 
+        editDate.setShowSoftInputOnFocus(false);
         editDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Calendar calendar = Calendar.getInstance();
+                final Calendar calendar = Calendar.getInstance();
                 new DatePickerDialog(
                         getContext(),
-                        (datePicker, year, month, day) -> {
-                            calendar.set(Calendar.YEAR, year);
-                            calendar.set(Calendar.MONTH, month);
-                            calendar.set(Calendar.DAY_OF_MONTH, day);
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                calendar.set(Calendar.YEAR, year);
+                                calendar.set(Calendar.MONTH, month);
+                                calendar.set(Calendar.DAY_OF_MONTH, day);
 
-                            new TimePickerDialog(
-                                    getContext(),
-                                    (timePicker, hourOfDay, minute) -> {
-                                        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                                        calendar.set(Calendar.MINUTE, minute);
+                                new TimePickerDialog(
+                                        getContext(),
+                                        new TimePickerDialog.OnTimeSetListener() {
+                                            @Override
+                                            public void onTimeSet(android.widget.TimePicker timePicker, int hourOfDay, int minute) {
+                                                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                                                calendar.set(Calendar.MINUTE, minute);
 
-                                        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-                                        editDate.setText(dateTimeFormat.format(calendar.getTime()));
-                                    },
-                                    calendar.get(Calendar.HOUR_OF_DAY),
-                                    calendar.get(Calendar.MINUTE),
-                                    true
-                            ).show();
+                                                SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+                                                editDate.setText(dateTimeFormat.format(calendar.getTime()));
+                                            }
+                                        },
+                                        calendar.get(Calendar.HOUR_OF_DAY),
+                                        calendar.get(Calendar.MINUTE),
+                                        true
+                                ).show();
+                            }
                         },
                         calendar.get(Calendar.YEAR),
                         calendar.get(Calendar.MONTH),
                         calendar.get(Calendar.DAY_OF_MONTH)
                 ).show();
+            }
+        });
+
+        final String[] activityTypes = {"Running", "Walking", "Cycling"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                activityTypes
+        );
+        spinnerManual.setAdapter(adapter);
+        spinnerManual.setText("Running", false);
+        activityType = "Running";
+
+        spinnerManual.setShowSoftInputOnFocus(false);
+        spinnerManual.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                spinnerManual.showDropDown();
+            }
+        });
+
+        spinnerManual.setOnItemClickListener(new android.widget.AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                activityType = parent.getItemAtPosition(position).toString();
             }
         });
 
@@ -106,7 +140,7 @@ public class ManualActivityFragment extends Fragment {
                 }
 
                 if (!isValidTime(stringTime)) {
-                    Toast.makeText(getContext(), "Invalid time was entered!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Invalid time format. Use HH:mm:ss", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -115,51 +149,65 @@ public class ManualActivityFragment extends Fragment {
                     return;
                 }
 
-                int time = ConversionUtil.convertTimeToSeconds(stringTime);
+                if (activityType == null) {
+                    Toast.makeText(getContext(), "Please select an activity type.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                int totalTime = ConversionUtil.convertTimeToSeconds(stringTime);
                 double distance = Double.parseDouble(stringDistance);
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
                 Date today = new Date();
                 String shortDate = dateFormat.format(today);
 
-                SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
                 Timestamp timestamp = null;
                 try {
+                    SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
                     Date parsedDate = dateTimeFormat.parse(stringDate);
                     timestamp = new Timestamp(parsedDate);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
 
-                int totalTime = ConversionUtil.convertTimeToSeconds(stringTime);
-
                 CaloriesCalculator caloriesCalculator = new CaloriesCalculator();
 
+                String activityID = DocumentIDGenerator.GenerateActivityID();
+
                 Map<String, Object> data = new HashMap<>();
-                System.out.println("Values: " + stringDistance + " " + time);
+                data.put("ActivityID", activityID);
                 data.put("distance", ConversionUtil.kmToMeters(distance));
                 data.put("time", totalTime);
                 data.put("UserID", UserID);
                 data.put("date", timestamp);
                 data.put("shortDate", shortDate);
-                data.put("pace", calculateAveragePace(stringDistance, time));
+                data.put("pace", calculateAveragePace(stringDistance, totalTime));
                 data.put("type", activityType);
-                data.put("caloriesBurned", caloriesCalculator.calculateCalories(time, (calculateAveragePace(stringDistance, time)), activityType, getUserWeight()));
+                data.put("caloriesBurned", caloriesCalculator.calculateCalories(
+                        totalTime,
+                        calculateAveragePace(stringDistance, totalTime),
+                        activityType,
+                        getUserWeight())
+                );
 
                 db.collection("Activities")
-                        .document(DocumentIDGenerator.GenerateActivityID())
-                        .set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        .document(activityID)
+                        .set(data)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
-                                Log.d("Successful written activity", "Successfully written activity");
                                 Toast.makeText(getContext(), "Successfully saved activity!", Toast.LENGTH_SHORT).show();
+                                getActivity().finish();
                             }
-                        }).addOnFailureListener(new OnFailureListener() {
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                System.out.println(e.getMessage());
+                                Log.e("Firebase Error", e.getMessage());
+                                Toast.makeText(getContext(), "Failed to save activity", Toast.LENGTH_SHORT).show();
                             }
                         });
+
                 editTime.setText("");
                 editDistance.setText("");
                 editDate.setText("");
@@ -168,19 +216,30 @@ public class ManualActivityFragment extends Fragment {
     }
 
     private boolean isValidDistance(String distance) {
-        if (distance.isEmpty()) return false;
-        return Pattern.matches("\\d+\\.\\d{2}", distance);
+        return !distance.isEmpty() && Pattern.matches("\\d+(\\.\\d{1,2})?", distance);
     }
 
     private boolean isValidTime(String time) {
-        return Pattern.matches("\\d{2}:\\d{2}", time);
+        if (!Pattern.matches("\\d{1,2}:\\d{2}:\\d{2}", time)) {
+            return false;
+        }
+
+        String[] parts = time.split(":");
+        try {
+            int hours = Integer.parseInt(parts[0]);
+            int minutes = Integer.parseInt(parts[1]);
+            int seconds = Integer.parseInt(parts[2]);
+
+            return hours >= 0 && minutes >= 0 && minutes < 60 && seconds >= 0 && seconds < 60;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     private boolean isValidDate(String dateStr) {
         if (dateStr.isEmpty()) return false;
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
         try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
             Date inputDate = dateFormat.parse(dateStr);
             return inputDate != null && inputDate.before(new Date());
         } catch (ParseException e) {
@@ -191,19 +250,16 @@ public class ManualActivityFragment extends Fragment {
     public static String calculateAveragePace(String distanceStr, int timeInSeconds) {
         double distanceKm = Double.parseDouble(distanceStr);
         double timeInMinutes = timeInSeconds / 60.0;
-
         if (distanceKm == 0) return "0:00";
 
         double pace = timeInMinutes / distanceKm;
         int minutes = (int) pace;
         int seconds = (int) ((pace - minutes) * 60);
-
         return String.format("%d:%02d", minutes, seconds);
     }
 
-
     private int getUserWeight() {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserPI", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("UserPI", Context.MODE_PRIVATE);
         long longWeight = sharedPreferences.getLong("Weight", 0);
         return Math.toIntExact(longWeight);
     }

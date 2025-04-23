@@ -162,6 +162,14 @@ public class ActivitiesRecyclerViewAdapter extends FirestoreRecyclerAdapter<Acti
                 }
             }
         });
+
+        if(activity.getType().equals("Running")) {
+            holder.activityTypeImage.setImageResource(R.drawable.running);
+        } else if (activity.getType().equals("Cycling")) {
+            holder.activityTypeImage.setImageResource(R.drawable.cycling_icon);
+        } else if (activity.getType().equals("Walking")) {
+            holder.activityTypeImage.setImageResource(R.drawable.walking_icon);
+        }
     }
 
     @Override

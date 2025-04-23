@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
+
 public class CreateManualActivity extends AppCompatActivity {
 
     @Override
@@ -20,19 +22,7 @@ public class CreateManualActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_manual);
 
-        Spinner spinner = findViewById(R.id.spinnerManualActivityTypes);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter
-                .createFromResource(this, R.array.fitness_activities, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-
-        String selected = spinner.getSelectedItem().toString();
-
-        if(selected.equals("Running") || selected.equals("Walking") || selected.equals("Cycling")) {
-            loadFragment(new ManualActivityFragment(selected), R.id.fragmentManualActivity);
-        } else {
-            // do options for another activity.
-        }
+        loadFragment(new ManualActivityFragment(), R.id.fragmentManualActivity);
     }
 
     public void loadFragment(Fragment fragment, int frameLayoutId) {
