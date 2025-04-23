@@ -125,17 +125,31 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
                 ActivityCompletedChecker.class, 3, TimeUnit.HOURS).build();
 
         OneTimeWorkRequest checkGoalsRequest = new OneTimeWorkRequest.Builder(GoalCompletedChecker.class)
-                .setInitialDelay(30, TimeUnit.SECONDS)
                 .build();
+
+        OneTimeWorkRequest statsRequest = new OneTimeWorkRequest.Builder(UpdateStats.class)
+                .build();
+
+        OneTimeWorkRequest checkBadgesRequest = new OneTimeWorkRequest.Builder(BadgesEarnedChecker.class)
+                .build();
+
+        PeriodicWorkRequest recurringBadgesRequest = new PeriodicWorkRequest.Builder(
+                ActivityCompletedChecker.class, 3, TimeUnit.HOURS).build();
 
         PeriodicWorkRequest periodicCheckGoalsRequest = new PeriodicWorkRequest.Builder(
                 ActivityCompletedChecker.class, 30, TimeUnit.MINUTES).build();
 
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            new Thread(() -> {
+                WorkManager workManager = WorkManager.getInstance(getApplicationContext());
+                workManager
+                        .beginWith(oneTimeWorkRequest)
+                        .then(checkGoalsRequest)
+                        .then(checkBadgesRequest)
+                        .enqueue();
+            }).start();
+        }, 3000);
 
-        WorkManager.getInstance(this).enqueue(oneTimeWorkRequest);
-        WorkManager.getInstance(this).enqueue(periodicWorkRequest);
-        WorkManager.getInstance(this).enqueue(checkGoalsRequest);
-        WorkManager.getInstance(this).enqueue(periodicCheckGoalsRequest);
 
         logFoodNotifications(10, 00, "Breakfast");
         logFoodNotifications(15, 10, "Lunch");

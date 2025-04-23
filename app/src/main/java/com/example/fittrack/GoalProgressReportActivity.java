@@ -1,5 +1,7 @@
 package com.example.fittrack;
 
+import static com.example.fittrack.ConversionUtil.longToTimeConversion;
+
 import android.app.people.ConversationStatus;
 import android.content.Intent;
 import android.os.Bundle;
@@ -63,7 +65,7 @@ public class GoalProgressReportActivity extends AppCompatActivity {
     private FirebaseDatabaseHelper userUtil = new FirebaseDatabaseHelper(db);
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private String UserID = mAuth.getUid();
-    private TextView txtGoalDescription, txtTarget, txtProgress, txtDeadline, txtGoalType;
+    private TextView txtGoalDescription, txtTarget, txtProgress, txtDeadline, txtGoalType, txtActivityType;
     private TextView txtTotalProgress, txtBestPace, txtDaysRemaining, txtProgressNumber, txtAIAdvice;
     private ActivitiesRecyclerViewAdapter activitiesAdapter;
     private RecyclerView recyclerGoalEfforts;
@@ -81,6 +83,7 @@ public class GoalProgressReportActivity extends AppCompatActivity {
         txtGoalType = findViewById(R.id.txtGoalType);
         txtGoalDescription = findViewById(R.id.txtGoalDescription);
         txtTarget = findViewById(R.id.txtTarget);
+        txtActivityType = findViewById(R.id.txtActivityTypeGoal);
         txtProgress = findViewById(R.id.txtProgress);
         txtDeadline = findViewById(R.id.txtDeadline);
         txtTotalProgress = findViewById(R.id.txtTotalProgress);
@@ -111,20 +114,21 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                 .offsetY(5d);
 
         cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
-        progressLine.setChart(cartesian);
 
         Intent intent = getIntent();
         String GoalID = intent.getStringExtra("GoalID");
+        String ActivityType = intent.getStringExtra("activityType");
 
         goalsUtil.retrieveGoalSpecificDescription(UserID, GoalID, new GoalsUtil.SpecificGoalCallback() {
             @Override
-            public void onCallback(double targetDistance, int targetTime, String status, String goalType, int currentProgress, Timestamp startDate, Timestamp endDate, String description) {
+            public void onCallback(double targetDistance, int targetTime, String status, String goalType, int currentProgress, Timestamp startDate, Timestamp endDate, String description, String activityType) {
                 System.out.println(goalType + " goal");
                 if(goalType.equals("Distance")) {
                     txtGoalType.setText("🛣️ Distance Goal");
                 } else if (goalType.equals("Time")) {
                     txtGoalType.setText("⏰ Time Goal");
                 }
+                txtActivityType.setText("\uD83D\uDCAA Activity Type: " + ActivityType);
                 txtProgress.setText("\uD83D\uDCC8 Progress: " + status);
                 txtGoalDescription.setText(description);
                 txtTarget.setText(String.format("\uD83C\uDFAF Target: %.2f KM", targetDistance / 1000));
@@ -134,7 +138,7 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                 if(goalType.equals("Time")) {
                     Query timeQuery = db.collection("Activities")
                             .whereEqualTo("UserID", UserID)
-                            .whereEqualTo("type", "Running")
+                            .whereEqualTo("type", activityType)
                             .whereGreaterThanOrEqualTo("date", startDate)
                             .whereLessThanOrEqualTo("date", endDate)
                             .orderBy("date", Query.Direction.DESCENDING);
@@ -167,13 +171,13 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            System.out.println("Error lfc: " + e.getMessage());
+                            System.out.println("Error: " + e.getMessage());
                         }
                     });
                 } else if (goalType.equals("Distance")) {
                     Query query = db.collection("Activities")
                             .whereEqualTo("UserID", UserID)
-                            .whereEqualTo("type", "Running")
+                            .whereEqualTo("type", activityType)
                             .whereGreaterThanOrEqualTo("date", startDate)
                             .whereLessThanOrEqualTo("date", endDate)
                             .orderBy("date", Query.Direction.DESCENDING);
@@ -192,7 +196,7 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                     activitiesAdapter.startListening();
                 }
 
-                gamUtil.getActivityProgressData(UserID, startDate, endDate, new GamificationUtil.ProgressCallback() {
+                gamUtil.getActivityProgressData(UserID, activityType, startDate, endDate, new GamificationUtil.ProgressCallback() {
                     @Override
                     public void onCallback(ArrayList<ActivityModel> activities) {
                         double totalDistance = 0;
@@ -210,7 +214,6 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                             int progressPercentage = (int) Math.min(rawPercentage, 100);
                             txtProgressNumber.setText("Progress: " + progressPercentage + "%");
                         } else if(goalType.equals("Time")) {
-
                             long bestTime = Long.MAX_VALUE;
                             for(ActivityModel activity : activities) {
                                 if (Double.parseDouble(activity.getDistance()) >= targetDistance) {
@@ -224,14 +227,17 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                                     }
                                 }
                             }
-                            txtTotalProgress.setText("Best Time: " + ConversionUtil.longToTimeConversion(bestTime));
+                            String formattedBestTime = longToTimeConversion(bestTime);
+                            txtTotalProgress.setText("Best Time: " + formattedBestTime);
+
                             long target = targetTime * 1000L;
                             long timeDifference = bestTime - target;
                             String label;
+
                             if (timeDifference <= 0) {
-                                label = "Faster by " + ConversionUtil.convertSecondsToTime((int)(-timeDifference / 1000));
+                                label = "Faster by " + longToTimeConversion(Math.abs(timeDifference));
                             } else {
-                                label = "Slower by " + ConversionUtil.convertSecondsToTime((int)(timeDifference / 1000));
+                                label = "Slower by " + longToTimeConversion(timeDifference);
                             }
                             txtBestPace.setText(label);
 
@@ -296,8 +302,10 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                             double yAxisMax = Math.max(goalKm, maxDistanceReached / 1000);
                             cartesian.yScale().maximum(yAxisMax);
                             cartesian.legend().enabled(true);
+                            progressLine.setChart(cartesian);
                         } else if (goalType.equals("Time")) {
-                            cartesian = AnyChart.column(); // Vertical bars
+                            cartesian = AnyChart.column();
+                            progressLine.setChart(cartesian);
                             cartesian.animation(true);
                             cartesian.title("Top 5 Quickest Times");
                             cartesian.yAxis(0).title("Time (mm:ss)");
@@ -448,6 +456,14 @@ public class GoalProgressReportActivity extends AppCompatActivity {
             }
         };
         requestQueue.add(request);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (progressLine != null) {
+            progressLine.invalidate();
+        }
     }
 
     @Override

@@ -4,8 +4,11 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -46,6 +49,7 @@ public class DistanceGoalFragment extends Fragment {
 
         EditText editTargetDistance = view.findViewById(R.id.editEnterDistanceGoal);
         EditText editCompletionDate = view.findViewById(R.id.editDistanceCompletionDate);
+        AutoCompleteTextView activitySelector = view.findViewById(R.id.goalActivityTypeSpinner);
         Button btnCreateDistanceGoal = view.findViewById(R.id.btnCreateGoalDistance);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -69,6 +73,26 @@ public class DistanceGoalFragment extends Fragment {
                 ).show();
             }
         });
+
+        String[] activityTypes = new String[] {"Running", "Walking", "Cycling"};
+
+        ArrayAdapter<String> activityAdapter = new ArrayAdapter<>(
+                getContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                activityTypes
+        );
+
+        activitySelector.setAdapter(activityAdapter);
+        activitySelector.setText("Running", false);
+
+        activitySelector.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                activitySelector.showDropDown();
+                return false;
+            }
+        });
+
 
         btnCreateDistanceGoal.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,11 +146,13 @@ public class DistanceGoalFragment extends Fragment {
                 Timestamp formattedCompletionDate = new Timestamp(endDate);
                 String formattedEndDate = descriptionFormat.format(endDate);
                 goalsUtil.setDistanceGoal(currentUser, Timestamp.now(), formattedCompletionDate, Double.parseDouble(targetDistance) * 1000, "In Progress", 0,
-                        "Achieve a distance of " + Double.parseDouble(targetDistance)  + " KM by " + formattedEndDate);
+                        "Achieve a distance of " + Double.parseDouble(targetDistance)  + " KM by " + formattedEndDate, activitySelector.getText().toString().trim());
                 Toast.makeText(view.getContext(), "Distance Goal has been set successfully!", Toast.LENGTH_SHORT).show();
 
                 editTargetDistance.setText("");
                 editCompletionDate.setText("");
+
+                getActivity().finish();
             }
         });
     }

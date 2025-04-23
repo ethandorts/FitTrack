@@ -1,6 +1,7 @@
 package com.example.fittrack;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,14 +14,23 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public class LeaderboardStatsFragment extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private String UserID = mAuth.getUid();
     private RecyclerView leaderboardRecyclerView;
     private GamificationUtil gamificationUtil = new GamificationUtil();
     private FirebaseDatabaseHelper userUtil = new FirebaseDatabaseHelper(db);
@@ -67,53 +77,46 @@ public class LeaderboardStatsFragment extends Fragment {
         groupsUtil.retrieveUsersinGroup(GroupID, new GroupsDatabaseUtil.UsersinGroupsCallback() {
             @Override
             public void onCallback(ArrayList<String> runners) {
-                ArrayList<LeaderboardModel> leaderboardStats = new ArrayList<>();
-                int runnersSize = runners.size();
-                int[] totalCallbacks = {0};
+                List<String> userIds = new ArrayList<>(runners);
+                List<Task<DocumentSnapshot>> tasks = new ArrayList<>();
 
-                for (String runner : runners) {
-                    System.out.println(runner);
-                    if(isWeek) {
-                        System.out.println("Name is: " + runner);
-                        gamificationUtil.calculateUserDistancePerWeek(runner, ActivityType, new GamificationUtil.UserDistancePerMonthCallback() {
-                            @Override
-                            public void onCallback(double distancePerWeek) {
-                                leaderboardStats.add(new LeaderboardModel(runner, distancePerWeek, null));
-                                totalCallbacks[0]++;
-
-                                if (totalCallbacks[0] == runnersSize) {
-                                    Collections.sort(leaderboardStats, new Comparator<LeaderboardModel>() {
-                                        @Override
-                                        public int compare(LeaderboardModel a, LeaderboardModel b) {
-                                            System.out.println("A: " + a.getDistance() + " | B: " + b.getDistance());
-                                            return Double.compare(b.getDistance(), a.getDistance());
-                                        }
-                                    });
-                                    updateLeaderboard(leaderboardStats);
-                                }
-                            }
-                        });
-                    } else {
-                        gamificationUtil.calculateUserDistancePerMonth(runner, ActivityType,  new GamificationUtil.UserDistancePerMonthCallback() {
-                            @Override
-                            public void onCallback(double distancePerMonth) {
-                                leaderboardStats.add(new LeaderboardModel(runner, distancePerMonth, null));
-                                totalCallbacks[0]++;
-
-                                if (totalCallbacks[0] == runnersSize) {
-                                    Collections.sort(leaderboardStats, new Comparator<LeaderboardModel>() {
-                                        @Override
-                                        public int compare(LeaderboardModel a, LeaderboardModel b) {
-                                            System.out.println("A: " + a.getDistance() + " | B: " + b.getDistance());
-                                            return Double.compare(b.getDistance(), a.getDistance());
-                                        }
-                                    });
-                                    updateLeaderboard(leaderboardStats);
-                                }
-                            }
-                        });
-                    }
+                for (String runner : userIds) {
+                    Task<DocumentSnapshot> t =
+                            db.collection("Users")
+                            .document(runner)
+                            .collection("Statistics")
+                            .document(isWeek ? "lastWeek" : "lastMonth")
+                            .get();
+                    tasks.add(t);
                 }
+
+                Tasks.whenAllSuccess(tasks)
+                        .addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+                            @Override
+                            public void onSuccess(List<Object> docs) {
+                                ArrayList<LeaderboardModel> stats = new ArrayList<>();
+                                for (int i = 0; i < docs.size(); i++) {
+                                    DocumentSnapshot snap = (DocumentSnapshot) docs.get(i);
+                                    Double distance = snap.getDouble("Distance");
+                                    if (distance == null) distance = 0.0;
+                                    stats.add(new LeaderboardModel(userIds.get(i), distance / 1000, null));
+                                }
+
+                                Collections.sort(stats, new Comparator<LeaderboardModel>() {
+                                    @Override
+                                    public int compare(LeaderboardModel a, LeaderboardModel b) {
+                                        return Double.compare(b.getDistance(), a.getDistance());
+                                    }
+                                });
+                                updateLeaderboard(stats, "Distance");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("Leaderboard", "Error loading stats", e);
+                            }
+                        });
             }
         });
     }
@@ -122,54 +125,46 @@ public class LeaderboardStatsFragment extends Fragment {
         groupsUtil.retrieveUsersinGroup(GroupID, new GroupsDatabaseUtil.UsersinGroupsCallback() {
             @Override
             public void onCallback(ArrayList<String> runners) {
-                ArrayList<LeaderboardModel> leaderboardStats = new ArrayList<>();
-                int runnersSize = runners.size();
-                int[] totalCallbacks = {0};
+                List<String> userIds = new ArrayList<>(runners);
+                List<Task<DocumentSnapshot>> tasks = new ArrayList<>();
 
-                for (String runner : runners) {
-                    System.out.println(runner);
-                    if(isWeek) {
-                        System.out.println("Name is: " + runner);
-                        gamificationUtil.calculateUserActivitiesPerWeek(runner, ActivityType, new GamificationUtil.ActivityFrequencyCallback() {
-                            @Override
-                            public void onCallback(int activityNumber) {
-                                System.out.println("Activity No Per Week: " + activityNumber);
-                                leaderboardStats.add(new LeaderboardModel(runner, activityNumber, null));
-                                totalCallbacks[0]++;
-
-                                if (totalCallbacks[0] == runnersSize) {
-                                    Collections.sort(leaderboardStats, new Comparator<LeaderboardModel>() {
-                                        @Override
-                                        public int compare(LeaderboardModel a, LeaderboardModel b) {
-                                            System.out.println("A: " + a.getDistance() + " | B: " + b.getDistance());
-                                            return Double.compare(b.getDistance(), a.getDistance());
-                                        }
-                                    });
-                                    updateLeaderboard(leaderboardStats);
-                                }
-                            }
-                        });
-                    } else {
-                        gamificationUtil.calculateUserActivitiesPerMonth(runner, ActivityType, new GamificationUtil.ActivityFrequencyCallback() {
-                            @Override
-                            public void onCallback(int activityNumber) {
-                                leaderboardStats.add(new LeaderboardModel(runner, activityNumber, null));
-                                totalCallbacks[0]++;
-                                System.out.println("Activity No Per Month: " + activityNumber);
-                                if (totalCallbacks[0] == runnersSize) {
-                                    Collections.sort(leaderboardStats, new Comparator<LeaderboardModel>() {
-                                        @Override
-                                        public int compare(LeaderboardModel a, LeaderboardModel b) {
-                                            System.out.println("A: " + a.getDistance() + " | B: " + b.getDistance());
-                                            return Double.compare(b.getDistance(), a.getDistance());
-                                        }
-                                    });
-                                    updateLeaderboard(leaderboardStats);
-                                }
-                            }
-                        });
-                    }
+                for (String runner : userIds) {
+                    Task<DocumentSnapshot> t =
+                            db.collection("Users")
+                                    .document(runner)
+                                    .collection("Statistics")
+                                    .document(isWeek ? "lastWeek" : "lastMonth")
+                                    .get();
+                    tasks.add(t);
                 }
+
+                Tasks.whenAllSuccess(tasks)
+                        .addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+                            @Override
+                            public void onSuccess(List<Object> docs) {
+                                ArrayList<LeaderboardModel> stats = new ArrayList<>();
+                                for (int i = 0; i < docs.size(); i++) {
+                                    DocumentSnapshot snap = (DocumentSnapshot) docs.get(i);
+                                    Double activityFrequency = snap.getDouble("ActivityFrequency");
+                                    if (activityFrequency == null) activityFrequency = 0.0;
+                                    stats.add(new LeaderboardModel(userIds.get(i), activityFrequency, null));
+                                }
+
+                                Collections.sort(stats, new Comparator<LeaderboardModel>() {
+                                    @Override
+                                    public int compare(LeaderboardModel a, LeaderboardModel b) {
+                                        return Double.compare(b.getDistance(), a.getDistance());
+                                    }
+                                });
+                                updateLeaderboard(stats, "ActivityFrequency");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("Leaderboard", "Error loading stats", e);
+                            }
+                        });
             }
         });
     }
@@ -178,29 +173,84 @@ public class LeaderboardStatsFragment extends Fragment {
         groupsUtil.retrieveUsersinGroup(GroupID, new GroupsDatabaseUtil.UsersinGroupsCallback() {
             @Override
             public void onCallback(ArrayList<String> runners) {
-                if(isWeek) {
-                    gamificationUtil.collectDistanceTime(runners, ActivityType, distance, true, new GamificationUtil.FastestTimeCallback() {
-                        @Override
-                        public void onCallback(ArrayList<LeaderboardModel> timeData) {
-                            System.out.println("Time Data: " + timeData.size());
-                            updateLeaderboard(timeData);
-                        }
-                    });
-                } else {
-                    gamificationUtil.collectDistanceTime(runners, ActivityType, distance, false, new GamificationUtil.FastestTimeCallback() {
-                        @Override
-                        public void onCallback(ArrayList<LeaderboardModel> timeData) {
-                            System.out.println("Time Data: " + timeData.size());
-                            updateLeaderboard(timeData);
-                        }
-                    });
+                List<String> userIds = new ArrayList<>(runners);
+                List<Task<DocumentSnapshot>> tasks = new ArrayList<>();
+
+                for (String runner : userIds) {
+                    Task<DocumentSnapshot> t =
+                            db.collection("Users")
+                                    .document(runner)
+                                    .collection("Statistics")
+                                    .document(isWeek ? "lastWeek" : "lastMonth")
+                                    .get();
+                    tasks.add(t);
                 }
+
+                Tasks.whenAllSuccess(tasks)
+                        .addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+                            @Override
+                            public void onSuccess(List<Object> docs) {
+                                ArrayList<LeaderboardModel> stats = new ArrayList<>();
+
+                                for (int i = 0; i < docs.size(); i++) {
+                                    DocumentSnapshot snap = (DocumentSnapshot) docs.get(i);
+                                    System.out.println(snap.getId());
+
+                                    double fastest = 0;
+
+                                    if (distance == 1000) {
+                                        Object raw = snap.get("1K");
+                                        fastest = parseSafeTime(raw, "1K", snap.getId());
+                                    } else if (distance == 5000) {
+                                        Object raw = snap.get("5K");
+                                        fastest = parseSafeTime(raw, "5K", snap.getId());
+                                    } else if (distance == 10000) {
+                                        Object raw = snap.get("10K");
+                                        fastest = parseSafeTime(raw, "10K", snap.getId());
+                                    }
+
+                                    if (fastest == -1.0) continue;
+                                    stats.add(new LeaderboardModel(userIds.get(i), fastest, null));
+                                }
+
+                                Collections.sort(stats, new Comparator<LeaderboardModel>() {
+                                    @Override
+                                    public int compare(LeaderboardModel a, LeaderboardModel b) {
+                                        return Double.compare(a.getDistance(), b.getDistance());
+                                    }
+                                });
+
+                                updateLeaderboard(stats, "Time");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("Leaderboard", "Error loading stats", e);
+                            }
+                        });
             }
         });
     }
 
-    private void updateLeaderboard(ArrayList<LeaderboardModel> leaderboardStats) {
-        LeaderboardRecyclerAdapter adapter = new LeaderboardRecyclerAdapter(getContext(), leaderboardStats);
+    private double parseSafeTime(Object raw, String field, String docId) {
+        if (raw instanceof Number) {
+            return ((Number) raw).doubleValue();
+        } else if (raw instanceof String) {
+            try {
+                return Double.parseDouble((String) raw);
+            } catch (NumberFormatException e) {
+                Log.w("Leaderboard", "Invalid string for " + field + " in " + docId + ": " + raw);
+            }
+        } else {
+            Log.w("Leaderboard", "Missing or invalid " + field + " in " + docId);
+        }
+        return 0.0;
+    }
+
+
+    private void updateLeaderboard(ArrayList<LeaderboardModel> leaderboardStats, String selectedMetric) {
+        LeaderboardRecyclerAdapter adapter = new LeaderboardRecyclerAdapter(getContext(), leaderboardStats, selectedMetric);
         leaderboardRecyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         leaderboardRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

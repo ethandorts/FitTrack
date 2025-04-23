@@ -29,9 +29,6 @@ public class InProgressGoalsFragment extends Fragment {
         this.status = status;
     }
 
-    public InProgressGoalsFragment() {
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

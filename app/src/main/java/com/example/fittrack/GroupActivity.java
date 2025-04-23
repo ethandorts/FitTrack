@@ -2,6 +2,7 @@ package com.example.fittrack;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -12,9 +13,16 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 public class GroupActivity extends AppCompatActivity {
     TextView txtGroupName;
@@ -22,7 +30,7 @@ public class GroupActivity extends AppCompatActivity {
 //    private ActivitiesRecyclerViewAdapter groupActivitiesAdapter;
 //    private GroupActivitiesViewModel groupActivityViewModel;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-//    private GroupsDatabaseUtil databaseUtil = new GroupsDatabaseUtil(db);
+    private GroupsDatabaseUtil groupsUtil = new GroupsDatabaseUtil(db);
     private ProgressBar loadingActivities;
 
     @Override
@@ -101,6 +109,50 @@ public class GroupActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-    }
 
+        Timestamp now = Timestamp.now();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                CollectionReference meetupsRef = db
+                        .collection("Groups")
+                        .document(GroupID)
+                        .collection("Meetups");
+
+                meetupsRef.whereLessThan("Date", now)
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot querySnapshot) {
+                                WriteBatch batch = db.batch();
+
+                                for (QueryDocumentSnapshot document : querySnapshot) {
+                                    batch.delete(document.getReference());
+                                }
+
+                                batch.commit()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+                                                Log.d("Meetup Deleted Successfully", "Previous meetups deleted successfully.");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.e("Firestore Meetup Cleanup", "Error deleting meetups", e);
+                                            }
+                                        });
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("Can't retrieve meetups", e.getMessage());
+                            }
+                        });
+            }
+        }).start();
+    }
 }

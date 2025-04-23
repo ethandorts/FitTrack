@@ -1,10 +1,13 @@
 package com.example.fittrack;
 
+import static java.security.AccessController.getContext;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
 
@@ -32,26 +35,35 @@ public class CreateGoalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_goal);
 
-        Spinner spinnerGoalTypes = findViewById(R.id.spinnerGoalType);
+        AutoCompleteTextView spinnerGoalTypes = findViewById(R.id.spinnerGoalType);
         FrameLayout formDisplay = findViewById(R.id.goalFormFrame);
 
         //goalCheckerUtil.checkDistanceGoalIsAchieved(UserID);
+        String[] goalTypes = new String[] {"Distance", "Time"};
 
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_dropdown_item_1line,
+                goalTypes
+        );
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter
-                .createFromResource(this, R.array.goal_types, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
         spinnerGoalTypes.setAdapter(adapter);
+        spinnerGoalTypes.setText("Distance", false);
+        loadFragment(new DistanceGoalFragment());
+        spinnerGoalTypes.setOnTouchListener((v, event) -> {
+            spinnerGoalTypes.showDropDown();
+            return false;
+        });
 
-        spinnerGoalTypes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinnerGoalTypes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String selectedGoal = adapterView.getItemAtPosition(i).toString();
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selectedGoal = parent.getItemAtPosition(position).toString();
                 switch (selectedGoal) {
-                    case "Distance Goal":
+                    case "Distance":
                         loadFragment(new DistanceGoalFragment());
                         break;
-                    case "Time Goal":
+                    case "Time":
                         loadFragment(new TimeGoalFragment());
                         break;
                     default:
@@ -59,15 +71,7 @@ public class CreateGoalActivity extends AppCompatActivity {
                         break;
                 }
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
         });
-
-
-
     }
 
     public void loadFragment(Fragment fragment) {

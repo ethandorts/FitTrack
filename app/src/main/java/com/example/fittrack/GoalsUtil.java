@@ -25,7 +25,7 @@ public class GoalsUtil {
         this.db = db;
     }
 
-    public void setDistanceGoal(String UserID, Timestamp startDate, Timestamp endDate, double targetDistance, String status, double currentProgress, String goalDescription) {
+    public void setDistanceGoal(String UserID, Timestamp startDate, Timestamp endDate, double targetDistance, String status, double currentProgress, String goalDescription, String activityType) {
 
         HashMap<String, Object> distanceGoalMap = new HashMap<>();
         distanceGoalMap.put("goalType", "Distance");
@@ -35,6 +35,7 @@ public class GoalsUtil {
         distanceGoalMap.put("status", status);
         distanceGoalMap.put("currentProgress", currentProgress);
         distanceGoalMap.put("goalDescription", goalDescription);
+        distanceGoalMap.put("activityType", activityType);
 
 
         db.collection("Users")
@@ -54,7 +55,7 @@ public class GoalsUtil {
                 });
     }
 
-    public void setTimeGoal(String UserID, Timestamp startDate, Timestamp endDate, double targetTime, double targetDistance, String status, double currentProgress, String goalDescription) {
+    public void setTimeGoal(String UserID, Timestamp startDate, Timestamp endDate, double targetTime, double targetDistance, String status, double currentProgress, String goalDescription, String activityType) {
 
         HashMap<String, Object> timeGoalMap = new HashMap<>();
         timeGoalMap.put("goalType", "Time");
@@ -65,6 +66,7 @@ public class GoalsUtil {
         timeGoalMap.put("status", status);
         timeGoalMap.put("currentProgress", currentProgress);
         timeGoalMap.put("goalDescription", goalDescription);
+        timeGoalMap.put("activityType", activityType);
 
 
         db.collection("Users")
@@ -176,13 +178,14 @@ public class GoalsUtil {
                         Timestamp startDate = documentSnapshot.getTimestamp("startDate");
                         Timestamp endDate = documentSnapshot.getTimestamp("endDate");
                         String description = documentSnapshot.getString("goalDescription");
+                        String activityType = documentSnapshot.getString("activityType");
 
                         double targetDist = targetDistance != null ? targetDistance : 0.0;
                         int targetTime = targetTimeDouble != null ? targetTimeDouble.intValue() : 0;
                         int currentProgress = currentProgressDouble != null ? currentProgressDouble.intValue() : 0;
 
                         callback.onCallback(targetDist, targetTime, status, goalType,
-                                currentProgress, startDate, endDate, description);
+                                currentProgress, startDate, endDate, description, activityType);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -227,6 +230,6 @@ public class GoalsUtil {
 
     public interface SpecificGoalCallback {
         void onCallback(double targetDistance, int targetTime, String status, String goalType,
-                        int currentProgress, Timestamp startDate, Timestamp endDate, String description);
+                        int currentProgress, Timestamp startDate, Timestamp endDate, String description, String activityType);
     }
 }

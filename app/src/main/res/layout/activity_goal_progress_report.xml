@@ -68,6 +68,14 @@
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/txtActivityTypeGoal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Activity Type: Running"
+                    android:textSize="14sp" />
+
+                <TextView
                     android:id="@+id/txtProgress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

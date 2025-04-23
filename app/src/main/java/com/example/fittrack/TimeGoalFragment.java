@@ -7,8 +7,11 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -35,6 +38,7 @@ public class TimeGoalFragment extends Fragment {
     private GoalsUtil goalsUtil = new GoalsUtil(db);
 
     private EditText editTargetDistance, editTargetTime, editCompletionDate;
+    private AutoCompleteTextView activityGoalSpinner;
     private Button btnCreateDistanceGoal;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -53,6 +57,7 @@ public class TimeGoalFragment extends Fragment {
         editTargetDistance = view.findViewById(R.id.etDistanceTarget);
         editTargetTime = view.findViewById(R.id.etTimeTarget);
         editCompletionDate = view.findViewById(R.id.etCompletionDate);
+        activityGoalSpinner = view.findViewById(R.id.goalActivityTypeSpinner);
         btnCreateDistanceGoal = view.findViewById(R.id.btnCreateTimeGoal);
 
         editCompletionDate.setOnClickListener(view1 -> {
@@ -67,6 +72,24 @@ public class TimeGoalFragment extends Fragment {
                     calendar.get(java.util.Calendar.MONTH),
                     calendar.get(java.util.Calendar.DAY_OF_MONTH)
             ).show();
+        });
+
+        String[] activityTypes = new String[] {"Running", "Walking", "Cycling"};
+
+        ArrayAdapter<String> activityAdapter = new ArrayAdapter<>(
+                getContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                activityTypes
+        );
+
+        activityGoalSpinner.setAdapter(activityAdapter);
+        activityGoalSpinner.setText("Running", false);
+        activityGoalSpinner.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                activityGoalSpinner.showDropDown();
+                return false;
+            }
         });
 
         btnCreateDistanceGoal.setOnClickListener(view1 -> {
@@ -160,7 +183,8 @@ public class TimeGoalFragment extends Fragment {
                     Double.parseDouble(targetDistance) * 1000,
                     "In Progress",
                     0,
-                    "Achieve a time of " + ConversionUtil.convertSecondsToTime(targetTimeInSeconds) + " for a distance of " + targetDistance + " KM by " + formattedEndDate
+                    "Achieve a time of " + ConversionUtil.convertSecondsToTime(targetTimeInSeconds) + " for a distance of " + targetDistance + " KM by " + formattedEndDate,
+                    activityGoalSpinner.getText().toString().trim()
             );
 
             Toast.makeText(getContext(), "Time Goal has been set successfully", Toast.LENGTH_SHORT).show();
@@ -168,6 +192,8 @@ public class TimeGoalFragment extends Fragment {
             editTargetDistance.setText("");
             editTargetTime.setText("");
             editCompletionDate.setText("");
+
+            getActivity().finish();
         } catch (ParseException e) {
             Toast.makeText(getContext(), "Error parsing date", Toast.LENGTH_SHORT).show();
         }

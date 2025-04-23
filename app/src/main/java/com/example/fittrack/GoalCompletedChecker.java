@@ -70,7 +70,7 @@ public class GoalCompletedChecker extends Worker {
                 if(notify) {
                     goalsUtil.retrieveGoalSpecificDescription(UserID, GoalID, new GoalsUtil.SpecificGoalCallback() {
                                 @Override
-                                public void onCallback(double targetDistance, int targetTime, String status, String goalType, int currentProgress, Timestamp startDate, Timestamp endDate, String description) {
+                                public void onCallback(double targetDistance, int targetTime, String status, String goalType, int currentProgress, Timestamp startDate, Timestamp endDate, String description, String activityType) {
                                     NotificationUtil.showTimeGoalSuccessfulNotification(getApplicationContext(), description);
                                 }
                             });
@@ -99,7 +99,7 @@ public class GoalCompletedChecker extends Worker {
                 if(notify) {
                     goalsUtil.retrieveGoalSpecificDescription(UserID, GoalID, new GoalsUtil.SpecificGoalCallback() {
                                 @Override
-                                public void onCallback(double targetDistance, int targetTime, String status, String goalType, int currentProgress, Timestamp startDate, Timestamp endDate, String description) {
+                                public void onCallback(double targetDistance, int targetTime, String status, String goalType, int currentProgress, Timestamp startDate, Timestamp endDate, String description, String activityType) {
                                     NotificationUtil.showDistanceGoalSuccessfulNotification(getApplicationContext(), description);
                                 }
                             });
@@ -128,7 +128,7 @@ public class GoalCompletedChecker extends Worker {
                 if(notify) {
                     goalsUtil.retrieveGoalSpecificDescription(UserID, GoalID, new GoalsUtil.SpecificGoalCallback() {
                                 @Override
-                                public void onCallback(double targetDistance, int targetTime, String status, String goalType, int currentProgress, Timestamp startDate, Timestamp endDate, String description) {
+                                public void onCallback(double targetDistance, int targetTime, String status, String goalType, int currentProgress, Timestamp startDate, Timestamp endDate, String description, String activityType) {
                                     NotificationUtil.showCalorieGoalSuccessfulNotification(getApplicationContext(), description);
                                 }
                             });

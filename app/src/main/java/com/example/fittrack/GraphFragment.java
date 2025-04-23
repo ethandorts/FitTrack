@@ -2,6 +2,7 @@ package com.example.fittrack;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,15 @@ import com.anychart.enums.Anchor;
 import com.anychart.enums.HoverMode;
 import com.anychart.enums.Position;
 import com.anychart.enums.TooltipPositionMode;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.auth.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,130 +87,243 @@ public class GraphFragment extends Fragment {
         groupsUtil.retrieveUsersinGroup(GroupID, new GroupsDatabaseUtil.UsersinGroupsCallback() {
             @Override
             public void onCallback(ArrayList<String> runners) {
-                distanceTotals = new ArrayList<>();
-                int runnersSize = runners.size();
-                int[] totalCallbacks = {0};
+                final List<String> userIds = new ArrayList<String>(runners);
+                List<Task<DocumentSnapshot>> statTasks = new ArrayList<>();
 
-                for (String runner : runners) {
-                    userUtil.retrieveUserName(runner, new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
-                        @Override
-                        public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal, String level, String fitnessGoal) {
-                            if(isWeek) {
-                                System.out.println("Name is: " + runner);
-                                gamUtil.calculateUserActivitiesPerWeek(runner, ActivityType, new GamificationUtil.ActivityFrequencyCallback() {
-                                    @Override
-                                    public void onCallback(int activityNumber) {
-                                        System.out.println("Activity No Per Week: " + activityNumber);
-                                        distanceTotals.add(new ValueDataEntry(FullName, activityNumber));
-                                        totalCallbacks[0]++;
-
-                                        if (totalCallbacks[0] == runnersSize) {
-                                            loadColumnChart(distanceTotals);
-                                        }
-                                    }
-                                });
-                            } else {
-                                gamUtil.calculateUserActivitiesPerMonth(runner, ActivityType, new GamificationUtil.ActivityFrequencyCallback() {
-                                    @Override
-                                    public void onCallback(int activityNumber) {
-                                        distanceTotals.add(new ValueDataEntry(FullName, activityNumber));
-                                        totalCallbacks[0]++;
-                                        System.out.println("Activity No Per Month: " + activityNumber);
-                                        if (totalCallbacks[0] == runnersSize) {
-                                            loadColumnChart(distanceTotals);
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    });
+                for (String uid : userIds) {
+                    DocumentReference docRef = db
+                            .collection("Users")
+                            .document(uid)
+                            .collection("Statistics")
+                            .document(isWeek ? "lastWeek" : "lastMonth");
+                    statTasks.add(docRef.get());
                 }
+
+                Tasks.whenAllSuccess(statTasks)
+                        .addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+                            @Override
+                            public void onSuccess(List<Object> docs) {
+                                List<Task<DataEntry>> chartTasks = new ArrayList<>();
+
+                                for (int i = 0; i < docs.size(); i++) {
+                                    final String uid = userIds.get(i);
+                                    DocumentSnapshot snap = (DocumentSnapshot) docs.get(i);
+
+                                    Double freq = snap.getDouble("ActivityFrequency");
+                                    if (freq == null) freq = 0.0;
+                                    final double finalFreq = freq;
+
+                                    final TaskCompletionSource<DataEntry> tcs = new TaskCompletionSource<>();
+                                    chartTasks.add(tcs.getTask());
+
+
+                                    userUtil.retrieveChatName(uid, new FirebaseDatabaseHelper.ChatUserCallback() {
+                                        @Override
+                                        public void onCallback(String chatName) {
+                                            tcs.setResult(new ValueDataEntry(chatName, finalFreq));
+                                        }
+                                    });
+                                }
+
+                                Tasks.whenAllSuccess(chartTasks)
+                                        .addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+                                            @Override
+                                            public void onSuccess(List<Object> entries) {
+                                                List<DataEntry> dataEntries = (List<DataEntry>)(List<?>) entries;
+                                                loadColumnChart(dataEntries);
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.e("GraphFragment", "Error loading AF chart names", e);
+                                            }
+                                        });
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("GraphFragment", "Error loading AF stats", e);
+                            }
+                        });
             }
         });
     }
+
+
 
     private void loadDistanceData() {
+        System.out.println("Loading distance for GroupID=" + GroupID + ", isWeek=" + isWeek);
+
         groupsUtil.retrieveUsersinGroup(GroupID, new GroupsDatabaseUtil.UsersinGroupsCallback() {
             @Override
             public void onCallback(ArrayList<String> runners) {
-                distanceTotals = new ArrayList<>();
-                int runnersSize = runners.size();
-                int [] totalCallbacks = {0};
+                List<String> userIds = new ArrayList<String>(runners);
 
-                for(String runner : runners) {
-                    userUtil.retrieveUserName(runner, new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
-                        @Override
-                        public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal, String level, String fitnessGoal) {
-                            if(isWeek) {
-                                gamUtil.calculateUserDistancePerWeek(runner, ActivityType,  new GamificationUtil.UserDistancePerMonthCallback() {
-                                    @Override
-                                    public void onCallback(double distancePerMonth) {
-                                        System.out.println("DistancePerWeek: " + distancePerMonth);
-                                        distanceTotals.add(new ValueDataEntry(FullName, distancePerMonth));
-                                        totalCallbacks[0]++;
-
-                                        if (totalCallbacks[0] == runnersSize) {
-                                            loadColumnChart(distanceTotals);
-                                        }
-                                    }
-                                });
-                            } else {
-                                gamUtil.calculateUserDistancePerMonth(runner, ActivityType, new GamificationUtil.UserDistancePerMonthCallback() {
-                                    @Override
-                                    public void onCallback(double distancePerMonth) {
-                                        System.out.println("DistancePerMonth: " + distancePerMonth);
-                                        distanceTotals.add(new ValueDataEntry(FullName, distancePerMonth));
-                                        totalCallbacks[0]++;
-
-                                        if (totalCallbacks[0] == runnersSize) {
-                                            loadColumnChart(distanceTotals);
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    });
+                List<Task<DocumentSnapshot>> statTasks = new ArrayList<Task<DocumentSnapshot>>();
+                for (String uid : userIds) {
+                    DocumentReference docRef = db
+                            .collection("Users")
+                            .document(uid)
+                            .collection("Statistics")
+                            .document(isWeek ? "lastWeek" : "lastMonth");
+                    statTasks.add(docRef.get());
                 }
+
+                Tasks.whenAllSuccess(statTasks)
+                        .addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+                            @Override
+                            public void onSuccess(List<Object> statsResults) {
+                                // 4) Build name+distance Tasks
+                                List<Task<DataEntry>> chartTasks = new ArrayList<Task<DataEntry>>();
+
+                                for (int i = 0; i < statsResults.size(); i++) {
+                                    DocumentSnapshot snap = (DocumentSnapshot) statsResults.get(i);
+                                    final double dist = snap.getDouble("Distance") != null
+                                            ? snap.getDouble("Distance")
+                                            : 0.0;
+
+                                    // Wrap the name lookup in a TaskCompletionSource
+                                    final TaskCompletionSource<DataEntry> tcs = new TaskCompletionSource<>();
+                                    chartTasks.add(tcs.getTask());
+
+                                    // Resolve display name, then complete the Task
+                                    userUtil.retrieveChatName(
+                                            userIds.get(i),
+                                            new FirebaseDatabaseHelper.ChatUserCallback() {
+                                                @Override
+                                                public void onCallback(String chatName) {
+                                                    tcs.setResult(new ValueDataEntry(chatName, dist));
+                                                }
+                                            }
+                                    );
+                                }
+
+                                Tasks.whenAllSuccess(chartTasks)
+                                        .addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+                                            @Override
+                                            public void onSuccess(List<Object> chartResults) {
+                                                List<DataEntry> entries = (List<DataEntry>)(List<?>) chartResults;
+                                                loadColumnChart(entries);
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.e("GraphFragment", "Error loading distance chart names", e);
+                                            }
+                                        });
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("GraphFragment", "Error loading distance stats", e);
+                            }
+                        });
             }
         });
     }
 
-    public void loadFastestData(double distance) {
-        List<DataEntry> fastestData = new ArrayList<>();
+    private void loadFastestData(final double distance) {
+        if (GroupID == null) {
+            Log.e("GraphFragment", "Cannot load fastest data: GroupID is null");
+            return;
+        }
+
+        // 1) Get group members
         groupsUtil.retrieveUsersinGroup(GroupID, new GroupsDatabaseUtil.UsersinGroupsCallback() {
             @Override
             public void onCallback(ArrayList<String> runners) {
-                gamUtil.collectDistanceTime(runners, ActivityType, distance, isWeek, new GamificationUtil.FastestTimeCallback() {
-                    @Override
-                    public void onCallback(ArrayList<LeaderboardModel> timeData) {
-                        System.out.println("Time Data: " + timeData.size());
+                final List<String> userIds = new ArrayList<>(runners);
+                List<Task<DocumentSnapshot>> statTasks = new ArrayList<>();
 
-                        if (timeData.isEmpty()) {
-                            loadColumnChart(fastestData);
-                            return;
-                        }
+                // 2) Create stat fetch tasks
+                for (String uid : userIds) {
+                    DocumentReference docRef = db
+                            .collection("Users")
+                            .document(uid)
+                            .collection("Statistics")
+                            .document(isWeek ? "lastWeek" : "lastMonth");
+                    statTasks.add(docRef.get());
+                }
 
-                        int total = timeData.size();
-                        int[] resolved = {0};
+                // 3) Wait for all stats to load
+                Tasks.whenAllSuccess(statTasks)
+                        .addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+                            @Override
+                            public void onSuccess(List<Object> statsResults) {
+                                List<Task<DataEntry>> chartTasks = new ArrayList<>();
 
-                        for (LeaderboardModel model : timeData) {
-                            userUtil.retrieveUserName(model.getUsername(), new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
-                                @Override
-                                public void onCallback(String fullName, long weight, long height, long activityFrequency, long dailyCalorieGoal, String level, String fitnessGoal) {
-                                    fastestData.add(new ValueDataEntry(fullName, model.getDistance()));
-                                    resolved[0]++;
+                                for (int i = 0; i < statsResults.size(); i++) {
+                                    DocumentSnapshot snap = (DocumentSnapshot) statsResults.get(i);
+                                    final String uid = userIds.get(i);
 
-                                    if (resolved[0] == total) {
-                                        loadColumnChart(fastestData);
+                                    String fieldKey;
+                                    if (distance == 1000.0) {
+                                        fieldKey = "1K";
+                                    } else if (distance == 5000.0) {
+                                        fieldKey = "5K";
+                                    } else {
+                                        fieldKey = "10K";
                                     }
+
+                                    Object raw = snap.get(fieldKey);
+                                    final double fastest;
+                                    if (raw instanceof Number) {
+                                        fastest = ((Number) raw).doubleValue();
+                                    } else if (raw instanceof String) {
+                                        try {
+                                            fastest = Double.parseDouble((String) raw);
+                                        } catch (NumberFormatException e) {
+                                            Log.w("GraphFragment", "Invalid string value for " + fieldKey + ": " + raw);
+                                            continue;
+                                        }
+                                    } else {
+                                        Log.w("GraphFragment", "Missing or invalid " + fieldKey + " for user " + uid);
+                                        continue;
+                                    }
+
+                                    final TaskCompletionSource<DataEntry> tcs = new TaskCompletionSource<>();
+                                    chartTasks.add(tcs.getTask());
+
+                                    userUtil.retrieveChatName(uid, new FirebaseDatabaseHelper.ChatUserCallback() {
+                                        @Override
+                                        public void onCallback(String chatName) {
+                                            tcs.setResult(new ValueDataEntry(chatName, fastest));
+                                        }
+                                    });
                                 }
-                            });
-                        }
-                    }
-                });
+
+                                // 4) Wait until all chart entry tasks complete
+                                Tasks.whenAllSuccess(chartTasks)
+                                        .addOnSuccessListener(new OnSuccessListener<List<Object>>() {
+                                            @Override
+                                            public void onSuccess(List<Object> chartResults) {
+                                                List<DataEntry> entries = (List<DataEntry>) (List<?>) chartResults;
+                                                loadColumnChart(entries);
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.e("GraphFragment", "Error resolving fastest chart names", e);
+                                            }
+                                        });
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("GraphFragment", "Error loading fastest stat docs", e);
+                            }
+                        });
             }
         });
     }
+
+
 
 
     private void loadColumnChart(List<DataEntry> distanceTotals) {

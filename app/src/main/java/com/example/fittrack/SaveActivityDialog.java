@@ -139,13 +139,19 @@ public class SaveActivityDialog extends DialogFragment {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             saveActivity();
                             NotificationUtil.showSavedActivityNotification(context);
+                            OneTimeWorkRequest statsRequest = new OneTimeWorkRequest.Builder(UpdateStats.class)
+                                    .build();
                             OneTimeWorkRequest checkGoalsRequest = new OneTimeWorkRequest.Builder(GoalCompletedChecker.class).setInitialDelay(10, TimeUnit.SECONDS)
                                     .build();
-                            WorkManager.getInstance(getContext()).enqueue(checkGoalsRequest);
+                            WorkManager workManager = WorkManager.getInstance(context);
+                            workManager
+                                    .beginWith(statsRequest)
+                                    .then(checkGoalsRequest)
+                                    .enqueue();
                             Activity activity = getActivity();
                             if (activity != null) {
                                 System.out.println("Activity: " + activity);
-                                Intent intent = new Intent(activity, HomeActivity.class); // Use activity context
+                                Intent intent = new Intent(activity, HomeActivity.class);
                                 startActivity(intent);
                             } else {
                                 Log.e("SaveActivityDialog", "Activity is null, cannot start HomeActivity");

@@ -8,413 +8,251 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.SetOptions;
-
-import org.w3c.dom.Document;
+import com.google.firebase.firestore.Query;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Locale;
+import java.util.concurrent.CountDownLatch;
 
 public class BadgesUtil {
-    // Distance Badges for a Month
-    // Time Badges
-    // First Cycling / Running / Walking Activity
-
-    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private String UserID = mAuth.getUid();
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String UserID = FirebaseAuth.getInstance().getUid();
 
-    public void checkDistanceBadges(String activityType) {
-        Calendar startCalendar = Calendar.getInstance();
-        startCalendar.set(Calendar.DAY_OF_MONTH, 1);
+    public List<String> collectDistanceBadges(List<String> activityTypes) {
+        List<String> earned = new ArrayList<>();
+        CountDownLatch latch = new CountDownLatch(activityTypes.size());
 
-        Calendar endCalendar = Calendar.getInstance();
-        endCalendar.set(Calendar.DAY_OF_MONTH, endCalendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        Calendar start = Calendar.getInstance();
+        start.set(Calendar.DAY_OF_MONTH, 1);
 
+        Calendar end = Calendar.getInstance();
+        end.set(Calendar.DAY_OF_MONTH, end.getActualMaximum(Calendar.DAY_OF_MONTH));
 
-        Date startDate = startCalendar.getTime();
-        Timestamp startTimestamp = new Timestamp(startDate);
-        Date endDate = endCalendar.getTime();
-        Timestamp endTimestamp = new Timestamp(endDate);
+        Timestamp startTs = new Timestamp(start.getTime());
+        Timestamp endTs = new Timestamp(end.getTime());
 
-        Query query = db.collection("Activities")
+        for (String type : activityTypes) {
+            db.collection("Activities")
+                    .whereEqualTo("UserID", UserID)
+                    .whereEqualTo("type", type)
+                    .whereGreaterThanOrEqualTo("date", startTs)
+                    .whereLessThanOrEqualTo("date", endTs)
+                    .get()
+                    .addOnSuccessListener(new com.google.android.gms.tasks.OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot querySnapshot) {
+                            double total = 0.0;
+                            for (QueryDocumentSnapshot doc : querySnapshot) {
+                                try {
+                                    total += Double.parseDouble(String.valueOf(doc.get("distance")));
+                                } catch (Exception ignored) {}
+                            }
+
+                            int badgeTarget = 25000;
+                            int earnedBadges = (int) (total / badgeTarget);
+
+                            String month = new SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(start.getTime());
+                            for (int i = 1; i <= earnedBadges; i++) {
+                                earned.add("Ran " + (i * 25) + " KM in " + month);
+                            }
+
+                            latch.countDown();
+                        }
+                    })
+                    .addOnFailureListener(new com.google.android.gms.tasks.OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            latch.countDown();
+                        }
+                    });
+        }
+
+        try {
+            latch.await();
+        } catch (InterruptedException ignored) {}
+
+        return earned;
+    }
+
+    public List<String> collectFirstDistanceBadges(String activityType) {
+        List<String> earned = new ArrayList<>();
+        double[] thresholds = {1000, 5000, 21100, 42200};
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+
+        String month = new SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(cal.getTime());
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        db.collection("Activities")
                 .whereEqualTo("UserID", UserID)
                 .whereEqualTo("type", activityType)
-                .whereGreaterThanOrEqualTo("date", startTimestamp)
-                .whereLessThanOrEqualTo("date", endTimestamp);
-
-        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot querySnapshot) {
-                double monthDistance = 0.0;
-                List<DocumentSnapshot> snapshots = querySnapshot.getDocuments();
-                for(DocumentSnapshot snapshot :snapshots) {
-                    String stringDistance = (String) snapshot.get("distance");
-                    Double distance = Double.parseDouble(stringDistance);
-                    monthDistance += distance;
-                }
-                System.out.println("Total month distance: " + monthDistance);
-
-                DocumentReference badgesQuery = db.collection("Badges")
-                        .document(new SimpleDateFormat("MMMM").format(startCalendar.getTime()) + " " + startCalendar.get(Calendar.YEAR));
-
-                double finalMonthDistance = monthDistance;
-                badgesQuery.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                .whereGreaterThanOrEqualTo("date", new Timestamp(cal.getTime()))
+                .get()
+                .addOnSuccessListener(new com.google.android.gms.tasks.OnSuccessListener<QuerySnapshot>() {
                     @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        List<String> userBadges  = (List<String>) documentSnapshot.get("Badges");
-                        if(userBadges == null) {
-                            userBadges = new ArrayList<>();
+                    public void onSuccess(QuerySnapshot snapshot) {
+                        for (QueryDocumentSnapshot doc : snapshot) {
+                            try {
+                                double dist = Double.parseDouble(String.valueOf(doc.get("distance")));
+                                for (double threshold : thresholds) {
+                                    if (dist >= threshold) {
+                                        earned.add(getBadgeText(threshold, activityType, month));
+                                    }
+                                }
+                            } catch (Exception ignored) {}
                         }
-                        int badgeTarget = 25000;
-                        int badgesEarned = (int) (finalMonthDistance / badgeTarget);
-                        System.out.println("Badges Earned " + badgesEarned);
+                        latch.countDown();
+                    }
+                })
+                .addOnFailureListener(new com.google.android.gms.tasks.OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        latch.countDown();
+                    }
+                });
 
-                        boolean BadgeAdded = false;
-                        for(int i = 1; i < badgesEarned + 1; i++) {
-                            String badgeName = "Ran " + (i * 25) + " KM in " +
-                                    new SimpleDateFormat("MMMM").format(startCalendar.getTime()) + " " + startCalendar.get(Calendar.YEAR);
-                            if(!userBadges.contains(badgeName)) {
-                                userBadges.add(badgeName);
-                                BadgeAdded = true;
+        try {
+            latch.await();
+        } catch (InterruptedException ignored) {}
+
+        return earned;
+    }
+
+    public List<String> collectTimeBadges() {
+        List<String> earned = new ArrayList<>();
+
+        Calendar start = Calendar.getInstance();
+        start.set(Calendar.DAY_OF_MONTH, 1);
+        Timestamp startTs = new Timestamp(start.getTime());
+
+        Calendar end = Calendar.getInstance();
+        end.set(Calendar.DAY_OF_MONTH, end.getActualMaximum(Calendar.DAY_OF_MONTH));
+        Timestamp endTs = new Timestamp(end.getTime());
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        db.collection("Activities")
+                .whereEqualTo("UserID", UserID)
+                .whereGreaterThanOrEqualTo("date", startTs)
+                .whereLessThanOrEqualTo("date", endTs)
+                .get()
+                .addOnSuccessListener(new com.google.android.gms.tasks.OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot snapshot) {
+                        String month = new SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(start.getTime());
+                        for (QueryDocumentSnapshot doc : snapshot) {
+                            try {
+                                long time = Long.parseLong(String.valueOf(doc.get("time")));
+                                if (time >= 1800) earned.add("Completed a Fitness Activity of over 30 minutes in " + month);
+                                if (time >= 2700) earned.add("Completed a Fitness Activity of over 45 minutes in " + month);
+                                if (time >= 3600) earned.add("Completed a Fitness Activity of over 1 hour in " + month);
+                                if (time >= 7200) earned.add("Completed a Fitness Activity of over 2 hours in " + month);
+                            } catch (Exception ignored) {}
+                        }
+                        latch.countDown();
+                    }
+                })
+                .addOnFailureListener(new com.google.android.gms.tasks.OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        latch.countDown();
+                    }
+                });
+
+        try {
+            latch.await();
+        } catch (InterruptedException ignored) {}
+
+        return earned;
+    }
+
+    public String getFirstActivityBadge() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+
+        Timestamp start = new Timestamp(cal.getTime());
+
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+        Timestamp end = new Timestamp(cal.getTime());
+
+        CountDownLatch latch = new CountDownLatch(1);
+        final boolean[] hasActivity = {false};
+
+        db.collection("Activities")
+                .whereEqualTo("UserID", UserID)
+                .whereGreaterThanOrEqualTo("date", start)
+                .whereLessThanOrEqualTo("date", end)
+                .get()
+                .addOnSuccessListener(new com.google.android.gms.tasks.OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot snapshot) {
+                        hasActivity[0] = !snapshot.isEmpty();
+                        latch.countDown();
+                    }
+                })
+                .addOnFailureListener(new com.google.android.gms.tasks.OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        latch.countDown();
+                    }
+                });
+
+        try {
+            latch.await();
+        } catch (InterruptedException ignored) {}
+
+        if (hasActivity[0]) {
+            return "Completed First Fitness Activity for " + new SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(new Date());
+        } else {
+            return null;
+        }
+    }
+
+    public void retrieveUserBadges(String UserID, BadgesCallback callback) {
+        String month = new SimpleDateFormat("MMMM yyyy").format(Calendar.getInstance().getTime());
+
+        db.collection("Users")
+                .document(UserID)
+                .collection("Badges")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot querySnapshot) {
+                        List<String> allBadges = new ArrayList<>();
+                        for(DocumentSnapshot document : querySnapshot.getDocuments()) {
+                            List<String> badges = (List<String>) document.get("Badges");
+                            if (badges != null) {
+                                allBadges.addAll(badges);
                             }
                         }
 
-                        if(BadgeAdded) {
-                            DocumentReference docRef = db.collection("Users").document(UserID).collection("Badges")
-                                    .document(new SimpleDateFormat("MMMM").format(startCalendar.getTime()) + " " + startCalendar.get(Calendar.YEAR));
-
-
-                            List<String> finalUserBadges = userBadges;
-                            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    HashMap<String, Object> badgeMap = new HashMap<>();
-                                    badgeMap.put("Badges", finalUserBadges);
-                                    if(!documentSnapshot.exists()) {
-                                                docRef.set(badgeMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void unused) {
-                                                        System.out.println("On successful created");
-                                                    }
-                                                }).addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        System.out.println(e.getMessage());
-                                                    }
-                                                });
-                                    } else {
-                                        docRef.update("Badges", finalUserBadges)
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void unused) {
-                                                        Log.d("User Badges Updated", "User Badges Successfully Updated");
-                                                    }
-                                                }).addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Log.e("User Badges Failure", "User Badges Failure: " + e.getMessage());
-                                                    }
-                                                });
-                                    }
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    System.out.println(e.getMessage());
-                                }
-                            });
-                        }
+                        callback.onCallback(allBadges);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.e("Badge Retrieval Failure", e.getMessage());
+                        Log.e("Badges Retrieval Error: ", e.getMessage());
                     }
                 });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                System.out.println(e.getMessage());
-            }
-        });
     }
 
-    public void checkFirstDistanceBadges(String activityType, double targetDistance) {
-        String distanceBadge = " ";
-        Calendar startCalendar = Calendar.getInstance();
-        startCalendar.set(Calendar.DAY_OF_MONTH, 1);
-
-        Calendar endCalendar = Calendar.getInstance();
-        endCalendar.set(Calendar.DAY_OF_MONTH, endCalendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-
-        Date startDate = startCalendar.getTime();
-        Timestamp startTimestamp = new Timestamp(startDate);
-        Date endDate = endCalendar.getTime();
-        Timestamp endTimestamp = new Timestamp(endDate);
-
-        Query query = db.collection("Activities")
-                .whereEqualTo("UserID", UserID)
-                .whereEqualTo("type", activityType)
-                .whereGreaterThanOrEqualTo("date", startTimestamp)
-                .whereLessThanOrEqualTo("date", endTimestamp);
-
-        String month = new SimpleDateFormat("MMMM").format(startCalendar.getTime()) + " " + startCalendar.get(Calendar.YEAR);
-        DocumentReference docRef = db.collection("Users").document(UserID).collection("Badges").document(month);
-
-        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot querySnapshot) {
-                final String[] distanceBadge = {" "};
-                AtomicReference<List<String>> badgeListRef = new AtomicReference<>(new ArrayList<>());
-                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if(documentSnapshot.exists() && documentSnapshot.contains("Badges")) {
-                            List<String> badgesList = (List<String>) documentSnapshot.get("Badges");
-                            if(badgesList != null) {
-                                badgeListRef.set(badgesList);
-                            }
-                        }
-
-                        boolean distancePassed = false;
-                        if(activityType == "Running") {
-                            distanceBadge[0] = getRunningDistanceBadgeMessage(targetDistance, "Running");
-                        } else {
-                            distanceBadge[0] = "Completed a " + targetDistance + " KM " + activityType + " Activity";
-                        }
-
-                        for(DocumentSnapshot document : querySnapshot) {
-                            String stringDistance = (String) document.get("distance");
-                            double distance = Double.parseDouble(stringDistance);
-                            if(distance >= targetDistance) {
-                                if(!badgeListRef.get().contains(distanceBadge[0])) {
-                                    badgeListRef.get().add(distanceBadge[0]);
-                                    distancePassed = true;
-                                }
-                            }
-                        }
-
-                        if(distancePassed) {
-                            Map<String, Object> dataToAdd = new HashMap<>();
-                            dataToAdd.put("Badges", badgeListRef.get());
-                            docRef.set(dataToAdd, SetOptions.merge())
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void unused) {
-                                            System.out.println("Specific Distance Passed");
-                                        }
-                                    }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            System.out.println("Specific Distance Failed");
-                                        }
-                                    });
-                        }
-                    }
-                });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                System.out.println(e.getMessage());
-            }
-        });
-    }
-
-    public void checkFirstActivityofMonth() {
-
-        Calendar startCalendar = Calendar.getInstance();
-        startCalendar.set(Calendar.DAY_OF_MONTH, 1);
-
-        Calendar endCalendar = Calendar.getInstance();
-        endCalendar.set(Calendar.DAY_OF_MONTH, endCalendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-
-        Date startDate = startCalendar.getTime();
-        Timestamp startTimestamp = new Timestamp(startDate);
-        Date endDate = endCalendar.getTime();
-        Timestamp endTimestamp = new Timestamp(endDate);
-
-        Query query = db.collection("Activities")
-                .whereEqualTo("UserID", UserID)
-                .whereGreaterThanOrEqualTo("date", startTimestamp)
-                .whereLessThanOrEqualTo("date", endTimestamp);
-
-        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot querySnapshot) {
-                if(!querySnapshot.isEmpty()) {
-                    db.collection("Users")
-                            .document(UserID)
-                            .collection("Badges")
-                            .document("January 2025")
-                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    HashMap<String, Object> badgeMap = new HashMap<>();
-                                    List<String> badges = new ArrayList<>();
-                                    badges.add("Completed First Fitness Activity for February 2025");
-                                    badgeMap.put("Badges", new ArrayList<>());
-                                    if(!documentSnapshot.exists()) {
-                                        db.collection("Users").document(UserID).collection("Badges")
-                                                .document(new SimpleDateFormat("MMMM")
-                                                .format(startCalendar.getTime()) + " " + startCalendar.get(Calendar.YEAR))
-                                                .set(badgeMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void unused) {
-
-                                                    }
-                                                }).addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-
-                                                    }
-                                                });
-                                    }
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-
-                                }
-                            });
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-            }
-        });
-    }
-
-    public void checkActivityTime(int time) {
-        Calendar startCalendar = Calendar.getInstance();
-        startCalendar.set(Calendar.DAY_OF_MONTH, 1);
-
-        Calendar endCalendar = Calendar.getInstance();
-        endCalendar.set(Calendar.DAY_OF_MONTH, endCalendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-
-
-        Date startDate = startCalendar.getTime();
-        Timestamp startTimestamp = new Timestamp(startDate);
-        Date endDate = endCalendar.getTime();
-        Timestamp endTimestamp = new Timestamp(endDate);
-
-        Query query = db.collection("Activities")
-                .whereEqualTo("UserID", UserID)
-                .whereGreaterThanOrEqualTo("time", time)
-                .whereGreaterThanOrEqualTo("date", startTimestamp)
-                .whereLessThanOrEqualTo("date", endTimestamp);
-
-        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot querySnapshot) {
-                if(!querySnapshot.isEmpty()) {
-                    String month = new SimpleDateFormat("MMMM").format(startCalendar.getTime()) + " " + startCalendar.get(Calendar.YEAR);
-                    DocumentReference docRef = db.collection("Users").document(UserID).collection("Badges").document(month);
-
-                    docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            List<String> badgeList;
-                            if (documentSnapshot.exists() && documentSnapshot.contains("Badges")) {
-                                badgeList = (List<String>) documentSnapshot.get("Badges");
-                                if(badgeList == null) {
-                                    badgeList = new ArrayList<>();
-                                }
-                            } else {
-                                badgeList = new ArrayList<>();
-                            }
-
-                            String firstBadge = "First Fitness Activity Completed for: " + month;
-                            if(!badgeList.contains(firstBadge)) {
-                                badgeList.add(firstBadge);
-                            }
-                            String timeBadge = "Completed a Fitness Activity of over 45 minutes";
-                            if(!badgeList.contains(timeBadge)) {
-                                badgeList.add(timeBadge);
-                            }
-
-                            if(!badgeList.isEmpty()) {
-                                Map<String, Object> dataToAdd = new HashMap<>();
-                                dataToAdd.put("Badges", badgeList);
-                                docRef.set(dataToAdd, SetOptions.merge())
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void unused) {
-                                                System.out.println("Badges updated successfully");
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                System.out.println("Error updating badges: " + e.getMessage());
-                                            }
-                                        });
-                            }
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            System.out.println(e.getMessage());
-                        }
-                    });
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                System.out.println(e.getMessage());
-            }
-        });
-    }
-
-
-
-    public void retrieveUserBadges(String UserID, BadgesCallback callback) {
-        DocumentReference docRef = db.collection("Users")
-                .document(UserID)
-                .collection("Badges")
-                .document("January 2025");
-
-        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                List<String> badgesList = (List<String>) documentSnapshot.get("Badges");
-                callback.onCallback(badgesList);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e("Failure to retrieve user badges list", e.getMessage());
-            }
-        });
-    }
-
-    private String getRunningDistanceBadgeMessage(double distance, String activityType) {
-        if(distance == 5000) {
-            return "Completed a 5KM " + activityType + " Activity";
-        } else if(distance == 10000) {
-            return "Completed a 10KM " + activityType + " Activity";
-        } else if(distance == 21100) {
-            return "Completed a Half Marathon " + activityType + " Activity";
-        } else if(distance == 42200) {
-            return "Completed a Marathon " + activityType + " Activity";
-        }
-        return "Completed a " + distance + "KM " + activityType + " Activity";
+    private String getBadgeText(double dist, String type, String month) {
+        if (dist == 5000) return "Completed a 5KM " + type + " Activity in " + month;
+        if (dist == 10000) return "Completed a 10KM " + type + " Activity in " + month;
+        if (dist == 21100) return "Completed a Half Marathon " + type + " Activity in " + month;
+        if (dist == 42200) return "Completed a Marathon " + type + " Activity in " + month;
+        return "Completed a " + (int)(dist / 1000) + "KM " + type + " Activity in " + month;
     }
 
     public interface BadgesCallback {

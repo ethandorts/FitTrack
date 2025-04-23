@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MyBadgesActivity extends AppCompatActivity {
@@ -28,13 +29,18 @@ public class MyBadgesActivity extends AppCompatActivity {
 
         recyclerBadges = findViewById(R.id.recyclerBadges);
 
+        List<String> activityTypes = new ArrayList<>(Arrays.asList("Running", "Walking", "Cycling"));
+
         badgesUtil.retrieveUserBadges(UserID, new BadgesUtil.BadgesCallback() {
             @Override
             public void onCallback(List<String> badges) {
+                System.out.println(badges);
                 ArrayList<BadgeModel> badgesList = new ArrayList<>();
-                for(String badge : badges) {
-                    BadgeModel newBadge = new BadgeModel(badge, 0);
-                    badgesList.add(newBadge);
+                if(badges != null) {
+                    for (String badge : badges) {
+                        BadgeModel newBadge = new BadgeModel(badge, 0);
+                        badgesList.add(newBadge);
+                    }
                 }
                 BadgesRecyclerViewAdapter adapter = new BadgesRecyclerViewAdapter(getApplicationContext(), badgesList);
                 recyclerBadges.setAdapter(adapter);

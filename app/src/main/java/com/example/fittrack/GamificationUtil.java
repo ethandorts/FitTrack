@@ -282,9 +282,10 @@ public class GamificationUtil {
                 });
     }
 
-    public void getActivityProgressData(String UserID, Timestamp startDate, Timestamp endDate, ProgressCallback callback) {
+    public void getActivityProgressData(String UserID, String activityType, Timestamp startDate, Timestamp endDate, ProgressCallback callback) {
         db.collection("Activities")
                 .whereEqualTo("UserID", UserID)
+                .whereEqualTo("type", activityType)
                 .whereGreaterThanOrEqualTo("date", startDate)
                 .whereLessThanOrEqualTo("date", endDate)
                 .get()

@@ -19,10 +19,12 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseDatabaseHelper userUtil = new FirebaseDatabaseHelper(db);
     private ArrayList<LeaderboardModel> leaderboardList = new ArrayList<>();
+    private String selectedMetric;
 
-    public LeaderboardRecyclerAdapter(Context context, ArrayList<LeaderboardModel> leaderboardList) {
+    public LeaderboardRecyclerAdapter(Context context, ArrayList<LeaderboardModel> leaderboardList, String selectedMetric) {
         this.context = context;
         this.leaderboardList = leaderboardList;
+        this.selectedMetric = selectedMetric;
     }
 
     @NonNull
@@ -36,7 +38,13 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
     public void onBindViewHolder(@NonNull LeaderboardViewHolder holder, int position) {
         LeaderboardModel leaderboardModel = leaderboardList.get(position);
         holder.Number.setText(String.valueOf(position + 1));
-        holder.DistanceValue.setText(String.valueOf(leaderboardModel.getDistance()));
+        if(selectedMetric.equals("Time")) {
+            holder.DistanceValue.setText(ConversionUtil.convertSecondsToTime((int) leaderboardModel.getDistance()));
+        } else if (selectedMetric.equals("ActivityFrequency")) {
+            holder.DistanceValue.setText(String.format("%d", (int) leaderboardModel.getDistance()));
+        } else if (selectedMetric.equals("Distance")) {
+            holder.DistanceValue.setText(String.format("%.2f KM", leaderboardModel.getDistance()));
+        }
         userUtil.retrieveUserName(leaderboardModel.getUsername(), new FirebaseDatabaseHelper.FirestoreUserNameCallback() {
             @Override
             public void onCallback(String FullName, long weight, long height, long activityFrequency, long dailyCalorieGoal, String level, String fitnessGoal) {

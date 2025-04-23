@@ -31,10 +31,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar2">
 
-        <Spinner
-            android:id="@+id/spinnerGoalType"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputLayoutGoalType"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:hint="Select Goal Type">
+
+            <AutoCompleteTextView
+                android:id="@+id/spinnerGoalType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:focusable="false"
+                android:clickable="true"
+                android:padding="12dp"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
 
     </LinearLayout>
 

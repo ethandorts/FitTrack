@@ -31,17 +31,20 @@ public class GoalsRecyclerViewAdapter extends FirestoreRecyclerAdapter<GoalModel
     @Override
     protected void onBindViewHolder(@NonNull GoalsViewHolder holder, int i, @NonNull GoalModel model) {
         String GoalID = getSnapshots().getSnapshot(i).getId();
+        String activityType = model.getActivityType();
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, GoalProgressReportActivity.class);
                 intent.putExtra("GoalID", GoalID);
+                intent.putExtra("activityType", activityType);
                 context.startActivity(intent);
             }
         });
         holder.txtGoalType.setText(model.getGoalType() + " Goal");
         holder.txtGoalDescription.setText(model.getGoalDescription());
         holder.txtDeadline.setText("Completion Target Date: " + ConversionUtil.dateFormatter(model.getEndDate()));
+        holder.txtActivityType.setText(model.getActivityType());
         holder.txtProgress.setText(model.getStatus());
         if(model.getStatus().equals("Completed")) {
             holder.txtProgress.setTextColor(Color.RED);
@@ -56,11 +59,12 @@ public class GoalsRecyclerViewAdapter extends FirestoreRecyclerAdapter<GoalModel
     }
 
     public class GoalsViewHolder extends RecyclerView.ViewHolder {
-        private TextView txtGoalType, txtGoalDescription, txtProgress, txtDeadline;
+        private TextView txtGoalType, txtGoalDescription, txtProgress, txtDeadline, txtActivityType;
 
         public GoalsViewHolder(@NonNull View itemView) {
             super(itemView);
             txtGoalType = itemView.findViewById(R.id.goal_title);
+            txtActivityType = itemView.findViewById(R.id.goal_activity_type);
             txtGoalDescription = itemView.findViewById(R.id.goal_description);
             txtProgress = itemView.findViewById(R.id.goal_status);
             txtDeadline = itemView.findViewById(R.id.goal_deadline);

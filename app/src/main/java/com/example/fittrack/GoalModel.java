@@ -14,11 +14,12 @@ public class GoalModel {
     private double targetTime;
     private double targetDistance;
     private double targetCalories;
+    private String activityType;
 
     public GoalModel() {
     }
 
-    public GoalModel(String goalType, String status, String goalDescription, double currentProgress, Timestamp startDate, Timestamp endDate, Timestamp lastUpdated, int bestTime, double targetTime, double targetDistance, double targetCalories) {
+    public GoalModel(String goalType, String status, String goalDescription, double currentProgress, Timestamp startDate, Timestamp endDate, Timestamp lastUpdated, int bestTime, double targetTime, double targetDistance, double targetCalories, String activityType) {
         this.goalType = goalType;
         this.status = status;
         this.goalDescription = goalDescription;
@@ -30,6 +31,7 @@ public class GoalModel {
         this.targetTime = targetTime;
         this.targetDistance = targetDistance;
         this.targetCalories = targetCalories;
+        this.activityType = activityType;
     }
 
     public String getGoalType() {
@@ -118,5 +120,13 @@ public class GoalModel {
 
     public void setGoalDescription(String goalDescription) {
         this.goalDescription = goalDescription;
+    }
+
+    public String getActivityType() {
+        return activityType;
+    }
+
+    public void setActivityType(String activityType) {
+        this.activityType = activityType;
     }
 }

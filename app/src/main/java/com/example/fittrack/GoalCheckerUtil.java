@@ -48,9 +48,11 @@ public class GoalCheckerUtil {
                     Timestamp startDate = (Timestamp) snapshot.get("startDate");
                     Timestamp endDate = (Timestamp) snapshot.get("endDate");
                     double targetDistance = (double) snapshot.get("targetDistance");
+                    String activityType = (String) snapshot.get("activityType");
 
                     Query activitiesQuery = db.collection("Activities")
                             .whereEqualTo("UserID", UserID)
+                            .whereEqualTo("type", activityType)
                             .whereGreaterThanOrEqualTo("date", startDate)
                             .whereLessThanOrEqualTo("date", endDate);
 
@@ -111,8 +113,10 @@ public class GoalCheckerUtil {
                     double targetDistance = (double) snapshot.get("targetDistance");
                     double targetTime = (double) snapshot.get("targetTime");
 
-                    System.out.println("Target Distance (km): " + targetDistance);
+                    int requiredSplits = (int) (targetDistance / 1000);
+                    System.out.println("Target Distance (km): " + targetDistance / 1000);
                     System.out.println("Target Time (seconds): " + targetTime);
+                    System.out.println("Required Splits: " + requiredSplits);
 
                     Query activitiesQuery = db.collection("Activities")
                             .whereEqualTo("UserID", UserID)
@@ -122,41 +126,37 @@ public class GoalCheckerUtil {
                     activitiesQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot querySnapshot) {
-                            System.out.println("Number of activities found: " + querySnapshot.getDocuments().size());
                             List<DocumentSnapshot> activityDocuments = querySnapshot.getDocuments();
                             boolean achieved = false;
 
                             for (DocumentSnapshot activity : activityDocuments) {
                                 double totalDistance = Double.parseDouble((String) activity.get("distance"));
-                                totalDistance = totalDistance / 1000;
                                 List<Long> splits = (List<Long>) activity.get("splits");
 
-                                if (splits != null && splits.size() > 0) {
-                                    int validSplits = (int) Math.floor(totalDistance);
-
-                                    System.out.println("Total Distance (km): " + totalDistance);
+                                if (splits != null && !splits.isEmpty()) {
+                                    int validSplits = (int) Math.floor(totalDistance / 1000);
+                                    System.out.println("Total Distance (km): " + totalDistance / 1000);
                                     System.out.println("Valid Full Splits: " + validSplits);
 
-                                    int requiredSplits = (int) targetDistance;
-                                    System.out.println(requiredSplits + " : Required Splits");
-                                    for (int i = 0; i < validSplits; i++) {
-                                        double segmentTime = 0;
-                                        for (int j = i; j < validSplits; j++) {
-                                            int seconds = convertLongtoSeconds(splits.get(j));
-                                            segmentTime += seconds;
+                                    if (validSplits >= requiredSplits) {
+                                        for (int i = 0; i <= validSplits - requiredSplits; i++) {
+                                            double segmentTime = 0;
+                                            for (int j = i; j < i + requiredSplits; j++) {
+                                                segmentTime += convertLongtoSeconds(splits.get(j));
+                                            }
+                                            System.out.println("Segment Time: " + segmentTime + "s from splits " + i + " to " + (i + requiredSplits - 1));
+                                            if (segmentTime <= targetTime) {
+                                                System.out.println("Time goal achieved in activity " + activity.getId() + " within segment starting at split " + i);
+                                                achieved = true;
+                                                break;
+                                            }
                                         }
-                                        System.out.println("Segment Time" + segmentTime);
-                                        if (segmentTime <= targetTime) {
-                                            System.out.println("Achieved with segment starting at split " + i + " and time: " + segmentTime);
-                                            achieved = true;
-                                            break;
-                                        }
+                                        if (achieved) break;
                                     }
-                                    if (achieved) break;
                                 }
                             }
+
                             if (achieved) {
-                                System.out.println("Time goal achieved");
                                 callback.onCallback(true, snapshot.getId());
                             } else {
                                 System.out.println("Time goal not achieved");
@@ -165,7 +165,7 @@ public class GoalCheckerUtil {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Log.e("Activities Failure", "Error retrieving activities: " + e.getMessage());
+                            System.out.println("Error getting activities: " + e.getMessage());
                         }
                     });
                 }
@@ -173,10 +173,11 @@ public class GoalCheckerUtil {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.e("Goals Failure", "Error retrieving goals: " + e.getMessage());
+                System.out.println("Error getting goals: " + e.getMessage());
             }
         });
     }
+
 
     public void checkCalorieGoalIsAchieved(String UserID, NotificationCallback callback) {
         Query query = db.collection("Users")

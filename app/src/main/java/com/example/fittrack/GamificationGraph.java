@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -47,7 +48,7 @@ public class GamificationGraph extends AppCompatActivity {
     private GamificationUtil gamificationUtil = new GamificationUtil();
     private ViewPager2 gamificationPager;
     private TabLayout gamificationTabs;
-    private Spinner graphMetricSpinner;
+    private AutoCompleteTextView graphMetricSpinner;
     private RadioButton btnWeek, btnMonth;
     private GroupsDatabaseUtil groupsUtil = new GroupsDatabaseUtil(db);
     private RecyclerView leaderboardRecyclerView;
@@ -76,22 +77,27 @@ public class GamificationGraph extends AppCompatActivity {
 //        txtGraphName.setText("Distance Ran This Week");
         btnWeek.setChecked(true);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter
-                .createFromResource(this, R.array.run_graph_metric, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
+        String[] graphOptions = {"Distance", "Activity Frequency", "1 KM", "5 KM", "10 KM"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_dropdown_item_1line,
+                graphOptions
+        );
         graphMetricSpinner.setAdapter(adapter);
+
+        graphMetricSpinner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                graphMetricSpinner.showDropDown();
+            }
+        });
 
         loadGamificationFragments();
 
-        graphMetricSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        graphMetricSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 loadGamificationFragments();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
 
@@ -141,11 +147,11 @@ public class GamificationGraph extends AppCompatActivity {
 
     private void loadGamificationFragments() {
         GroupActivitiesFragmentStateAdapter gamAdapter = new GroupActivitiesFragmentStateAdapter(this);
-        gamAdapter.addFragment(new LeaderboardStatsFragment(graphMetricSpinner.getSelectedItem().toString(),
+        gamAdapter.addFragment(new LeaderboardStatsFragment(graphMetricSpinner.getText().toString(),
                 btnWeek.isChecked(),
                 GroupID,
                 ActivityType));
-        gamAdapter.addFragment(new GraphFragment(graphMetricSpinner.getSelectedItem().toString(),
+        gamAdapter.addFragment(new GraphFragment(graphMetricSpinner.getText().toString(),
                 btnWeek.isChecked(),
                 GroupID,
                 ActivityType)
