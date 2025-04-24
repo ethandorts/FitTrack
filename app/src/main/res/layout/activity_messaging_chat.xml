@@ -28,6 +28,7 @@
             android:padding="8dp">
 
             <ImageView
+                android:id="@+id/img_recipient"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_gravity="left"

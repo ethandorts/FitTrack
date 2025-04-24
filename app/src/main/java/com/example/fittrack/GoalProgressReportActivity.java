@@ -215,8 +215,10 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                             txtProgressNumber.setText("Progress: " + progressPercentage + "%");
                         } else if(goalType.equals("Time")) {
                             long bestTime = Long.MAX_VALUE;
+                            boolean qualifyActivities = false;
                             for(ActivityModel activity : activities) {
                                 if (Double.parseDouble(activity.getDistance()) >= targetDistance) {
+                                    qualifyActivities = true;
                                     List<Long> splits = activity.getSplits();
                                     long splitTime = 0;
                                     for (Long split : splits) {
@@ -229,6 +231,15 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                             }
                             String formattedBestTime = longToTimeConversion(bestTime);
                             txtTotalProgress.setText("Best Time: " + formattedBestTime);
+
+                            if (qualifyActivities == false) {
+                                txtTotalProgress.setText("No qualifying activities yet.");
+                                txtBestPace.setVisibility(View.GONE);
+                                txtProgressNumber.setVisibility(View.GONE);
+                            } else {
+                                txtBestPace.setVisibility(View.VISIBLE);
+                                txtProgressNumber.setVisibility(View.VISIBLE);
+                            }
 
                             long target = targetTime * 1000L;
                             long timeDifference = bestTime - target;
@@ -272,7 +283,12 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                         });
 
                         System.out.println(activities.toString());
-                        if (activities.isEmpty()) return;
+                        if (activities.isEmpty()) {
+                            txtTotalProgress.setText("No qualifying activities yet.");
+                            txtBestPace.setVisibility(View.GONE);
+                            txtProgressNumber.setVisibility(View.GONE);
+                            return;
+                        }
 
                         System.out.println( "Activities :" + activities.size());
 

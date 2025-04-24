@@ -27,8 +27,6 @@ public class OverviewFitnessStats extends AppCompatActivity {
         setContentView(R.layout.activity_overview_fitness_stats);
 
         Toolbar toolbar = findViewById(R.id.ActivityOverviewToolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(Html.fromHtml("<b>Activity Overview</b>"));
 
         Intent intent = getIntent();
         String ActivityID = intent.getStringExtra("ActivityID");

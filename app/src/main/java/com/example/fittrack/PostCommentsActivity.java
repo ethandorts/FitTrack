@@ -65,6 +65,7 @@ public class PostCommentsActivity extends AppCompatActivity {
                 String message = editMessage.getText().toString();
                 CommentModel comment = new CommentModel(UserID, message, Timestamp.now());
                 commentUtil.savePostComment(GroupID, PostID, comment);
+                editMessage.setText("");
             }
         });
     }

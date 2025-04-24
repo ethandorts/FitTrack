@@ -1,14 +1,19 @@
 package com.example.fittrack;
 
+import static android.provider.CalendarContract.CalendarCache.URI;
+
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -44,11 +49,11 @@ public class CommentsRecyclerViewAdapter extends FirestoreRecyclerAdapter<Commen
 
     public static class CommentHolder extends RecyclerView.ViewHolder {
         TextView txtUser, txtComment;
+        ImageView imageView;
         public CommentHolder (@NonNull View itemView) {
             super(itemView);
             txtUser = itemView.findViewById(R.id.txtNutrientNameLabel);
             txtComment = itemView.findViewById(R.id.txtNutrientValueLabel);
         }
     }
-
 }

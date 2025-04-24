@@ -1,9 +1,11 @@
 package com.example.fittrack;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -11,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,14 +28,17 @@ public class MessagingChatActivity extends AppCompatActivity {
     private TextView txtRecipientUser;
     private MessagesRecyclerViewAdapter messagesAdapter;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
     private DirectMessagingUtil MessagingUtil = new DirectMessagingUtil(db);
     private String messageDocumentID;
+    private ImageView img_recipient;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messaging_chat);
 
         btnSendMessage = findViewById(R.id.btnSendPost);
+        img_recipient = findViewById(R.id.img_recipient);
 
         mAuth = FirebaseAuth.getInstance().getCurrentUser();
         currentUser = mAuth.getUid();
@@ -44,6 +50,18 @@ public class MessagingChatActivity extends AppCompatActivity {
 
         txtRecipientUser = findViewById(R.id.txtChatUser);
         TypeBox = findViewById(R.id.editPost);
+
+        DatabaseUtil.retrieveProfilePicture(recipientUser + ".jpeg", new FirebaseDatabaseHelper.ProfilePictureCallback() {
+            @Override
+            public void onCallback(Uri PicturePath) {
+                Glide.with(getApplicationContext())
+                        .load(PicturePath)
+                        .placeholder(R.drawable.profile)
+                        .error(R.drawable.profile)
+                        .circleCrop()
+                        .into(img_recipient);
+            }
+        });
 
         txtRecipientUser.setText(recipientName);
 

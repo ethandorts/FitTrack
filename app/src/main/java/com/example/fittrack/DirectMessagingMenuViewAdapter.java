@@ -2,6 +2,7 @@ package com.example.fittrack;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +12,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 
 public class DirectMessagingMenuViewAdapter extends RecyclerView.Adapter<DirectMessagingMenuViewAdapter.ChatUsersViewHolder> {
     private final RecyclerViewInterface recyclerViewInterface;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
     private Context context;
     private ArrayList<UserModel> userList = new ArrayList<>();
 
@@ -38,6 +44,20 @@ public class DirectMessagingMenuViewAdapter extends RecyclerView.Adapter<DirectM
 
     public void onBindViewHolder(@NonNull ChatUsersViewHolder holder, int position) {
         UserModel user = userList.get(position);
+
+        DatabaseUtil.retrieveProfilePicture(user.getUserID() + ".jpeg", new FirebaseDatabaseHelper.ProfilePictureCallback() {
+            @Override
+            public void onCallback(Uri pictureUri) {
+                Glide.with(context)
+                        .load(pictureUri)
+                        .placeholder(R.drawable.profile)
+                        .error(R.drawable.profile)
+                        .circleCrop()
+                        .into(holder.UserProfileImage);
+            }
+        });
+
+
         holder.UserName.setText(user.getUserFullName());
         holder.LastMessage.setText(user.getLastMessage());
         holder.itemView.setOnClickListener(v -> {
@@ -61,7 +81,7 @@ public class DirectMessagingMenuViewAdapter extends RecyclerView.Adapter<DirectM
             super(itemView);
             UserName = itemView.findViewById(R.id.txtNutrientNameLabel);
             LastMessage = itemView.findViewById(R.id.txtNutrientValueLabel);
-            UserProfileImage = itemView.findViewById(R.id.user_comment_icon);
+            UserProfileImage = itemView.findViewById(R.id.comment_picture);
         }
     }
 }

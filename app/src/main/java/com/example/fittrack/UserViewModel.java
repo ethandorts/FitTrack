@@ -25,16 +25,25 @@ public class UserViewModel extends ViewModel {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseDatabaseHelper DatabaseUtil = new FirebaseDatabaseHelper(db);
     private GroupsDatabaseUtil groupsDatabaseUtil = new GroupsDatabaseUtil(db);
+    private String groupId; // Store the groupId for reuse
 
     public UserViewModel(String GroupID) {
+        this.groupId = GroupID;
         loadGroupUsers(GroupID);
     }
 
-    public UserViewModel() {
-    }
+    public UserViewModel() {}
 
     public MutableLiveData<ArrayList<UserModel>> getChatUsers() {
         return users;
+    }
+
+    public void refreshChatUsers() {
+        if (groupId != null && !groupId.isEmpty()) {
+            loadGroupUsers(groupId);
+        } else {
+            Log.e("UserViewModel", "groupId is null or empty, cannot refresh.");
+        }
     }
 
     public void loadUsersToChat() {

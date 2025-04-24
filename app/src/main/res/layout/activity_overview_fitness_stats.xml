@@ -9,17 +9,28 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/ActivityOverviewToolbar"
-        android:layout_width="411dp"
-        android:layout_height="91dp"
-        android:layout_marginBottom="3dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/button_blue"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        android:title="Activity Overview"
         app:layout_constraintBottom_toTopOf="@+id/activityTabLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/txtOverviewTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Fitness Activity Statistics"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </androidx.appcompat.widget.Toolbar>
+
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager3"

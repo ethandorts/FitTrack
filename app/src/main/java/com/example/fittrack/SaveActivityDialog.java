@@ -13,6 +13,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+import androidx.work.Constraints;
+import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
@@ -52,9 +54,15 @@ public class SaveActivityDialog extends DialogFragment {
     private ActivityLocationsDao activityLocationsDao;
     private List<LatLng> locations = new ArrayList<>();
     private ElevationUtil elevationUtil;
+    private SaveActivityDialogListener listener;
 
     public SaveActivityDialog(Context context) {
         this.context = context;
+    }
+
+    public interface SaveActivityDialogListener {
+        void onSaveConfirmed();
+        void onSaveCancelled();
     }
 
     @Override
@@ -139,15 +147,28 @@ public class SaveActivityDialog extends DialogFragment {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             saveActivity();
                             NotificationUtil.showSavedActivityNotification(context);
+
+                            Constraints networkConstraints = new Constraints.Builder()
+                                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                                    .build();
+
                             OneTimeWorkRequest statsRequest = new OneTimeWorkRequest.Builder(UpdateStats.class)
+                                    .setConstraints(networkConstraints)
                                     .build();
                             OneTimeWorkRequest checkGoalsRequest = new OneTimeWorkRequest.Builder(GoalCompletedChecker.class).setInitialDelay(10, TimeUnit.SECONDS)
-                                    .build();
+                                    .setConstraints(networkConstraints)
+                                    .setInitialDelay(5, TimeUnit.SECONDS).
+                                    build();
                             WorkManager workManager = WorkManager.getInstance(context);
                             workManager
                                     .beginWith(statsRequest)
                                     .then(checkGoalsRequest)
                                     .enqueue();
+
+                            if (listener != null) {
+                                listener.onSaveConfirmed();
+                            }
+
                             Activity activity = getActivity();
                             if (activity != null) {
                                 System.out.println("Activity: " + activity);
@@ -161,11 +182,22 @@ public class SaveActivityDialog extends DialogFragment {
                     .setNegativeButton("Resume Activity", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            // Clock and Distance will continue recording activity.
+                            if (listener != null) {
+                                listener.onSaveCancelled();
+                            }
+                            dialogInterface.dismiss();
                         }
                     });
             return builder.create();
         }
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (listener != null) {
+            listener.onSaveCancelled();
+        }
+    }
 
         private String calculateAveragePace (double distance, double time){
             double speed = distance / time;
@@ -217,9 +249,13 @@ public class SaveActivityDialog extends DialogFragment {
                     });
         }
 
+        public void setListener(SaveActivityDialogListener listener) {
+            this.listener = listener;
+        }
+
         private int getUserWeight() {
-            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserPI", Context.MODE_PRIVATE);
-            long longWeight = sharedPreferences.getLong("Weight", 0);
-            return Math.toIntExact(longWeight);
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserPI", Context.MODE_PRIVATE);
+                long longWeight = sharedPreferences.getLong("Weight", 0);
+                return Math.toIntExact(longWeight);
         }
 }

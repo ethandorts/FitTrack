@@ -14,7 +14,7 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/user_comment_icon"
+                android:id="@+id/comment_picture"
                 android:layout_width="69dp"
                 android:layout_height="67dp"
                 android:layout_marginStart="8dp"
@@ -36,7 +36,7 @@
                 android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.019"
-                app:layout_constraintStart_toEndOf="@id/user_comment_icon"
+                app:layout_constraintStart_toEndOf="@id/comment_picture"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -49,7 +49,7 @@
                 android:text="Hello, how are you?"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.016"
-                app:layout_constraintStart_toEndOf="@id/user_comment_icon"
+                app:layout_constraintStart_toEndOf="@id/comment_picture"
                 app:layout_constraintTop_toBottomOf="@id/txtNutrientNameLabel" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

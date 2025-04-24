@@ -1,8 +1,5 @@
 package com.example.fittrack;
 
-import static androidx.core.content.ContextCompat.getSystemService;
-
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -16,8 +13,6 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-
 public class NotificationUtil {
     private static final String SAVED_ACTIVITY_ID = "save_activity_channel";
     private static final String PROGRESS_TRACKING_ID = "progress_tracking_channel";
@@ -26,6 +21,8 @@ public class NotificationUtil {
     private static final String CALORIE_GOAL_SUCCESSFUL_ID = "calorie_goal_successful_channel";
     private static final String DISTANCE_GOAL_SUCCESSFUL_ID ="distance_goal_successful_channel";
     private static final String TIME_GOAL_SUCCESSFUL_ID ="time_goal_successful_channel";
+    private static final String BADGE_ACHIEVED_ID = "badge_achieved_channel";
+
 
     public static void createNotificationChannel(Context context, String channelID, String name, String channelDescription, int importanceLevel) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -56,7 +53,9 @@ public class NotificationUtil {
                 .setPriority(priorityLevel);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.notify(1, builder.build());
+
+        int uniqueId = (int) System.currentTimeMillis();
+        notificationManager.notify(uniqueId, builder.build());
     }
 
 
@@ -145,5 +144,20 @@ public class NotificationUtil {
     private static String modifyCalorieGoalNotificationMessage(String description) {
         String successMessage = description.replace("Consume", "consumed");
         return "Successfully " + successMessage;
+    }
+
+    public static void createBadgeAchievedNotificationChannel(Context context) {
+        createNotificationChannel(context,
+                BADGE_ACHIEVED_ID,
+                "Badge Achievements",
+                "Notifications for badge milestones achieved by the user",
+                NotificationManager.IMPORTANCE_HIGH);
+    }
+
+    public static void showBadgeAchievedNotification(Context context, String badgeName) {
+        String title = "🏅 Badge Achieved: " + badgeName;
+        String message = "You've just earned the " + badgeName + " badge! ";
+
+        showNotification(context, BADGE_ACHIEVED_ID, title, message, NotificationCompat.PRIORITY_HIGH, null);
     }
 }

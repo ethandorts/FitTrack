@@ -55,8 +55,8 @@
 
     <Button
         android:id="@+id/stopStartBtn"
-        android:layout_width="249dp"
-        android:layout_height="46dp"
+        android:layout_width="250dp"
+        android:layout_height="53dp"
         android:layout_marginTop="31dp"
         android:layout_marginBottom="37dp"
         android:text="Start Run"

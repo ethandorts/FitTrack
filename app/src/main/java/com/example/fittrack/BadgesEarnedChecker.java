@@ -72,11 +72,21 @@ public class BadgesEarnedChecker extends Worker {
                 combinedBadges.add(firstActivityBadge);
             }
 
+            Set<String> newlyEarned = new HashSet<>(combinedBadges);
+            newlyEarned.removeAll(existingBadges);
+            System.out.println(newlyEarned.size());
+
             if (!combinedBadges.equals(new HashSet<String>(existingBadges))) {
                 Map<String, Object> update = new HashMap<>();
                 update.put("Badges", new ArrayList<>(combinedBadges));
 
                 badgeDocRef.set(update, SetOptions.merge());
+
+                NotificationUtil.createBadgeAchievedNotificationChannel(getApplicationContext());
+
+                for (String badge : newlyEarned) {
+                    NotificationUtil.showBadgeAchievedNotification(getApplicationContext(), badge);
+                }
 
                 Log.d("Badge Checker", "Badges updated.");
             }

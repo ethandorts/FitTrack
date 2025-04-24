@@ -1,104 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context=".MainActivity">
 
     <TextView
         android:id="@+id/labelEventName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
         android:text="Event Name"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/enterEventName"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginTop="24dp" />
 
-    <EditText
-        android:id="@+id/enterEventName"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/eventNameLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:hint="Enter Event Name"
-        android:inputType="text"
-        android:padding="12dp"
-        app:layout_constraintBottom_toTopOf="@+id/labelActivityType"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:hint="Enter event name"
+        app:layout_constraintTop_toBottomOf="@id/labelEventName"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/labelEventName" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="4dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/enterEventName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:id="@+id/labelActivityType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="8dp"
         android:text="Activity Type"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/enterActivityType"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/eventNameLayout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/enterEventName" />
+        android:layout_marginTop="16dp" />
 
     <Spinner
         android:id="@+id/enterActivityType"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="12dp"
-        android:hint="Enter Activity Type"
-        android:inputType="text"
         android:padding="12dp"
-        app:layout_constraintBottom_toTopOf="@+id/labelDescription"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/labelActivityType"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/labelActivityType" />
-
-    <EditText
-        android:id="@+id/enterDescription"
-        android:layout_width="340dp"
-        android:layout_height="123dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:gravity="start|top"
-        android:hint="Enter Description"
-        android:inputType="textMultiLine"
-        android:padding="12dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnSaveEvent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/labelDescription" />
-
+        android:layout_marginTop="4dp" />
 
     <TextView
         android:id="@+id/labelDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="8dp"
         android:text="Description"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/enterDescription"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/enterActivityType"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/enterActivityType" />
+        android:layout_marginTop="24dp" />
 
-    <Button
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/descriptionLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Write something..."
+        app:layout_constraintTop_toBottomOf="@id/labelDescription"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="4dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/enterDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minLines="4"
+            android:gravity="top"
+            android:inputType="textMultiLine" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSaveEvent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
         android:text="Save Event"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:cornerRadius="24dp"
+        android:backgroundTint="@color/button_blue"
+        app:layout_constraintTop_toBottomOf="@+id/descriptionLayout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/enterDescription" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

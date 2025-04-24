@@ -1,5 +1,6 @@
 package com.example.fittrack;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -23,7 +24,7 @@ import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 
 public class BadgesUtil {
-
+    private Context context;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String UserID = FirebaseAuth.getInstance().getUid();
 
@@ -54,7 +55,9 @@ public class BadgesUtil {
                             for (QueryDocumentSnapshot doc : querySnapshot) {
                                 try {
                                     total += Double.parseDouble(String.valueOf(doc.get("distance")));
-                                } catch (Exception ignored) {}
+                                } catch (Exception ignored) {
+
+                                }
                             }
 
                             int badgeTarget = 25000;
@@ -110,7 +113,9 @@ public class BadgesUtil {
                                         earned.add(getBadgeText(threshold, activityType, month));
                                     }
                                 }
-                            } catch (Exception ignored) {}
+                            } catch (Exception ignored) {
+
+                            }
                         }
                         latch.countDown();
                     }

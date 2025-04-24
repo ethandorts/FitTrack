@@ -62,6 +62,7 @@ public class GroupPostsFragment extends Fragment {
             public void onClick(View view) {
                 String description = editMessage.getText().toString();
                 groupsDatabaseUtil.createNewPost(GroupID, UserID, Timestamp.now(), description);
+                editMessage.setText("");
             }
         });
 
