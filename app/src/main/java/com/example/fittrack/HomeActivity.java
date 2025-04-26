@@ -358,7 +358,7 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
         addFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, CreateManualActivity.class);
+                Intent intent = new Intent(HomeActivity.this, Head2HeadActivity.class);
                 intent.putExtra("UserID", UserID);
                 startActivity(intent);
             }

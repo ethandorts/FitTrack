@@ -230,9 +230,18 @@ public class GraphFragment extends Fragment {
             return;
         }
 
+        Log.d("GraphFragment", "Loading fastest data for distance: " + distance + ", GroupID=" + GroupID);
+
         groupsUtil.retrieveUsersinGroup(GroupID, new GroupsDatabaseUtil.UsersinGroupsCallback() {
             @Override
             public void onCallback(ArrayList<String> runners) {
+                if (runners == null || runners.isEmpty()) {
+                    Log.e("GraphFragment", "No runners found in group");
+                    return;
+                }
+
+                Log.d("GraphFragment", "Found " + runners.size() + " runners");
+
                 final List<String> userIds = new ArrayList<>(runners);
                 List<Task<DocumentSnapshot>> statTasks = new ArrayList<>();
 
@@ -249,6 +258,7 @@ public class GraphFragment extends Fragment {
                         .addOnSuccessListener(new OnSuccessListener<List<Object>>() {
                             @Override
                             public void onSuccess(List<Object> statsResults) {
+                                Log.d("GraphFragment", "Successfully fetched stats for " + statsResults.size() + " users");
                                 List<Task<DataEntry>> chartTasks = new ArrayList<>();
 
                                 for (int i = 0; i < statsResults.size(); i++) {
@@ -275,11 +285,14 @@ public class GraphFragment extends Fragment {
                                             }
                                         }
                                     } catch (Exception e) {
-                                        Log.w("GraphFragment", "Error parsing time for " + fieldKey, e);
+                                        Log.w("GraphFragment", "Error parsing time for field: " + fieldKey, e);
                                     }
 
                                     if (fastest == null) {
+                                        Log.d("GraphFragment", "No valid time for userId=" + uid);
                                         fastest = Double.MAX_VALUE;
+                                    } else {
+                                        Log.d("GraphFragment", "UserId=" + uid + ", fastestTime=" + fastest + " seconds");
                                     }
 
                                     final double finalFastest = fastest;
@@ -289,6 +302,7 @@ public class GraphFragment extends Fragment {
                                     userUtil.retrieveChatName(uid, new FirebaseDatabaseHelper.ChatUserCallback() {
                                         @Override
                                         public void onCallback(String chatName) {
+                                            Log.d("GraphFragment", "Mapping chat name: " + chatName + " -> " + finalFastest);
                                             tcs.setResult(new ValueDataEntry(chatName, finalFastest));
                                         }
                                     });
@@ -298,25 +312,20 @@ public class GraphFragment extends Fragment {
                                         .addOnSuccessListener(new OnSuccessListener<List<Object>>() {
                                             @Override
                                             public void onSuccess(List<Object> chartResults) {
-                                                for(Object chart : chartResults) {
-                                                    System.out.println(" Chart Value : " + chart);
-                                                }
                                                 List<DataEntry> entries = new ArrayList<>();
                                                 for (Object obj : chartResults) {
                                                     if (obj instanceof DataEntry) {
                                                         DataEntry entry = (DataEntry) obj;
                                                         double value = parseDoubleSafe(entry.getValue("value"));
-                                                        System.out.println(value + " Chart Standing");
                                                         if (value < Double.MAX_VALUE) {
                                                             entries.add(entry);
+                                                            Log.d("GraphFragment", "Added chart entry: " + entry.getValue("x") + " -> " + value);
+                                                        } else {
+                                                            Log.d("GraphFragment", "Skipped chart entry with invalid value");
                                                         }
                                                     }
                                                 }
-                                                for (DataEntry entry : entries) {
-                                                    double value = parseDoubleSafe(entry.getValue("value"));
-                                                    System.out.println(", Value: " + value);
-                                                }
-
+                                                Log.d("GraphFragment", "Total valid chart entries: " + entries.size());
                                                 loadColumnChart(entries);
                                             }
                                         })
@@ -344,7 +353,23 @@ public class GraphFragment extends Fragment {
 
         boolean isStatTimeBased = selectedMetric.equals("1 KM") || selectedMetric.equals("5 KM") || selectedMetric.equals("10 KM");
 
-        Collections.sort(distanceTotals, new Comparator<DataEntry>() {
+        List<DataEntry> validEntries = new ArrayList<>();
+        for (DataEntry entry : distanceTotals) {
+            double value = parseDoubleSafe(entry.getValue("value"));
+            if (value > 0 && value != Double.MAX_VALUE) {
+                if (isStatTimeBased) {
+                    value = value / 1000.0;
+                }
+                validEntries.add(new ValueDataEntry(entry.getValue("x").toString(), value));
+            }
+        }
+
+        if (validEntries.isEmpty()) {
+            Log.d("GraphFragment", "No valid entries to display on chart.");
+            return;
+        }
+
+        Collections.sort(validEntries, new Comparator<DataEntry>() {
             @Override
             public int compare(DataEntry value1, DataEntry value2) {
                 double firstValue = parseDoubleSafe(value1.getValue("value"));
@@ -353,53 +378,22 @@ public class GraphFragment extends Fragment {
             }
         });
 
-        if (distanceTotals.size() > 5) {
-            distanceTotals = new ArrayList<>(distanceTotals.subList(0, 5));
+        if (validEntries.size() > 5) {
+            validEntries = new ArrayList<>(validEntries.subList(0, 5));
         }
 
-        AnyChartView anyChartView = view.findViewById(R.id.any_chart_barchart);
+        AnyChartView anyChartView = (AnyChartView) view.findViewById(R.id.any_chart_barchart);
         anyChartView.setProgressBar(view.findViewById(R.id.progressBarChart));
-        Cartesian cartesian = AnyChart.column();
 
-        Column column = cartesian.column(distanceTotals);
+        Cartesian cartesian = AnyChart.column();
+        Column column = cartesian.column(validEntries);
 
         String chartTitle;
         String yAxisTitle;
-        String tooltipFormat;
-        boolean isTimeBased = selectedMetric.equals("1 KM") || selectedMetric.equals("5 KM") || selectedMetric.equals("10 KM");
 
         if (selectedMetric.equals("Activity Frequency")) {
             chartTitle = "Activity Frequency by Users";
             yAxisTitle = "Activities";
-            tooltipFormat = "{%Value} activities";
-        } else if (isTimeBased) {
-            chartTitle = "Fastest Times by Users";
-            yAxisTitle = "Time (mm:ss)";
-            tooltipFormat = "";
-        } else {
-            chartTitle = "Total Distance Ran by Users";
-            yAxisTitle = "Distance (KM)";
-            tooltipFormat = "{%Value}{groupsSeparator: } km";
-        }
-
-        if (isTimeBased) {
-            column.tooltip()
-                    .titleFormat("{%X}")
-                    .position(Position.CENTER_BOTTOM)
-                    .anchor(Anchor.CENTER_BOTTOM)
-                    .offsetX(0d)
-                    .offsetY(0d)
-                    .format("function() { " +
-                            "var sec = this.value;" +
-                            "var h = Math.floor(sec / 3600);" +
-                            "var m = Math.floor((sec % 3600) / 60);" +
-                            "var s = sec % 60;" +
-                            "var timeStr = (h > 0 ? (h < 10 ? '0' + h : h) + ':' : '') + " +
-                            "              (m < 10 ? '0' + m : m) + ':' + " +
-                            "              (s < 10 ? '0' + s : s);" +
-                            "return timeStr;" +
-                            "}");
-        } else if (selectedMetric.equals("Activity Frequency")) {
             column.tooltip()
                     .titleFormat("{%X}")
                     .position(Position.CENTER_BOTTOM)
@@ -407,7 +401,24 @@ public class GraphFragment extends Fragment {
                     .offsetX(0d)
                     .offsetY(0d)
                     .format("{%Value} activities");
+        } else if (isStatTimeBased) {
+            chartTitle = "Fastest Times by Users";
+            yAxisTitle = "Time (mm:ss)";
+            column.tooltip()
+                    .titleFormat("{%X}")
+                    .position(Position.CENTER_BOTTOM)
+                    .anchor(Anchor.CENTER_BOTTOM)
+                    .offsetX(0d)
+                    .offsetY(0d)
+                    .format("function() { " +
+                            "var totalSeconds = this.value;" +
+                            "var minutes = Math.floor(totalSeconds / 60);" +
+                            "var seconds = Math.floor(totalSeconds % 60);" +
+                            "return (minutes < 10 ? '0' + minutes : minutes) + ':' + (seconds < 10 ? '0' + seconds : seconds);" +
+                            "}");
         } else {
+            chartTitle = "Total Distance Ran by Users";
+            yAxisTitle = "Distance (KM)";
             column.tooltip()
                     .titleFormat("{%X}")
                     .position(Position.CENTER_BOTTOM)
@@ -417,17 +428,12 @@ public class GraphFragment extends Fragment {
                     .format("function() { return (this.value / 1000).toFixed(2) + ' km'; }");
         }
 
-        // Y-axis formatting
-        if (isTimeBased) {
+        if (isStatTimeBased) {
             cartesian.yAxis(0).labels().format("function() { " +
-                    "var sec = this.value;" +
-                    "var h = Math.floor(sec / 3600);" +
-                    "var m = Math.floor((sec % 3600) / 60);" +
-                    "var s = sec % 60;" +
-                    "var timeStr = (h > 0 ? (h < 10 ? '0' + h : h) + ':' : '') + " +
-                    "              (m < 10 ? '0' + m : m) + ':' + " +
-                    "              (s < 10 ? '0' + s : s);" +
-                    "return timeStr;" +
+                    "var totalSeconds = this.value;" +
+                    "var minutes = Math.floor(totalSeconds / 60);" +
+                    "var seconds = Math.floor(totalSeconds % 60);" +
+                    "return (minutes < 10 ? '0' + minutes : minutes) + ':' + (seconds < 10 ? '0' + seconds : seconds);" +
                     "}");
         } else if (selectedMetric.equals("Activity Frequency")) {
             cartesian.yAxis(0).labels().format("{%Value}");

@@ -30,6 +30,9 @@
         android:theme="@style/Theme.FitTrack"
         tools:targetApi="31">
         <activity
+            android:name=".ProfileOverview"
+            android:exported="false" />
+        <activity
             android:name=".SpecificUserActivity"
             android:exported="false" />
         <activity

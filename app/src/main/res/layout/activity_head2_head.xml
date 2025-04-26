@@ -1,213 +1,222 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".Head2HeadActivity">
 
-
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/head2headTollbar"
+        android:id="@+id/head2headToolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/button_blue"
         android:elevation="4dp"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/txtHead2Head"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
-            android:text="Head 2 Head"
-            android:textColor="@color/white"
-            android:textSize="34sp"
+            android:text="Head To Head"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
             android:textStyle="bold" />
     </androidx.appcompat.widget.Toolbar>
 
-    <Spinner
-        android:id="@+id/spinner_time_filter"
-        android:layout_width="304dp"
-        android:layout_height="38dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/head2headTollbar" />
-
-    <TableLayout
-        android:id="@+id/table_stats"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/head2headInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:background="#F7F7F7"
-        android:padding="12dp"
-        android:stretchColumns="1"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/head2headToolbar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/spinner_time_filter">
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Header Row with User Avatars -->
-        <TableRow android:minHeight="80dp">
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/spinnerUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Select User"
+            android:inputType="none"
+            android:focusable="false"
+            android:clickable="true"
+            android:padding="12dp"
+            android:textSize="16sp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_margin="8dp"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/profile" />
+    <RadioGroup
+        android:id="@+id/head2head_time_filter_group"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintTop_toBottomOf="@id/head2headInputLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-            <TextView
-                android:layout_width="wrap_content"
+        <RadioButton
+            android:id="@+id/radio_this_week"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="This Week"
+            android:checked="true"
+            android:textSize="14sp"
+            android:textColor="@color/black" />
+
+        <RadioButton
+            android:id="@+id/radio_this_month"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="This Month"
+            android:textSize="14sp"
+            android:textColor="@color/black" />
+    </RadioGroup>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintTop_toBottomOf="@id/head2head_time_filter_group"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TableLayout
+                android:id="@+id/table_stats"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:gravity="center"
-                android:text="Running Statistics"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:stretchColumns="1"
+                android:padding="4dp">
 
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_margin="8dp"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/profile" />
-        </TableRow>
+                <TableRow android:minHeight="100dp">
 
-        <!-- Distance Covered -->
-        <TableRow android:minHeight="70dp">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_distance_user1"
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="125 km"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                        <ImageView
+                            android:id="@+id/imgUser1"
+                            android:layout_width="72dp"
+                            android:layout_height="72dp"
+                            android:layout_margin="8dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/profile" />
 
-            <TextView
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="Distance Covered"
-                android:textSize="18sp" />
+                        <TextView
+                            android:id="@+id/txt_username_user1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="You"
+                            android:textColor="@color/black"
+                            android:textSize="14sp" />
+                    </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_distance_user2"
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="118 km"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </TableRow>
+                    <TextView
+                        android:id="@+id/txtStatisticsText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:gravity="center"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
-        <TableRow android:minHeight="70dp">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_activities_user1"
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="20"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                        <ImageView
+                            android:id="@+id/imgUser2"
+                            android:layout_width="72dp"
+                            android:layout_height="72dp"
+                            android:layout_margin="8dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/profile" />
 
-            <TextView
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="Activities Completed"
-                android:textSize="18sp" />
+                        <TextView
+                            android:id="@+id/txt_username_user2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Opponent"
+                            android:textColor="@color/black"
+                            android:textSize="14sp" />
+                    </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_activities_user2"
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="18"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </TableRow>
+                </TableRow>
 
-        <TableRow android:minHeight="70dp">
+                <TableRow android:minHeight="70dp">
 
-            <TextView
-                android:id="@+id/tv_1km_user1"
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="03:50"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/txt_distance_user1"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                    <TextView android:gravity="center" android:padding="8dp" android:text="Distance Covered" android:textSize="16sp" android:textColor="@color/black"/>
 
-            <TextView
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="Best 1KM Time"
-                android:textSize="18sp" />
+                    <TextView
+                        android:id="@+id/txt_distance_user2"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </TableRow>
 
-            <TextView
-                android:id="@+id/tv_1km_user2"
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="03:45"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </TableRow>
+                <TableRow android:minHeight="70dp">
+                    <TextView android:id="@+id/txt_activities_user1" android:gravity="center" android:padding="8dp" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/black"/>
+                    <TextView android:gravity="center" android:padding="8dp" android:text="Activities Completed" android:textSize="16sp" android:textColor="@color/black"/>
+                    <TextView android:id="@+id/txt_activities_user2" android:gravity="center" android:padding="8dp" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/black"/>
+                </TableRow>
 
-        <TableRow android:minHeight="70dp">
+                <TableRow android:minHeight="70dp">
+                    <TextView android:id="@+id/txt_1km_user1" android:gravity="center" android:padding="8dp" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/black"/>
+                    <TextView android:gravity="center" android:padding="8dp" android:text="Best 1KM Time" android:textSize="16sp" android:textColor="@color/black"/>
+                    <TextView android:id="@+id/txt_1km_user2" android:gravity="center" android:padding="8dp" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/black"/>
+                </TableRow>
 
-            <TextView
-                android:id="@+id/tv_5km_user1"
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="22:15"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                <TableRow android:minHeight="70dp">
+                    <TextView android:id="@+id/txt_5km_user1" android:gravity="center" android:padding="8dp" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/black"/>
+                    <TextView android:gravity="center" android:padding="8dp" android:text="Best 5KM Time" android:textSize="16sp" android:textColor="@color/black"/>
+                    <TextView android:id="@+id/txt_5km_user2" android:gravity="center" android:padding="8dp" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/black"/>
+                </TableRow>
 
-            <TextView
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="Best 5KM Time"
-                android:textSize="18sp" />
+                <TableRow android:minHeight="70dp">
+                    <TextView android:id="@+id/txt_10km_user1" android:gravity="center" android:padding="8dp" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/black"/>
+                    <TextView android:gravity="center" android:padding="8dp" android:text="Best 10KM Time" android:textSize="16sp" android:textColor="@color/black"/>
+                    <TextView android:id="@+id/txt_10km_user2" android:gravity="center" android:padding="8dp" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/black"/>
+                </TableRow>
 
-            <TextView
-                android:id="@+id/tv_5km_user2"
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="21:30"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </TableRow>
-
-        <TableRow android:minHeight="70dp">
-
-            <TextView
-                android:id="@+id/tv_10km_user1"
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="47:10"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="Best 10KM Time"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/tv_10km_user2"
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="46:45"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </TableRow>
-    </TableLayout>
+            </TableLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

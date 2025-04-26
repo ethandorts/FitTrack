@@ -179,7 +179,20 @@ public class ActivityOverviewFragment extends Fragment {
                     commentUtil.addLike(ActivityID, currentUser);
                     btnLike.setImageResource(R.drawable.liked);
                     isLiked = true;
+
                 }
+                commentUtil.retrieveLikeCount(ActivityID, new CommentUtil.LikeNumberCallback() {
+                    @Override
+                    public void onCallback(int likesNumber) {
+                        if(likesNumber == 0) {
+                            txtLikeStat.setText("Be First To Like!");
+                        } else if(likesNumber == 1) {
+                            txtLikeStat.setText(likesNumber + " Like");
+                        } else {
+                            txtLikeStat.setText(likesNumber + " Likes");
+                        }
+                    }
+                });
             }
         });
 

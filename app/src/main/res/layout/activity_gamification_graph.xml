@@ -6,28 +6,44 @@
     android:layout_height="match_parent"
     tools:context=".GamificationGraph">
 
-    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/CreatePostsToolbar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
         android:background="@color/button_blue"
-        android:elevation="4dp"
+        android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/txtPersonalBestTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:gravity="center"
             android:text="Group Fitness Statistics"
             android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="24sp"
+            tools:layout_editor_absoluteX="162dp"
+            tools:layout_editor_absoluteY="5dp" />
+
+        <ImageButton
+            android:id="@+id/btnHead2Head"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="8dp"
+            android:background="@android:color/transparent"
+            android:padding="0dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/head2head"
+            android:contentDescription="Nutrition" />
+
     </androidx.appcompat.widget.Toolbar>
+
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/graphInputLayout"
@@ -89,7 +105,6 @@
             android:text="This Month" />
     </RadioGroup>
 
-
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/gamTabLayout"
         android:layout_width="0dp"
@@ -98,7 +113,6 @@
         app:layout_constraintTop_toBottomOf="@id/timeBtns"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/gamificationPager"

@@ -1,6 +1,7 @@
 package com.example.fittrack;
 
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,8 +87,11 @@ public class ActivitySplitsFragment extends Fragment {
         TextView textView = new TextView(getContext());
         textView.setText(text);
         textView.setPadding(16, 16, 30, 16);
+        textView.setGravity(Gravity.CENTER);
+        textView.setLayoutParams(new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f));
         row.addView(textView);
     }
+
 
     private String longToTimeConversion(long longValue) {
         long milliseconds = longValue % 1000;

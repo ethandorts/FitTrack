@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -54,6 +56,7 @@ public class GamificationGraph extends AppCompatActivity {
     private RecyclerView leaderboardRecyclerView;
     private ArrayList<LeaderboardModel> leaderboardStats = new ArrayList<>();
     private TextView txtGraphName;
+    private ImageButton btnHead2Head;
     private String ActivityType;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +74,7 @@ public class GamificationGraph extends AppCompatActivity {
         graphMetricSpinner = findViewById(R.id.graph_selector);
         btnWeek = findViewById(R.id.btnWeek);
         btnMonth = findViewById(R.id.btnMonth);
+        btnHead2Head = findViewById(R.id.btnHead2Head);
 
 //        txtGraphName = findViewById(R.id.txtStatsTitle);
 //        leaderboardRecyclerView = findViewById(R.id.leaderboard);
@@ -113,6 +117,16 @@ public class GamificationGraph extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 loadGamificationFragments();
+            }
+        });
+
+        btnHead2Head.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(GamificationGraph.this, Head2HeadActivity.class);
+                intent.putExtra("GroupID", GroupID);
+                intent.putExtra("ActivityType", ActivityType);
+                startActivity(intent);
             }
         });
 

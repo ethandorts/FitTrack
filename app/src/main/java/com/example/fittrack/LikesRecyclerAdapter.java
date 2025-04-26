@@ -39,27 +39,13 @@ public class LikesRecyclerAdapter extends RecyclerView.Adapter<LikesRecyclerAdap
     @Override
     public void onBindViewHolder(@NonNull LikesViewHolder holder, int position) {
         LikeModel model = likesList.get(position);
-        DatabaseUtil.retrieveChatName(model.getLikeName(), new FirebaseDatabaseHelper.ChatUserCallback() {
-            @Override
-            public void onCallback(String Chatname) {
-                holder.txtLikeName.setText(Chatname);
-            }
-        });
+        holder.txtLikeName.setText(model.getLikeName());
         System.out.println("URI: " + model.getProfilePicture());
 
-        DatabaseUtil.retrieveProfilePicture(model.getLikeName() + ".jpeg", new FirebaseDatabaseHelper.ProfilePictureCallback() {
-            @Override
-            public void onCallback(Uri PicturePath) {
-                if (PicturePath != null) {
-                    Glide.with(holder.itemView.getContext())
-                            .load(model.getProfilePicture())
-                            .error(R.drawable.profile)
-                            .into(holder.img);
-                } else {
-                    Log.e("No profile picture found", "No profile picture found.");
-                }
-            }
-        });
+            Glide.with(holder.itemView.getContext())
+                    .load(model.getProfilePicture())
+                    .error(R.drawable.profile)
+                    .into(holder.img);
     }
 
     @Override
