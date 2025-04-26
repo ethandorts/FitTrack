@@ -3,6 +3,8 @@ package com.example.fittrack;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +14,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 
 public class FindGroupsRecyclerViewAdapter extends RecyclerView.Adapter<FindGroupsRecyclerViewAdapter.GroupsViewHolder> {
     private Context context;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private GroupsDatabaseUtil groupsUtil = new GroupsDatabaseUtil(db);
     private ArrayList<GroupModel> groupsList = new ArrayList<>();
     private boolean isFinding;
 
@@ -37,6 +44,21 @@ public class FindGroupsRecyclerViewAdapter extends RecyclerView.Adapter<FindGrou
 
         holder.GroupName.setText(group.getName());
         holder.GroupDescription.setText(group.getShortDescription());
+
+        groupsUtil.retrieveGroupProfileImage(group.getGroupID() + ".jpg", new GroupsDatabaseUtil.GroupPictureCallback() {
+            @Override
+            public void onCallback(Uri PicturePath) {
+                if (PicturePath != null) {
+                    Glide.with(context)
+                            .load(PicturePath)
+                            .into(holder.GroupImage);
+                } else {
+                    Log.e("No profile picture found", "No profile picture found.");
+                    holder.GroupImage.setImageResource(R.drawable.running_club_background);
+                }
+            }
+        });
+
         if(isFinding) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

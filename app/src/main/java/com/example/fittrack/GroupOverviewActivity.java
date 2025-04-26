@@ -30,6 +30,11 @@ public class GroupOverviewActivity extends AppCompatActivity {
     private RecyclerView membersRecyclerView;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private GroupsDatabaseUtil groupUtil = new GroupsDatabaseUtil(db);
+    private String GroupID;
+    private String GroupName;
+    private String GroupActivity;
+    private String GroupShortDescription;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,26 +49,24 @@ public class GroupOverviewActivity extends AppCompatActivity {
         imgGroupProfile = findViewById(R.id.membersListLogo);
 
         Intent intent = getIntent();
-        String GroupName = intent.getStringExtra("GroupName");
-        int GroupSize = intent.getIntExtra("GroupSize", 0);
-        String GroupActivity = intent.getStringExtra("GroupActivity");
-        String GroupID = intent.getStringExtra("GroupID");
-        String GroupShortDescription = intent.getStringExtra("GroupShortDescription");
+        GroupName = intent.getStringExtra("GroupName");
+        GroupActivity = intent.getStringExtra("GroupActivity");
+        GroupID = intent.getStringExtra("GroupID");
+        GroupShortDescription = intent.getStringExtra("GroupShortDescription");
 
         txtRunningGroupInfo.setText(GroupName);
         txtGroupType.setText(GroupActivity);
-        txtMembersSize.setText(GroupSize + " members");
         txtDescription.setText(GroupShortDescription);
 
         groupUtil.retrieveGroupProfileImage(GroupID + ".jpg", new GroupsDatabaseUtil.GroupPictureCallback() {
             @Override
             public void onCallback(Uri PicturePath) {
-                if(PicturePath != null) {
+                if (PicturePath != null) {
                     Glide.with(getApplicationContext())
                             .load(PicturePath)
                             .into(imgGroupProfile);
                 } else {
-                    Log.e("No profile picture found", "No profile picture found.");
+                    Log.e("GroupOverviewActivity", "No profile picture found.");
                     imgGroupProfile.setImageResource(R.drawable.running_club_background);
                 }
             }
@@ -77,20 +80,32 @@ public class GroupOverviewActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshMembers();
+    }
+
+    private void refreshMembers() {
         groupUtil.retrieveUserRoles(GroupID, new GroupsDatabaseUtil.UserRolesCallback() {
             @Override
             public void onCallback(ArrayList<String> runners, ArrayList<String> admins) {
-                if(!admins.contains(currentUser)) {
+                if (admins.contains(currentUser)) {
+                    btnAdminJoinRequests.setVisibility(View.VISIBLE);
+                } else {
                     btnAdminJoinRequests.setVisibility(View.INVISIBLE);
                 }
+
                 ArrayList<MemberModel> members = new ArrayList<>();
                 HashSet<String> adminSet = new HashSet<>(admins);
-                for(String admin : admins) {
-                    members.add(new MemberModel(admin,  true));
+
+                for (String admin : admins) {
+                    members.add(new MemberModel(admin, true));
                 }
-                for(String runner: runners) {
-                    if(!adminSet.contains(runner)) {
+                for (String runner : runners) {
+                    if (!adminSet.contains(runner)) {
                         members.add(new MemberModel(runner, false));
                     }
                 }
@@ -99,6 +114,14 @@ public class GroupOverviewActivity extends AppCompatActivity {
                 membersRecyclerView.setLayoutManager(new LinearLayoutManager(GroupOverviewActivity.this));
                 membersRecyclerView.setAdapter(adapter);
                 membersRecyclerView.addItemDecoration(new DividerItemDecoration(GroupOverviewActivity.this, DividerItemDecoration.VERTICAL));
+
+                HashSet<String> uniqueMembers = new HashSet<>();
+                uniqueMembers.addAll(admins);
+                uniqueMembers.addAll(runners);
+
+                int totalMembers = uniqueMembers.size();
+                txtMembersSize.setText(totalMembers + " members");
+
             }
         });
     }

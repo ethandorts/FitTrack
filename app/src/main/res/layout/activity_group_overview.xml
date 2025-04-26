@@ -57,7 +57,7 @@
             android:id="@+id/txtClubNameOverview"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Derry Running Club"
+
             android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="@color/black"
@@ -71,43 +71,40 @@
             android:id="@+id/txtGroupType"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Beginner Friendly"
-            android:textSize="14sp"
-            android:textColor="#666666"
             android:paddingStart="8dp"
             android:paddingTop="4dp"
-            app:layout_constraintTop_toBottomOf="@id/txtClubNameOverview"
+            android:textColor="#666666"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@id/txtClubNameOverview"
             app:layout_constraintStart_toStartOf="@id/txtClubNameOverview"
-            app:layout_constraintEnd_toEndOf="@id/txtClubNameOverview" />
+            app:layout_constraintTop_toBottomOf="@id/txtClubNameOverview" />
 
         <TextView
             android:id="@+id/txtMemberSize"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="28 members"
+            android:paddingStart="8dp"
+            android:paddingTop="2dp"
             android:textColor="#666666"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:paddingStart="8dp"
-            android:paddingTop="2dp"
-            app:layout_constraintTop_toBottomOf="@id/txtGroupType"
+            app:layout_constraintEnd_toEndOf="@id/txtClubNameOverview"
             app:layout_constraintStart_toStartOf="@id/txtClubNameOverview"
-            app:layout_constraintEnd_toEndOf="@id/txtClubNameOverview" />
+            app:layout_constraintTop_toBottomOf="@id/txtGroupType" />
 
         <TextView
             android:id="@+id/txtGroupDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="A friendly community of runners meeting every Saturday morning. Great for beginners and seasoned runners alike!"
-            android:textColor="#444444"
-            android:textSize="14sp"
             android:lineSpacingExtra="4dp"
             android:paddingStart="8dp"
             android:paddingTop="8dp"
             android:paddingEnd="8dp"
-            app:layout_constraintTop_toBottomOf="@id/txtMemberSize"
+            android:textColor="#444444"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@id/txtClubNameOverview"
             app:layout_constraintStart_toStartOf="@id/txtClubNameOverview"
-            app:layout_constraintEnd_toEndOf="@id/txtClubNameOverview" />
+            app:layout_constraintTop_toBottomOf="@id/txtMemberSize" />
 
         <Button
             android:id="@+id/btnAdminRequests"

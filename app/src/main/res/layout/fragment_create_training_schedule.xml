@@ -42,6 +42,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:background="@drawable/rounded_table_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -51,16 +52,19 @@
             android:layout_width="0dp"
             android:layout_height="54dp"
             android:layout_weight="1"
-            android:background="@android:color/white"
-            android:hint="Enter your message..."
-            android:inputType="text"
-            android:padding="8dp" />
+            android:background="@color/white"
+            android:gravity="top|start"
+            android:hint="Enter Message..."
+            android:inputType="textMultiLine"
+            android:maxLines="4"
+            android:minLines="1"
+            android:padding="8dp"  />
 
         <ImageButton
             android:id="@+id/btnSendRequest"
-            android:layout_width="wrap_content"
+            android:background="@drawable/rounded_table_bg"
+            android:layout_width="38dp"
             android:layout_height="match_parent"
-            android:background="@android:color/transparent"
             android:contentDescription="Send"
             android:src="@drawable/baseline_send_24" />
     </LinearLayout>

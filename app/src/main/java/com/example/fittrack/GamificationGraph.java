@@ -84,6 +84,7 @@ public class GamificationGraph extends AppCompatActivity {
                 graphOptions
         );
         graphMetricSpinner.setAdapter(adapter);
+        graphMetricSpinner.setText("Distance", false);
 
         graphMetricSpinner.setOnClickListener(new View.OnClickListener() {
             @Override

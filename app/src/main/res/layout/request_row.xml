@@ -1,73 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/button_blue">
+    android:background="@color/white"
+    android:padding="8dp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/LikesCardView"
-        android:layout_width="409dp"
-        android:layout_height="137dp"
-        tools:layout_editor_absoluteX="1dp"
-        android:background="@color/button_blue">
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="8dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="137dp"
-            android:background="@color/button_blue"
-            android:paddingStart="10dp">
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:background="@color/button_blue">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/imgLikeProfile"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
-                android:layout_marginEnd="12dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/profile"
                 app:shapeAppearanceOverlay="@style/CircleImage"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
-
 
             <TextView
                 android:id="@+id/txtLikeName"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="52dp"
                 android:text="Ethan Doherty"
                 android:textColor="@color/white"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
+                android:layout_marginStart="8dp"
                 app:layout_constraintStart_toEndOf="@id/imgLikeProfile"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@id/imgLikeProfile"
+                app:layout_constraintEnd_toStartOf="@id/btnRequestAccept"
+                app:layout_constraintHorizontal_bias="0" />
+
+            <TextView
+                android:id="@+id/txtRequestMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Request Status"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:visibility="gone"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@id/imgLikeProfile"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <Button
                 android:id="@+id/btnRequestAccept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
                 android:backgroundTint="#4CAF50"
                 android:text="Accept"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:textColor="@android:color/white"
+                android:layout_marginStart="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <Button
                 android:id="@+id/btnRequestReject"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="20dp"
                 android:backgroundTint="#FF0000"
                 android:text="Reject"
-                android:textColorLink="#FFFFFF"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btnRequestAccept" />
+                android:textColor="@android:color/white"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                app:layout_constraintTop_toBottomOf="@id/btnRequestAccept"
+                app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

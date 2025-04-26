@@ -12,10 +12,10 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/button_blue"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/messageContainer"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ProgressBar
         android:id="@+id/postProgressBar"
@@ -34,7 +34,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@color/white"
+        android:background="@drawable/rounded_table_bg"
         android:padding="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,18 +42,21 @@
 
         <EditText
             android:id="@+id/editMessage"
-            android:layout_width="357dp"
-            android:layout_height="57dp"
+            android:layout_width="329dp"
+            android:layout_height="59dp"
             android:layout_weight="1"
             android:background="@color/white"
+            android:gravity="top|start"
             android:hint="Enter Message..."
-            android:inputType="text"
+            android:inputType="textMultiLine"
+            android:maxLines="4"
+            android:minLines="1"
             android:padding="8dp" />
 
         <ImageButton
             android:id="@+id/btnImgSend"
-            android:layout_width="wrap_content"
-            android:layout_height="58dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_marginStart="8dp"
             android:background="@color/white"
             android:contentDescription="Send"

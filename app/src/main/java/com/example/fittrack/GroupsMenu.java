@@ -17,7 +17,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 public class GroupsMenu extends AppCompatActivity {
-    ImageButton btnFindRunningGroups, btnCreateRunningGroup;
+    private ImageButton btnCreateRunningGroup;
+    private Button btnFindRunningGroups;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

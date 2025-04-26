@@ -62,24 +62,26 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
             @Override
             public void onClick(View view) {
                 groupsDatabaseUtil.updateRunners(GroupID, request.getUserName());
-                holder.btnAccept.setVisibility(View.INVISIBLE);
-                holder.btnReject.setVisibility(View.INVISIBLE);
+
+                holder.btnAccept.setVisibility(View.GONE);
+                holder.btnReject.setVisibility(View.GONE);
                 holder.RequestMessage.setVisibility(View.VISIBLE);
-                holder.RequestMessage.setText("Request Accepted");
+                holder.RequestMessage.setText("Request Accepted ✅");
             }
         });
 
         holder.btnReject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println(request.getUserName());
                 groupsDatabaseUtil.removeRequested(GroupID, request.getUserName());
-                holder.btnAccept.setVisibility(View.INVISIBLE);
-                holder.btnReject.setVisibility(View.INVISIBLE);
+
+                holder.btnAccept.setVisibility(View.GONE);
+                holder.btnReject.setVisibility(View.GONE);
                 holder.RequestMessage.setVisibility(View.VISIBLE);
-                holder.RequestMessage.setText("Request Rejected");
+                holder.RequestMessage.setText("Request Rejected ❌");
             }
         });
+
     }
 
     @Override
@@ -98,7 +100,7 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
             UserImage = itemView.findViewById(R.id.imgLikeProfile);
             btnAccept = itemView.findViewById(R.id.btnRequestAccept);
             btnReject = itemView.findViewById(R.id.btnRequestReject);
-//            RequestMessage = itemView.findViewById(R.id.txtRequestMessage);
+            RequestMessage = itemView.findViewById(R.id.txtRequestMessage);
         }
     }
 }

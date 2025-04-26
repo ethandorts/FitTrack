@@ -5,7 +5,6 @@
     android:id="@+id/txt_ai_response"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center"
     android:background="@drawable/running_club_background"
     tools:context=".GroupsMenu">
 
@@ -26,51 +25,43 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="Groups"
+            android:text="My Running Groups"
             android:textColor="@color/white"
-            android:textSize="40sp"
-            app:layout_constraintBottom_toTopOf="@+id/txtBuildRunningCommunity"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textSize="30sp"
+            android:textStyle="bold" />
     </androidx.appcompat.widget.Toolbar>
+
+    <Button
+        android:id="@+id/btnSearchGroups"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Search Groups"
+        android:backgroundTint="@color/button_blue"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/GroupsMenuToolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <FrameLayout
         android:id="@+id/GroupsFrameLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnSearchGroups"
+        app:layout_constraintBottom_toTopOf="@id/btnCreateGroup"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnCreateGroup">
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    </FrameLayout>
-
-    <ImageButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnCreateGroup"
-        android:layout_width="50dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="9dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="7dp"
-        app:layout_constraintBottom_toTopOf="@+id/GroupsFrameLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btnSearchGroups"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/baseline_add_24" />
-
-    <ImageButton
-        android:id="@+id/btnSearchGroups"
-        android:layout_width="48dp"
-        android:layout_height="46dp"
-        android:layout_marginStart="303dp"
-        android:layout_marginEnd="4dp"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="@+id/btnCreateGroup"
-        app:layout_constraintEnd_toStartOf="@+id/btnCreateGroup"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btnCreateGroup"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/search" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="Create Group"
+        android:src="@drawable/baseline_add_24"
+        app:backgroundTint="@color/button_blue"
+        app:tint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

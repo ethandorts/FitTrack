@@ -376,6 +376,11 @@ public class GroupsDatabaseUtil {
     }
 
     public void retrieveUsersinGroup(String groupId, UsersinGroupsCallback callback) {
+        if (groupId == null || groupId.isEmpty()) {
+            Log.e("GroupsDatabaseUtil", "Group ID is null or empty! Cannot retrieve users.");
+            return;
+        }
+
         db.collection("Groups")
                 .document(groupId)
                 .get()
@@ -506,6 +511,37 @@ public class GroupsDatabaseUtil {
                 });
     }
 
+    public void checkIfRequestPending(String groupId, String userId, final RequestPendingCallback callback) {
+        db.collection("Groups")
+                .document(groupId)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            ArrayList<String> joinRequests = (ArrayList<String>) documentSnapshot.get("JoinRequests");
+                            if (joinRequests != null && joinRequests.contains(userId)) {
+                                callback.onCallback(true);
+                            } else {
+                                callback.onCallback(false);
+                            }
+                        } else {
+                            callback.onCallback(false);
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("GroupUtil", "Failed to check JoinRequests: " + e.getMessage(), e);
+                        callback.onCallback(false);
+                    }
+                });
+    }
+
+
+
+
     public void retrieveGroupProfileImage(String groupPath, GroupPictureCallback callback) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference("group-profile-images/" + groupPath);
@@ -569,5 +605,9 @@ public class GroupsDatabaseUtil {
 
     public interface GroupPictureCallback {
         void onCallback(Uri PicturePath);
+    }
+
+    public interface RequestPendingCallback {
+        void onCallback(boolean isPending);
     }
 }

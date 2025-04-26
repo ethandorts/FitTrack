@@ -95,7 +95,7 @@ public class GraphFragment extends Fragment {
                             .collection("Users")
                             .document(uid)
                             .collection("Statistics")
-                            .document(isWeek ? "lastWeek" : "lastMonth");
+                            .document(isWeek ? ActivityType + "_lastWeek" : ActivityType + "_lastMonth");
                     statTasks.add(docRef.get());
                 }
 
@@ -113,9 +113,8 @@ public class GraphFragment extends Fragment {
                                     if (freq == null) freq = 0.0;
                                     final double finalFreq = freq;
 
-                                    final TaskCompletionSource<DataEntry> tcs = new TaskCompletionSource<>();
+                                    TaskCompletionSource<DataEntry> tcs = new TaskCompletionSource<>();
                                     chartTasks.add(tcs.getTask());
-
 
                                     userUtil.retrieveChatName(uid, new FirebaseDatabaseHelper.ChatUserCallback() {
                                         @Override
@@ -130,6 +129,7 @@ public class GraphFragment extends Fragment {
                                             @Override
                                             public void onSuccess(List<Object> entries) {
                                                 List<DataEntry> dataEntries = (List<DataEntry>)(List<?>) entries;
+                                                System.out.println(dataEntries +  " - Data Entries");
                                                 loadColumnChart(dataEntries);
                                             }
                                         })
@@ -167,7 +167,7 @@ public class GraphFragment extends Fragment {
                             .collection("Users")
                             .document(uid)
                             .collection("Statistics")
-                            .document(isWeek ? "lastWeek" : "lastMonth");
+                            .document(isWeek ? ActivityType + "_lastWeek" : ActivityType + "_lastMonth");
                     statTasks.add(docRef.get());
                 }
 
@@ -175,7 +175,6 @@ public class GraphFragment extends Fragment {
                         .addOnSuccessListener(new OnSuccessListener<List<Object>>() {
                             @Override
                             public void onSuccess(List<Object> statsResults) {
-                                // 4) Build name+distance Tasks
                                 List<Task<DataEntry>> chartTasks = new ArrayList<Task<DataEntry>>();
 
                                 for (int i = 0; i < statsResults.size(); i++) {
@@ -184,11 +183,10 @@ public class GraphFragment extends Fragment {
                                             ? snap.getDouble("Distance")
                                             : 0.0;
 
-                                    // Wrap the name lookup in a TaskCompletionSource
-                                    final TaskCompletionSource<DataEntry> tcs = new TaskCompletionSource<>();
+
+                                    TaskCompletionSource<DataEntry> tcs = new TaskCompletionSource<>();
                                     chartTasks.add(tcs.getTask());
 
-                                    // Resolve display name, then complete the Task
                                     userUtil.retrieveChatName(
                                             userIds.get(i),
                                             new FirebaseDatabaseHelper.ChatUserCallback() {
@@ -232,24 +230,21 @@ public class GraphFragment extends Fragment {
             return;
         }
 
-        // 1) Get group members
         groupsUtil.retrieveUsersinGroup(GroupID, new GroupsDatabaseUtil.UsersinGroupsCallback() {
             @Override
             public void onCallback(ArrayList<String> runners) {
                 final List<String> userIds = new ArrayList<>(runners);
                 List<Task<DocumentSnapshot>> statTasks = new ArrayList<>();
 
-                // 2) Create stat fetch tasks
                 for (String uid : userIds) {
                     DocumentReference docRef = db
                             .collection("Users")
                             .document(uid)
                             .collection("Statistics")
-                            .document(isWeek ? "lastWeek" : "lastMonth");
+                            .document(isWeek ? ActivityType + "_lastWeek" : ActivityType + "_lastMonth");
                     statTasks.add(docRef.get());
                 }
 
-                // 3) Wait for all stats to load
                 Tasks.whenAllSuccess(statTasks)
                         .addOnSuccessListener(new OnSuccessListener<List<Object>>() {
                             @Override
@@ -269,39 +264,59 @@ public class GraphFragment extends Fragment {
                                         fieldKey = "10K";
                                     }
 
-                                    Object raw = snap.get(fieldKey);
-                                    final double fastest;
-                                    if (raw instanceof Number) {
-                                        fastest = ((Number) raw).doubleValue();
-                                    } else if (raw instanceof String) {
-                                        try {
-                                            fastest = Double.parseDouble((String) raw);
-                                        } catch (NumberFormatException e) {
-                                            Log.w("GraphFragment", "Invalid string value for " + fieldKey + ": " + raw);
-                                            continue;
+                                    Double fastest = null;
+                                    try {
+                                        Object raw = snap.get(fieldKey);
+                                        if (raw != null) {
+                                            if (raw instanceof Number) {
+                                                fastest = ((Number) raw).doubleValue();
+                                            } else if (raw instanceof String) {
+                                                fastest = parseTimeStringToSeconds((String) raw);
+                                            }
                                         }
-                                    } else {
-                                        Log.w("GraphFragment", "Missing or invalid " + fieldKey + " for user " + uid);
-                                        continue;
+                                    } catch (Exception e) {
+                                        Log.w("GraphFragment", "Error parsing time for " + fieldKey, e);
                                     }
 
-                                    final TaskCompletionSource<DataEntry> tcs = new TaskCompletionSource<>();
+                                    if (fastest == null) {
+                                        fastest = Double.MAX_VALUE;
+                                    }
+
+                                    final double finalFastest = fastest;
+                                    TaskCompletionSource<DataEntry> tcs = new TaskCompletionSource<>();
                                     chartTasks.add(tcs.getTask());
 
                                     userUtil.retrieveChatName(uid, new FirebaseDatabaseHelper.ChatUserCallback() {
                                         @Override
                                         public void onCallback(String chatName) {
-                                            tcs.setResult(new ValueDataEntry(chatName, fastest));
+                                            tcs.setResult(new ValueDataEntry(chatName, finalFastest));
                                         }
                                     });
                                 }
 
-                                // 4) Wait until all chart entry tasks complete
                                 Tasks.whenAllSuccess(chartTasks)
                                         .addOnSuccessListener(new OnSuccessListener<List<Object>>() {
                                             @Override
                                             public void onSuccess(List<Object> chartResults) {
-                                                List<DataEntry> entries = (List<DataEntry>) (List<?>) chartResults;
+                                                for(Object chart : chartResults) {
+                                                    System.out.println(" Chart Value : " + chart);
+                                                }
+                                                List<DataEntry> entries = new ArrayList<>();
+                                                for (Object obj : chartResults) {
+                                                    if (obj instanceof DataEntry) {
+                                                        DataEntry entry = (DataEntry) obj;
+                                                        double value = parseDoubleSafe(entry.getValue("value"));
+                                                        System.out.println(value + " Chart Standing");
+                                                        if (value < Double.MAX_VALUE) {
+                                                            entries.add(entry);
+                                                        }
+                                                    }
+                                                }
+                                                for (DataEntry entry : entries) {
+                                                    double value = parseDoubleSafe(entry.getValue("value"));
+                                                    System.out.println(", Value: " + value);
+                                                }
+
                                                 loadColumnChart(entries);
                                             }
                                         })
@@ -322,9 +337,6 @@ public class GraphFragment extends Fragment {
             }
         });
     }
-
-
-
 
     private void loadColumnChart(List<DataEntry> distanceTotals) {
         View view = getView();
@@ -366,7 +378,7 @@ public class GraphFragment extends Fragment {
             tooltipFormat = "";
         } else {
             chartTitle = "Total Distance Ran by Users";
-            yAxisTitle = "Distance (km)";
+            yAxisTitle = "Distance (KM)";
             tooltipFormat = "{%Value}{groupsSeparator: } km";
         }
 
@@ -423,7 +435,6 @@ public class GraphFragment extends Fragment {
             cartesian.yAxis(0).labels().format("function() { return (this.value / 1000).toFixed(2) + ' km'; }");
         }
 
-        // General chart styling
         cartesian.animation(true);
         cartesian.title(chartTitle);
         cartesian.yScale().minimum(0d);
@@ -456,5 +467,22 @@ public class GraphFragment extends Fragment {
         return 0;
     }
 
-
+    private double parseTimeStringToSeconds(String timeString) {
+        try {
+            String[] parts = timeString.split(":");
+            if (parts.length == 2) {
+                int minutes = Integer.parseInt(parts[0]);
+                int seconds = Integer.parseInt(parts[1]);
+                return minutes * 60 + seconds;
+            } else if (parts.length == 3) {
+                int hours = Integer.parseInt(parts[0]);
+                int minutes = Integer.parseInt(parts[1]);
+                int seconds = Integer.parseInt(parts[2]);
+                return hours * 3600 + minutes * 60 + seconds;
+            }
+        } catch (NumberFormatException e) {
+            Log.w("GraphFragment", "Invalid time format: " + timeString, e);
+        }
+        return Double.MAX_VALUE;
+    }
 }

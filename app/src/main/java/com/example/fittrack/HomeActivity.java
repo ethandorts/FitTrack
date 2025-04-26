@@ -75,6 +75,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.auth.User;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -82,6 +84,7 @@ import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -109,6 +112,7 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
     private boolean isEndofArray = false;
     private Handler handler = new Handler();
     private PersonalBestUtil util = new PersonalBestUtil();
+    private FirebaseFunctions function = FirebaseFunctions.getInstance();
 
 
     @Override
@@ -305,6 +309,23 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
 //            }
 //        });
 
+        Map<String, Object> data = new HashMap<>();
+        data.put("userId", UserID);
+
+        function.getHttpsCallable("recalculateStatsOnCall")
+                .call(data)
+                .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
+                    @Override
+                    public void onSuccess(HttpsCallableResult result) {
+                        Log.d("Firebase Starting Function", "Stats Updated on App Start " + result.getData());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.e("Firebase Starting Function", "Failed to invoke function");
+                    }
+                });
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {

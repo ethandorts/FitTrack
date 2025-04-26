@@ -161,8 +161,7 @@ public class SaveActivityDialog extends DialogFragment {
                                     build();
                             WorkManager workManager = WorkManager.getInstance(context);
                             workManager
-                                    .beginWith(statsRequest)
-                                    .then(checkGoalsRequest)
+                                    .beginWith(checkGoalsRequest)
                                     .enqueue();
 
                             if (listener != null) {
