@@ -380,18 +380,36 @@ public class GoalProgressReportActivity extends AppCompatActivity {
         });
     }
 
-    public void GetFitnessAdvice(String fitnessLevel, String goalDescription, String endDate,  ArrayList<ActivityModel> activitiesInfo) {
+    public void GetFitnessAdvice(String fitnessLevel, String goalDescription, String endDate, ArrayList<ActivityModel> activitiesInfo) {
         aiProgressBar.setVisibility(View.VISIBLE);
         txtAIAdvice.setText(" ");
         JSONObject body = new JSONObject();
         JSONArray messagesArray = new JSONArray();
 
-                String question = "You are an AI Fitness Coach. Based on the following information I have provided of activities I have completed: \n" +
-                activitiesInfo.toString() +
-                "My fitness level type is: " + fitnessLevel +
-                ". Please suggest ways in which I can achieve my fitness goal which is " +
-                goalDescription + ", before the date of " + endDate +
-                ".";
+        StringBuilder activitiesDetails = new StringBuilder();
+        for(ActivityModel activity : activitiesInfo) {
+            activitiesDetails.append("Activity: ").append(activity.getType())
+                    .append(", Distance: ").append(activity.getDistance()).append("metres")
+                    .append(", Duration: ").append(activity.getTime()).append("seconds")
+                    .append(", Date: ").append(activity.getDate())
+                    .append(", Splits: ").append(activity.getSplits()).append("in milliseconds")
+                    .append(", Average Pace: ").append(activity.getPace()).append(" /km")
+                    .append("\n");
+        }
+
+        String question = "You are an expert AI Fitness Coach. Based on the following detailed activity history:\n\n" +
+                activitiesDetails.toString() +
+                "\n\nMy current fitness level is: " + fitnessLevel + "." +
+                "\nMy fitness goal is: " + goalDescription + ", which I aim to achieve by: " + endDate + "." +
+                "\n\nPlease perform the following tasks:\n" +
+                "1. Analyze each of my completed activities individually, identifying strengths and weaknesses for each activity.\n" +
+                "2. Summarize overall trends and patterns in my training (e.g., consistency, pacing, volume).\n" +
+                "3. Identify specific areas I need to improve based on my goal and my current performance.\n" +
+                "4. Recommend targeted training sessions I should focus on (e.g., endurance runs, speed intervals, recovery days).\n" +
+                "5. Provide a detailed, realistic weekly training plan for me, from today until my goal deadline, based on my history and fitness level.\n" +
+                "6. Ensure advice is specific, actionable, and personalized based on my previous performance data.\n\n" +
+                "Be highly detailed, structured, critical but encouraging, and prioritize practical, realistic improvements.";
+
 
 
 //        String question = "You are an AI Fitness Coach. Based on the following information I have provided of activities I have completed: \n" +

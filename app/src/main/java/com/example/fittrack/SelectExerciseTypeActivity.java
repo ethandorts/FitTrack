@@ -24,7 +24,6 @@ public class SelectExerciseTypeActivity extends AppCompatActivity {
         exerciseTypes.add(new ExerciseTypeModel("Running", R.drawable.running));
         exerciseTypes.add(new ExerciseTypeModel("Walking", R.drawable.walking_icon));
         exerciseTypes.add(new ExerciseTypeModel("Cycling", R.drawable.cycling_icon));
-        exerciseTypes.add(new ExerciseTypeModel("Gym Workout", R.drawable.gym_icon));
 
 
         RecyclerView exerciseTypesRecycler = findViewById(R.id.recyclerViewExerciseType);

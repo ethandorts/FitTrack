@@ -18,7 +18,7 @@ public class ViewAttendeesActivity extends AppCompatActivity {
     private String GroupID;
     private String MeetupID;
     private RecyclerView recyclerAttendees;
-    private LikesRecyclerAdapter adapter;
+    private AttendeesRecyclerViewAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +42,9 @@ public class ViewAttendeesActivity extends AppCompatActivity {
     private void loadAttendees() {
         groupsUtil.getMeetupAccepted(GroupID, MeetupID, new GroupsDatabaseUtil.AcceptedCallback() {
             @Override
-            public void onCallback(List<LikeModel> accepted) {
+            public void onCallback(List<AttendeeModel> accepted) {
                 System.out.println(accepted.size());
-                adapter = new LikesRecyclerAdapter(ViewAttendeesActivity.this, new ArrayList<>(accepted));
+                adapter = new AttendeesRecyclerViewAdapter(ViewAttendeesActivity.this, new ArrayList<>(accepted));
                 recyclerAttendees.setAdapter(adapter);
             }
         });

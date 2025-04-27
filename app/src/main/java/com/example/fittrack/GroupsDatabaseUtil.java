@@ -85,12 +85,17 @@ public class GroupsDatabaseUtil {
 
     public void createNewMeetup(String GroupID, String UserID, String title, Timestamp date, String location, String description) {
         CollectionReference groupReference = db.collection("Groups").document(GroupID).collection("Meetups");
+
+        ArrayList<String> acceptedUsers = new ArrayList<>();
+        acceptedUsers.add(UserID);
+
         Map<String, Object> meetupFields = new HashMap<>();
         meetupFields.put("Title", title);
         meetupFields.put("User", UserID);
         meetupFields.put("Date", date);
         meetupFields.put("Location", location);
         meetupFields.put("Description", description);
+        meetupFields.put("Accepted", acceptedUsers);
         meetupFields.put("MeetupID", " ");
 
         groupReference.add(meetupFields).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -154,11 +159,11 @@ public class GroupsDatabaseUtil {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 Map<String, Object> data = documentSnapshot.getData();
                 List<String> accepted = (List<String>) data.get("Accepted");
-                List<LikeModel> people = new ArrayList<>();
+                List<AttendeeModel> people = new ArrayList<>();
 
                 for(String accept : accepted) {
-                    LikeModel likeModel = new LikeModel(accept, 0, null);
-                    people.add(likeModel);
+                    AttendeeModel attendee = new AttendeeModel(accept);
+                    people.add(attendee);
                 }
                 System.out.println("Meetup Count " + people.size());
                 callback.onCallback(people);
@@ -596,7 +601,7 @@ public class GroupsDatabaseUtil {
     }
 
     public interface AcceptedCallback {
-        void onCallback(List<LikeModel> accepted);
+        void onCallback(List<AttendeeModel> accepted);
     }
 
     public interface MeetupCallback {

@@ -77,6 +77,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.auth.User;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -358,11 +359,48 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
         addFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, Head2HeadActivity.class);
+                Intent intent = new Intent(HomeActivity.this, CreateManualActivity.class);
                 intent.putExtra("UserID", UserID);
                 startActivity(intent);
             }
         });
+
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w("FCM Token", "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+
+                        String token = task.getResult();
+                        Log.d("FCM", "Current Token: " + token);
+
+                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        if (userId != null) {
+                            Map<String, Object> tokenMap = new HashMap<>();
+                            tokenMap.put("fcmToken", token);
+
+                            FirebaseFirestore.getInstance()
+                                    .collection("Users")
+                                    .document(userId)
+                                    .set(tokenMap, com.google.firebase.firestore.SetOptions.merge())
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+                                            Log.d("FCM", "Token saved successfully!");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.e("FCM", "Failed to save token", e);
+                                        }
+                                    });
+                        }
+                    }
+                });
 
     }
 
@@ -458,45 +496,6 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
                 startActivity(permissionsIntent);
             }
         }
-    }
-//    private void loadUserActivities() {
-//        if( isLoading || isEndofArray) {
-//            return;
-//        }
-//
-//        isLoading = true;
-//        DatabaseUtil.retrieveUserActivities(UserID, new FirebaseDatabaseHelper.FirestoreActivitiesCallback() {
-//            @Override
-//            public void onCallback(List<Map<String, Object>> data, DocumentSnapshot lastItemVisible) {
-//                for(Map<String, Object> activity : data) {
-//                    isLoading = false;
-//                    loadingActivities.setVisibility(View.GONE);
-//
-//                    if(data == null || data.isEmpty()) {
-//                        isEndofArray = true;
-//                        return;
-//                    }
-//                    ActivityModel activityInfo = new ActivityModel(
-//                            String.valueOf(activity.get("type")),
-//                            String.valueOf(activity.get("typeImage")),
-//                            (Timestamp) activity.get("date"),
-//                            String.valueOf(activity.get("distance")),
-//                            formatRunTime(Double.parseDouble(String.valueOf(activity.get("time")))),
-//                            String.valueOf(activity.get("pace")),
-//                            (String) UserName.getText(),
-//                            String.valueOf(activity.get("UserImage")),
-//                            (List<Object>) activity.get("activityCoordinates")
-//                    );
-//                        UserActivities.add(activityInfo);
-//                }
-//                lastVisible = lastItemVisible;
-//                System.out.println(UserActivities.size());
-//                activitiesAdapter.notifyDataSetChanged();
-//            }
-//        }, lastVisible);
-//    }
-
-    private void createSyncNotificationChannel() {
     }
 
     @Override

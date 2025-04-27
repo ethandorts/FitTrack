@@ -13,8 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.Timestamp;
@@ -23,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class GroupActivity extends AppCompatActivity {
     TextView txtGroupName;
@@ -49,9 +52,21 @@ public class GroupActivity extends AppCompatActivity {
         String activityType = intent.getStringExtra("ActivityType");
         int GroupSize = intent.getIntExtra("MembersValue", 0);
         String GroupShortDescription = intent.getStringExtra("GroupShortDescription");
-        System.out.println("Buzz Lightyear: " + GroupSize);
+        System.out.println(GroupSize);
         String GroupActivity = intent.getStringExtra("ActivityType");
         txtGroupName.setText(groupName);
+
+        FirebaseMessaging.getInstance().subscribeToTopic("group_" + GroupID)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("FCM", "Subscribed to group topic: group_" + GroupID);
+                        } else {
+                            Log.e("FCM", "Failed to subscribe to group topic: group_" + GroupID, task.getException());
+                        }
+                    }
+                });
 
         pager = findViewById(R.id.viewPager3);
         GroupActivitiesFragmentStateAdapter adapter = new GroupActivitiesFragmentStateAdapter(this);

@@ -61,7 +61,9 @@ public class ActivitySplitsFragment extends Fragment {
                             addInfo(row, longToTimeConversion(splits.get(i)));
                             String distance = String.format("%.2f", overDistance / 1000);
                             addInfo(row, distance);
-                            addInfo(row, longToTimeConversion(splits.get(i)));
+                            double partialDistanceMeters = overDistance;
+                            addInfo(row, calculateFinalSplitAveragePace(splits.get(i), partialDistanceMeters));
+
                             splitsTable.addView(row);
                         } else {
                             TableRow row = new TableRow(getContext());
@@ -69,7 +71,7 @@ public class ActivitySplitsFragment extends Fragment {
                             addInfo(row, longToTimeConversion(splits.get(i)));
                             String distance = String.format("%.2f", (float) (i + 1));
                             addInfo(row, distance);
-                            addInfo(row, longToTimeConversion(splits.get(i)));
+                            addInfo(row, longToTimeConversionRounded(splits.get(i)));
                             splitsTable.addView(row);
                         }
                     }
@@ -106,4 +108,29 @@ public class ActivitySplitsFragment extends Fragment {
             return String.format("%02d:%02d.%d", minutes, seconds, milliseconds / 100);
         }
     }
+
+    private String longToTimeConversionRounded(long longValue) {
+        longValue = (longValue + 500) / 1000;
+        long hours = longValue / 3600;
+        long minutes = (longValue % 3600) / 60;
+        long seconds = longValue % 60;
+
+        if (hours > 0) {
+            return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        } else {
+            return String.format("%02d:%02d", minutes, seconds);
+        }
+    }
+
+    private String calculateFinalSplitAveragePace(long timeMillis, double partialDistanceMeters) {
+        if (partialDistanceMeters <= 0) {
+            return "-";
+        }
+
+        double distanceKm = partialDistanceMeters / 1000.0;
+        long paceMillisPerKm = (long) (timeMillis / distanceKm);
+
+        return longToTimeConversionRounded(paceMillisPerKm);
+    }
+
 }
