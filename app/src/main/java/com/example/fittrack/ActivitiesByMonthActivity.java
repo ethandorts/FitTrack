@@ -48,7 +48,6 @@ public class ActivitiesByMonthActivity extends AppCompatActivity {
         if (adapter.getPosition(currentMonth) >= 0) {
             monthSpinner.setText(currentMonth, false);
 
-            // Manually trigger initial data load
             String[] parts = currentMonth.split(" ");
             if (parts.length == 2) {
                 int year = Integer.parseInt(parts[1]);
@@ -72,7 +71,7 @@ public class ActivitiesByMonthActivity extends AppCompatActivity {
         });
 
         recyclerMonthActivities.setLayoutManager(new LinearLayoutManager(this));
-        recyclerMonthActivities.setItemAnimator(null); // Disable animator to avoid layout conflicts
+        recyclerMonthActivities.setItemAnimator(null);
         recyclerMonthActivities.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
 

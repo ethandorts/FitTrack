@@ -1,8 +1,5 @@
 package com.example.fittrack;
 
-
-import android.net.Uri;
-
 public class AttendeeModel {
     private String attendee;
 

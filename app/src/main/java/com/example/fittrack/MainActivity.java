@@ -83,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        NotificationUtil.createSplitAchievementNotificationChannel(this);
+
         activityLocationsDao = ActivityLocationsDatabase.getActivityLocationsDatabase(this).activityLocationsDao();
         new Thread(new Runnable() {
             @Override
@@ -341,6 +343,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             long sumPreviousSplits = kmSplits.stream().mapToLong(Long::longValue).sum();
                             kmSplits.add(interpolatedEffectiveTime - (startTime - totalPausedTime + sumPreviousSplits));
                         }
+
+                        int currentKm = kmSplits.size();
+                        long latestSplitTimeMillis = kmSplits.get(kmSplits.size() - 1);
+                        String formattedSplitTime = formatNotificationTime(latestSplitTimeMillis);
+                        NotificationUtil.showSplitAchievementNotification(MainActivity.this, currentKm, formattedSplitTime);
                     }
 
                     if (isFinalSplit) {
@@ -399,6 +406,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             milestoneTarget += 1000;
         }
     }
+
+    private String formatNotificationTime(long millis) {
+        long totalSeconds = millis / 1000;
+        long minutes = totalSeconds / 60;
+        long seconds = totalSeconds % 60;
+        return String.format("%d:%02d", minutes, seconds);
+    }
+
 
     private void requestBatteryOptimizationExemption() {
         Intent intent = new Intent();

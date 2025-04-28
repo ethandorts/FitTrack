@@ -126,6 +126,13 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
         OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(ActivityCompletedChecker.class)
                 .build();
 
+        OneTimeWorkRequest goalsToComplete = new OneTimeWorkRequest.Builder(GoalsReminder.class)
+                .setInitialDelay(2, TimeUnit.MINUTES)
+                .build();
+
+        PeriodicWorkRequest goalsToCompletePeriodic = new PeriodicWorkRequest.Builder(GoalsReminder.class, 2, TimeUnit.HOURS)
+                .build();
+
         PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest.Builder(
                 ActivityCompletedChecker.class, 3, TimeUnit.HOURS).build();
 
@@ -159,6 +166,9 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
         logFoodNotifications(10, 00, "Breakfast");
         logFoodNotifications(15, 10, "Lunch");
         logFoodNotifications(20, 00, "Dinner");
+
+        WorkManager goalsWork = WorkManager.getInstance(getApplicationContext());
+        goalsWork.enqueue(goalsToComplete);
 
         activityLocationsDao = ActivityLocationsDatabase.getActivityLocationsDatabase(this).activityLocationsDao();
 
@@ -229,6 +239,15 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
                     Log.e("No profile picture found", "No profile picture found.");
                     profileImage.setImageResource(R.drawable.profile);
                 }
+            }
+        });
+
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, ProfileOverview.class);
+                intent.putExtra("UserID", UserID);
+                startActivity(intent);
             }
         });
 

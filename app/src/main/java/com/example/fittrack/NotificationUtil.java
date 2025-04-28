@@ -22,6 +22,9 @@ public class NotificationUtil {
     private static final String DISTANCE_GOAL_SUCCESSFUL_ID ="distance_goal_successful_channel";
     private static final String TIME_GOAL_SUCCESSFUL_ID ="time_goal_successful_channel";
     private static final String BADGE_ACHIEVED_ID = "badge_achieved_channel";
+    private static final String SPLIT_ACHIEVEMENT_ID = "split_achievement_channel";
+    private static final String GOAL_REMINDER_ID = "split_achievement_channel";
+
 
 
     public static void createNotificationChannel(Context context, String channelID, String name, String channelDescription, int importanceLevel) {
@@ -160,4 +163,39 @@ public class NotificationUtil {
 
         showNotification(context, BADGE_ACHIEVED_ID, title, message, NotificationCompat.PRIORITY_HIGH, null);
     }
+
+    public static void createSplitAchievementNotificationChannel(Context context) {
+        createNotificationChannel(
+                context,
+                SPLIT_ACHIEVEMENT_ID,
+                "Split Achievements",
+                "Notifications to be displayed for each split completed in an activity",
+                NotificationManager.IMPORTANCE_HIGH
+        );
+    }
+
+    public static void showSplitAchievementNotification(Context context, int splitKm, String splitTime) {
+        String title = "🏃 Split Completed!";
+        String message = "KM " + splitKm + " was completed in " + splitTime;
+        showNotification(context, SPLIT_ACHIEVEMENT_ID, title, message, NotificationCompat.PRIORITY_HIGH, null);
+    }
+
+    public static void createGoalReminderNotificationChannel(Context context) {
+        createNotificationChannel(
+                context,
+                GOAL_REMINDER_ID,
+                "Fitness Goal Reminders",
+                "Notifications for reminding users of fitness goals",
+                NotificationManager.IMPORTANCE_HIGH
+        );
+    }
+
+    public static void showGoalReminderNotification(Context context, String goalDescription) {
+        String title = "🏆 Stay Strong!";
+        String modifiedGoal = goalDescription.substring(0, 1).toLowerCase() + goalDescription.substring(1);
+        String message = "You're so close! Keep going to " + modifiedGoal + ". You've got this!";
+        showNotification(context, SPLIT_ACHIEVEMENT_ID, title, message, NotificationCompat.PRIORITY_HIGH, null);
+    }
+
+
 }

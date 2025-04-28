@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/button_blue"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/sportSelectorLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <AutoCompleteTextView
+                android:id="@+id/activitySelector"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select Activity"
+                android:padding="12dp"
+                android:inputType="none"
+                android:textColor="@color/black"
+                android:background="@drawable/rounded_table_bg"
+                android:textColorHint="@android:color/darker_gray" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <RadioGroup
+            android:id="@+id/timeRangeSelector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="16dp">
+
+            <RadioButton
+                android:id="@+id/radioThisWeek"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="This Week"
+                android:textColor="@android:color/white"
+                android:buttonTint="@color/white"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/radioThisMonth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="This Month"
+                android:textColor="@android:color/white"
+                android:buttonTint="@color/white"
+                android:layout_marginStart="24dp" />
+        </RadioGroup>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/statsCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="#1E1E1E"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="16dp">
+
+                    <ImageView
+                        android:id="@+id/iconActivityFrequency"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/activity_icon" />
+
+                    <TextView
+                        android:id="@+id/labelActivityFrequency"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Activity Frequency"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:paddingStart="12dp" />
+
+                    <TextView
+                        android:id="@+id/valueActivityFrequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="16dp">
+
+                    <ImageView
+                        android:id="@+id/iconDistance"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/distance_icon" />
+
+                    <TextView
+                        android:id="@+id/labelDistance"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Total Distance"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:paddingStart="12dp" />
+
+                    <TextView
+                        android:id="@+id/valueDistance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="16dp">
+
+                    <ImageView
+                        android:id="@+id/icon1k"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/baseline_1k_24" />
+
+                    <TextView
+                        android:id="@+id/label1k"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Fastest 1K"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:paddingStart="12dp" />
+
+                    <TextView
+                        android:id="@+id/value1k"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="16dp">
+
+                    <ImageView
+                        android:id="@+id/icon5k"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/baseline_5k_24" />
+
+                    <TextView
+                        android:id="@+id/label5k"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Fastest 5K"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:paddingStart="12dp" />
+
+                    <TextView
+                        android:id="@+id/value5k"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="16dp">
+
+                    <ImageView
+                        android:id="@+id/icon10k"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/baseline_10k_24" />
+
+                    <TextView
+                        android:id="@+id/label10k"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Fastest 10K"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:paddingStart="12dp" />
+
+                    <TextView
+                        android:id="@+id/value10k"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Distance Chart -->
+        <!--
+        <com.anychart.AnyChartView
+            android:id="@+id/distanceChart"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginTop="16dp" />
+        -->
+
+        <!-- Frequency Chart -->
+        <!--
+        <com.anychart.AnyChartView
+            android:id="@+id/frequencyChart"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginTop="16dp" />
+        -->
+
+
+    </LinearLayout>
+
+</ScrollView>

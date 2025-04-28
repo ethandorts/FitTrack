@@ -94,7 +94,7 @@ public class MembersRecyclerViewAdapter extends RecyclerView.Adapter<MembersRecy
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, ActivitiesByMonthActivity.class);
+                Intent intent = new Intent(context, ProfileOverview.class);
                 intent.putExtra("UserID", member.getUserName());
                 context.startActivity(intent);
             }
