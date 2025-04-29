@@ -6,8 +6,9 @@
         android:icon="@drawable/baseline_home_24"
         android:id="@+id/home_bottom"/>
     <item android:title="Record"
-        android:icon="@drawable/baseline_fiber_manual_record_24"
-        android:id="@+id/record_bottom"/>
+        android:icon="@drawable/running"
+        android:id="@+id/record_bottom"
+        />
     <item
         android:id="@+id/group_bottom"
         android:icon="@drawable/baseline_groups_24"

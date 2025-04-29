@@ -7,185 +7,153 @@
     android:layout_height="match_parent"
     tools:context=".CreateRunningGroupActivity">
 
-    <FrameLayout
-        android:id="@+id/frameLayout2"
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/GroupsMenuToolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="56dp">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/button_blue"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="Create Fitness Group"
+        app:titleCentered="true"
+        app:titleTextColor="@android:color/white" />
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/GroupsMenuToolbar">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="649dp"
-            android:background="#FFFFFF">
+            android:layout_height="wrap_content"
+            android:background="@android:color/white">
 
-            <EditText
-                android:id="@+id/editGroupMotto"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/groupNameTextInputLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="16dp"
-                android:background="#FFFFFF"
-                android:hint="Enter Group Motto..."
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/txtMotto" />
-
-            <EditText
-                android:id="@+id/editGroupDetailedDescription"
-                android:layout_width="0dp"
-                android:layout_height="150dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:background="#FFFFFF"
-                android:gravity="start|top"
-                android:hint="Enter Detailed Description..."
-                android:inputType="textMultiLine"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/txtCreateGroupDescription" />
-
-            <TextView
-                android:id="@+id/txtMotto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="Group Motto"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/editGroupLocation" />
-
-            <EditText
-                android:id="@+id/editGroupLocation"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:background="#FFFFFF"
-                android:hint="Enter Location..."
-                android:inputType="text"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/txtGroupLocation" />
-
-            <TextView
-                android:id="@+id/txtCreateGroupDescription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
-                android:text="Detailed Description"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/editGroupMotto" />
-
-            <Spinner
-                android:id="@+id/editGroupFitnessActivity"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
                 android:layout_marginEnd="16dp"
-                android:background="#FFFFFF"
-                android:focusable="false"
-                android:hint="Select Fitness Activity..."
-                android:inputType="none"
-                android:spinnerMode="dropdown"
+                android:hint="Group Name"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/txtTargetDistanceTimeForm" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/txtGroupLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="12dp"
-                android:text="Location"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/editGroupFitnessActivity" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editGroupName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/txtTargetDistanceTimeForm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="20dp"
                 android:text="Fitness Activity"
-                android:textSize="16sp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/editGroupName" />
+                app:layout_constraintTop_toBottomOf="@id/groupNameTextInputLayout" />
 
-            <EditText
-                android:id="@+id/editGroupName"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/fitnessActivityTextInputLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="12dp"
                 android:layout_marginEnd="16dp"
-                android:background="#FFFFFF"
-                android:hint="Enter Group Name..."
+                android:hint="Select Fitness Activity"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/txtTargetDistanceForm" />
+                app:layout_constraintTop_toBottomOf="@id/txtTargetDistanceTimeForm">
 
-            <TextView
-                android:id="@+id/txtTargetDistanceForm"
-                android:layout_width="wrap_content"
+                <AutoCompleteTextView
+                    android:id="@+id/editGroupFitnessActivity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/locationTextInputLayout"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:text="Group Name"
-                android:textSize="16sp"
-                android:textStyle="bold"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="16dp"
+                android:hint="Location"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/fitnessActivityTextInputLayout">
 
-            <Button
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editGroupLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/mottoTextInputLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="16dp"
+                android:hint="Group Motto"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/locationTextInputLayout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editGroupMotto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/descriptionTextInputLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mottoTextInputLayout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editGroupDetailedDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:gravity="start|top"
+                    android:hint="Detailed Description"
+                    android:inputType="textMultiLine" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCreateFitnessGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
                 android:text="Create Fitness Group"
+                android:backgroundTint="@color/button_blue"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.497"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/editGroupDetailedDescription" />
+                app:layout_constraintTop_toBottomOf="@id/descriptionTextInputLayout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </FrameLayout>
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/GroupsMenuToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/button_blue"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme">
-
-        <TextView
-            android:id="@+id/txtGroupOverview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="Create Fitness Group"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            tools:layout_editor_absoluteX="122dp"
-            tools:layout_editor_absoluteY="16dp" />
-    </androidx.appcompat.widget.Toolbar>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

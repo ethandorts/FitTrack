@@ -20,8 +20,15 @@
             android:text="Average Pace Graphs"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:paddingBottom="16dp"/>
+            android:paddingBottom="16dp" />
 
+        <ProgressBar
+            android:id="@+id/graphProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="visible"
+            android:layout_marginBottom="16dp"/>
 
         <TextView
             android:id="@+id/txtNoGraphs"
@@ -34,35 +41,38 @@
             android:gravity="center"
             android:visibility="gone"
             android:padding="16dp"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp" />
 
         <com.anychart.AnyChartView
             android:id="@+id/paceBarGraph"
             android:layout_width="match_parent"
             android:layout_height="333dp"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp" />
 
         <com.anychart.AnyChartView
             android:id="@+id/paceLineGraph"
             android:layout_width="match_parent"
             android:layout_height="261dp"
-            android:layout_marginBottom="32dp"/>
+            android:layout_marginBottom="32dp" />
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:gravity="center"
+            android:paddingBottom="16dp"
             android:text="Elevation"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:paddingBottom="16dp"
-            android:layout_marginTop="16dp"/>
+            android:visibility="invisible" />
 
         <com.anychart.AnyChartView
             android:id="@+id/elevationChart"
             android:layout_width="match_parent"
             android:layout_height="213dp"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp"
+            android:visibility="invisible" />
+
     </LinearLayout>
 </ScrollView>

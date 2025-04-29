@@ -96,7 +96,13 @@ public class PieChartNutrients extends Fragment {
                                 txtCalorieGoal.setText(String.valueOf(dailyCalorieGoal) + " calories");
                                 txtDailyCaloriesConsumed.setText(String.format("%.2f calories", caloriesConsumed));
                                 txtCaloriesBurned.setText(String.valueOf(caloriesBurned) + " calories");
-                                txtCaloriesRemaining.setText(String.format("%.2f calories", (dailyCalorieGoal - caloriesConsumed)));
+                                double caloriesRemaining = dailyCalorieGoal - caloriesConsumed + caloriesBurned;
+
+                                if (caloriesRemaining >= 0) {
+                                    txtCaloriesRemaining.setText(String.format("%.2f", caloriesRemaining));
+                                } else {
+                                    txtCaloriesRemaining.setText(String.format("Over consumed by %.2f calories", Math.abs(caloriesRemaining)));
+                                }
                             }
                         });
                     }
@@ -130,7 +136,13 @@ public class PieChartNutrients extends Fragment {
             public void onCallback(HashMap<String, Double> caloriesMap) {
                 if (caloriesMap == null || caloriesMap.isEmpty()) {
                     Log.e("PieChartNutrientsChart", "No food data found for " + selectedDate);
-                    txtNoChartData.setVisibility(View.VISIBLE);
+                    if (isAdded() && getView() != null) {
+                        PieChart updatedChartView = getView().findViewById(R.id.paceGraph);
+                        TextView noChartDataTextView = getView().findViewById(R.id.txtNoChartData);
+
+                        updatedChartView.setVisibility(View.GONE);
+                        noChartDataTextView.setVisibility(View.VISIBLE);
+                    }
                     return;
                 }
 

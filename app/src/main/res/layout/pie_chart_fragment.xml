@@ -4,7 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/nutrition_image"
-    android:padding="16dp">
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="16dp"
+    android:paddingTop="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,7 +15,8 @@
         android:orientation="vertical"
         android:background="@drawable/stats_table"
         android:elevation="4dp"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:layout_marginTop="8dp">
 
         <TextView
             android:id="@+id/txtChartTitle"
@@ -95,7 +99,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="0"
                     android:textAlignment="center"
                     android:textStyle="bold"
                     android:textSize="16sp" />
@@ -115,7 +118,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="0"
                     android:textAlignment="center"
                     android:textStyle="bold"
                     android:textSize="16sp" />
@@ -135,7 +137,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="0"
                     android:textAlignment="center"
                     android:textStyle="bold"
                     android:textSize="16sp" />
@@ -155,7 +156,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="0"
                     android:textAlignment="center"
                     android:textStyle="bold"
                     android:textSize="16sp" />

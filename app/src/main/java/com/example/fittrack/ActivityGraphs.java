@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,6 +26,7 @@ import java.util.List;
 
 public class ActivityGraphs extends Fragment {
     private String ActivityID;
+    private ProgressBar progressBar;
     private GamificationUtil gamificationUtil = new GamificationUtil();
     public ActivityGraphs(String ActivityID) {
         this.ActivityID = ActivityID;
@@ -40,6 +42,7 @@ public class ActivityGraphs extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         AnyChartView paceGraph = view.findViewById(R.id.paceLineGraph);
+        progressBar = view.findViewById(R.id.graphProgressBar);
 
         if (paceGraph == null) {
             return;
@@ -56,7 +59,7 @@ public class ActivityGraphs extends Fragment {
                 }
 
                 if (!splits.isEmpty()) {
-                    splits.remove(splits.size() - 1);
+//                    splits.remove(splits.size() - 1);
                 } else {
                     view.findViewById(R.id.txtPaceGraphs).setVisibility(View.GONE);
                     view.findViewById(R.id.paceLineGraph).setVisibility(View.GONE);
@@ -75,6 +78,11 @@ public class ActivityGraphs extends Fragment {
                 cartesian.xAxis(0).title("Lap Number");
 
                 cartesian.tooltip()
+                        .format("function() {" +
+                                "var minutes = Math.floor(this.value / 60);" +
+                                "var seconds = Math.floor(this.value % 60);" +
+                                "return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;" +
+                                "}")
                         .positionMode(TooltipPositionMode.POINT)
                         .anchor(Anchor.RIGHT_TOP)
                         .offsetX(5d)
@@ -87,7 +95,6 @@ public class ActivityGraphs extends Fragment {
 
                 cartesian.data(lapTimeData);
                 cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
-                cartesian.tooltip(false);
 
 
                 Linear yAxis = cartesian.yAxis(0);
@@ -99,8 +106,6 @@ public class ActivityGraphs extends Fragment {
 
                 paceGraph.setChart(cartesian);
 
-                // New chart
-
                 APIlib.getInstance().setActiveAnyChartView(paceBarChart);
                 Cartesian paceBar = AnyChart.column();
                 paceBar.animation(true);
@@ -109,6 +114,11 @@ public class ActivityGraphs extends Fragment {
                 paceBar.xAxis(0).title("Lap Number");
 
                 paceBar.tooltip()
+                        .format("function() {" +
+                                "var minutes = Math.floor(this.value / 60);" +
+                                "var seconds = Math.floor(this.value % 60);" +
+                                "return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;" +
+                                "}")
                         .positionMode(TooltipPositionMode.POINT)
                         .anchor(Anchor.RIGHT_TOP)
                         .offsetX(5d)
@@ -121,7 +131,6 @@ public class ActivityGraphs extends Fragment {
 
                 paceBar.data(paceBarData);
                 paceBar.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
-                paceBar.tooltip(false);
 
                 Linear PaceyAxis = paceBar.yAxis(0);
                 PaceyAxis.labels().format("function() { " +
@@ -130,6 +139,7 @@ public class ActivityGraphs extends Fragment {
                         "return minutes + ':' + (seconds < 10 ? '0' : '') + seconds; " +
                         "}");
                 paceBarChart.setChart(paceBar);
+                progressBar.setVisibility(View.GONE);
             }
         });
 

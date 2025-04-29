@@ -102,7 +102,7 @@ public class DistanceGoalFragment extends Fragment {
                 String targetDistance = editTargetDistance.getText().toString();
                 String completionDate = editCompletionDate.getText().toString();
 
-                if(TextUtils.isEmpty(targetDistance)) {
+                if (TextUtils.isEmpty(targetDistance)) {
                     editTargetDistance.setError("Please enter a target distance!");
                     return;
                 }
@@ -110,11 +110,13 @@ public class DistanceGoalFragment extends Fragment {
                 double distanceValue;
                 try {
                     distanceValue = Double.parseDouble(targetDistance);
-                    if(distanceValue <= 0) {
+                    if (distanceValue <= 0) {
                         editTargetDistance.setError("Distance must be greater than 0!");
+                        return;
                     }
                 } catch (NumberFormatException e) {
                     editTargetDistance.setError("Please enter a valid number!");
+                    return;
                 }
 
                 if (TextUtils.isEmpty(completionDate)) {
@@ -122,33 +124,48 @@ public class DistanceGoalFragment extends Fragment {
                     return;
                 }
 
-                Date selectedDate;
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                SimpleDateFormat descriptionFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy", Locale.getDefault());
                 try {
-                    selectedDate = dateFormat.parse(completionDate);
-                    if (selectedDate == null || selectedDate.before(new Date())) {
+                    Date selectedDate = dateFormat.parse(completionDate);
+                    if (selectedDate == null) {
                         editCompletionDate.setError("Please select a valid date!");
                         editCompletionDate.requestFocus();
                         return;
                     }
-                } catch (ParseException e) {
-                    editCompletionDate.setError("Value was inputted in a invalid date format!");
-                    return;
-                }
 
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                SimpleDateFormat descriptionFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy", Locale.getDefault());
-                try {
-                    endDate = dateFormat.parse(completionDate);
+                    SimpleDateFormat noTimeFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                    Date todayWithoutTime = noTimeFormat.parse(noTimeFormat.format(new Date()));
+                    Date selectedWithoutTime = noTimeFormat.parse(noTimeFormat.format(selectedDate));
+
+                    if (selectedWithoutTime.before(todayWithoutTime)) {
+                        editCompletionDate.setError("Completion date cannot be in the past!");
+                        editCompletionDate.requestFocus();
+                        return;
+                    }
+
+                    endDate = selectedDate;
+
                 } catch (ParseException e) {
-                    throw new RuntimeException(e);
+                    editCompletionDate.setError("Value was inputted in an invalid date format!");
+                    return;
                 }
 
                 Timestamp formattedCompletionDate = new Timestamp(endDate);
                 String formattedEndDate = descriptionFormat.format(endDate);
-                goalsUtil.setDistanceGoal(currentUser, Timestamp.now(), formattedCompletionDate, Double.parseDouble(targetDistance) * 1000, "In Progress", 0,
-                        "Achieve a distance of " + Double.parseDouble(targetDistance)  + " KM by " + formattedEndDate, activitySelector.getText().toString().trim());
-                Toast.makeText(view.getContext(), "Distance Goal has been set successfully!", Toast.LENGTH_SHORT).show();
 
+                goalsUtil.setDistanceGoal(
+                        currentUser,
+                        Timestamp.now(),
+                        formattedCompletionDate,
+                        Double.parseDouble(targetDistance) * 1000,
+                        "In Progress",
+                        0,
+                        "Achieve a distance of " + Double.parseDouble(targetDistance) + " KM by " + formattedEndDate,
+                        activitySelector.getText().toString().trim()
+                );
+
+                Toast.makeText(view.getContext(), "Distance Goal has been set successfully!", Toast.LENGTH_SHORT).show();
                 editTargetDistance.setText("");
                 editCompletionDate.setText("");
 

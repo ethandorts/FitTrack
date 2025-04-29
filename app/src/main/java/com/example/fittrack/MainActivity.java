@@ -347,7 +347,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         int currentKm = kmSplits.size();
                         long latestSplitTimeMillis = kmSplits.get(kmSplits.size() - 1);
                         String formattedSplitTime = formatNotificationTime(latestSplitTimeMillis);
-                        NotificationUtil.showSplitAchievementNotification(MainActivity.this, currentKm, formattedSplitTime);
                     }
 
                     if (isFinalSplit) {

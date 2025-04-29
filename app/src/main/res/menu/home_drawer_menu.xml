@@ -1,0 +1,46 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_profile_details"
+        android:icon="@drawable/profile_edit"
+        android:title="Profile Details" />
+
+    <item
+        android:id="@+id/nav_goals"
+        android:icon="@drawable/goals_image"
+        android:title="My Fitness Goals" />
+
+    <item
+        android:id="@+id/nav_activities"
+        android:icon="@drawable/running"
+        android:title="My Fitness Activities" />
+
+    <item
+        android:id="@+id/nav_planner"
+        android:icon="@drawable/planner"
+        android:title="My Fitness Planner" />
+
+    <item
+        android:id="@+id/nav_ai_coach"
+        android:icon="@drawable/robot_ai"
+        android:title="AI Fitness Coach" />
+
+    <item
+        android:id="@+id/nav_badges"
+        android:icon="@drawable/badges"
+        android:title="My Fitness Badges" />
+
+    <item
+        android:id="@+id/nav_personal_bests"
+        android:icon="@drawable/trophy"
+        android:title="Personal Bests" />
+
+    <item
+        android:id="@+id/nav_nutrition"
+        android:icon="@drawable/nutrition"
+        android:title="Nutrition" />
+
+    <item
+        android:id="@+id/nav_logout"
+        android:title="Logout" />
+</menu>

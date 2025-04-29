@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.anychart.APIlib;
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
@@ -56,7 +57,7 @@ public class IndividualStatisticsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 //        distanceChart = view.findViewById(R.id.distanceChart);
-//        activityFrequencyChart = view.findViewById(R.id.frequencyChart);
+        activityFrequencyChart = view.findViewById(R.id.frequencyChart);
 
         activitySelector = view.findViewById(R.id.activitySelector);
         timeRangeSelector = view.findViewById(R.id.timeRangeSelector);
@@ -130,97 +131,73 @@ public class IndividualStatisticsFragment extends Fragment {
                             value5k.setText(fastest5k != null && fastest5k != -1 ? formatTime(fastest5k) : "--");
                             value10k.setText(fastest10k != null && fastest10k != -1 ? formatTime(fastest10k) : "--");
                         }
-//                        retrieveActivities(selectedActivity);
+                        retrieveActivities();
                     }
                 });
     }
 
-//    private void retrieveActivities(String activityType) {
-//        int checkedId = timeRangeSelector.getCheckedRadioButtonId();
-//        boolean isThisWeek = (checkedId == R.id.radioThisWeek);
-//
-//        java.util.Calendar calendar = java.util.Calendar.getInstance();
-//        java.util.Calendar now = java.util.Calendar.getInstance();
-//
-//        if (isThisWeek) {
-//            calendar.add(java.util.Calendar.DAY_OF_YEAR, -7);
-//        } else {
-//            calendar.add(java.util.Calendar.MONTH, -1);
-//        }
-//
-//        Timestamp startDate = new Timestamp(calendar.getTime());
-//        Timestamp endDate = new Timestamp(now.getTime());
-//
-//        db.collection("Activities")
-//                .whereEqualTo("UserID", UserID)
-//                .whereEqualTo("type", activityType)
-//                .whereGreaterThanOrEqualTo("date", startDate)
-//                .whereLessThanOrEqualTo("date", endDate)
-//                .get()
-//                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onSuccess(QuerySnapshot querySnapshot) {
-//                        Map<String, Integer> dateCountMap = new TreeMap<>();
-//                        Map<String, Double> dateDistanceMap = new TreeMap<>();
-//
-//                        for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-//                            Timestamp timestamp = document.getTimestamp("date");
-//                            String distanceStr = document.getString("distance");
-//                            Double distance = null;
-//
-//                            if (distanceStr != null) {
-//                                try {
-//                                    distance = Double.parseDouble(distanceStr);
-//                                } catch (NumberFormatException e) {
-//                                    distance = 0.0; // fallback if somehow badly formatted
-//                                }
-//                            }
-//
-//                            if (timestamp != null && distance != null) {
-//                                Date date = timestamp.toDate();
-//                                SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
-//                                String formattedDate = sdf.format(date);
-//
-//                                // Update frequency
-//                                int count = dateCountMap.containsKey(formattedDate) ? dateCountMap.get(formattedDate) : 0;
-//                                dateCountMap.put(formattedDate, count + 1);
-//
-//                                // Update distance (sum distance per day)
-//                                double currentDistance = dateDistanceMap.containsKey(formattedDate) ? dateDistanceMap.get(formattedDate) : 0;
-//                                dateDistanceMap.put(formattedDate, currentDistance + distance);
-//                            }
-//                        }
-//
-//
-//                        List<DataEntry> frequencyDataEntries = new ArrayList<>();
-//                        for (Map.Entry<String, Integer> entry : dateCountMap.entrySet()) {
-//                            frequencyDataEntries.add(new ValueDataEntry(entry.getKey(), entry.getValue()));
-//                        }
-//
-//                        Cartesian frequencyChart = AnyChart.line();
-//                        frequencyChart.title("Activity Frequency");
-//                        frequencyChart.xAxis(0).title("Date");
-//                        frequencyChart.yAxis(0).title("Activity Count");
-//                        frequencyChart.data(frequencyDataEntries);
-//                        activityFrequencyChart.setChart(frequencyChart);
-//
-//
-//                        List<DataEntry> distanceDataEntries = new ArrayList<>();
-//                        for (Map.Entry<String, Double> entry : dateDistanceMap.entrySet()) {
-//                            double distanceKm = entry.getValue() / 1000.0;
-//                            double roundedDistanceKm = Math.round(distanceKm * 100.0) / 100.0; // round to 2 decimal places
-//                            distanceDataEntries.add(new ValueDataEntry(entry.getKey(), roundedDistanceKm));
-//                        }
-//
-//                        Cartesian distanceChartGraph = AnyChart.line();
-//                        distanceChartGraph.title("Distance per Day");
-//                        distanceChartGraph.xAxis(0).title("Date");
-//                        distanceChartGraph.yAxis(0).title("Distance (KM)");
-//                        distanceChartGraph.data(distanceDataEntries);
-//                        distanceChart.setChart(distanceChartGraph);
-//                    }
-//                });
-//    }
+    private void retrieveActivities() {
+        int checkedId = timeRangeSelector.getCheckedRadioButtonId();
+        boolean isThisWeek = (checkedId == R.id.radioThisWeek);
+
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        java.util.Calendar now = java.util.Calendar.getInstance();
+
+        if (isThisWeek) {
+            calendar.add(java.util.Calendar.DAY_OF_YEAR, -7);
+        } else {
+            calendar.add(java.util.Calendar.MONTH, -1);
+        }
+
+        Timestamp startDate = new Timestamp(calendar.getTime());
+        Timestamp endDate = new Timestamp(now.getTime());
+
+        db.collection("Activities")
+                .whereEqualTo("UserID", UserID)
+                .whereGreaterThanOrEqualTo("date", startDate)
+                .whereLessThanOrEqualTo("date", endDate)
+                .orderBy("date", Query.Direction.ASCENDING)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot querySnapshot) {
+                        Map<String, Integer> dateCountMap = new TreeMap<>();
+
+                        java.util.Calendar current = (java.util.Calendar) calendar.clone();
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+                        while (!current.after(now)) {
+                            String day = sdf.format(current.getTime());
+                            dateCountMap.put(day, 0);
+                            current.add(java.util.Calendar.DATE, 1);
+                        }
+
+                        for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                            Timestamp timestamp = document.getTimestamp("date");
+                            if (timestamp != null) {
+                                Date date = timestamp.toDate();
+                                String formattedDate = sdf.format(date);
+
+                                int count = dateCountMap.getOrDefault(formattedDate, 0);
+                                dateCountMap.put(formattedDate, count + 1);
+                            }
+                        }
+
+                        List<DataEntry> frequencyDataEntries = new ArrayList<>();
+                        for (Map.Entry<String, Integer> entry : dateCountMap.entrySet()) {
+                            frequencyDataEntries.add(new ValueDataEntry(entry.getKey(), entry.getValue()));
+                        }
+
+                        Cartesian frequencyChart = AnyChart.line();
+                        frequencyChart.title("Activity Frequency");
+                        frequencyChart.xAxis(0).title("Date");
+                        frequencyChart.yAxis(0).title("Activity Count");
+                        frequencyChart.data(frequencyDataEntries);
+
+                        activityFrequencyChart.setChart(frequencyChart);
+                    }
+                });
+    }
 
     private String formatTime(long millis) {
         if (millis < 0) return "--";
