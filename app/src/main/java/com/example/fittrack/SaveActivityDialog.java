@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -146,7 +147,6 @@ public class SaveActivityDialog extends DialogFragment {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             saveActivity();
-                            NotificationUtil.showSavedActivityNotification(context);
 
                             Constraints networkConstraints = new Constraints.Builder()
                                     .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -228,27 +228,46 @@ public class SaveActivityDialog extends DialogFragment {
 //            });
 //        }
 
-        private void saveActivity() {
-            String ActivityID = DocumentIDGenerator.GenerateActivityID();
-            data.put("ActivityID", ActivityID);
+    private void saveActivity() {
+        String ActivityID = DocumentIDGenerator.GenerateActivityID();
+        data.put("ActivityID", ActivityID);
 
-            db.collection("Activities")
-                    .document(ActivityID)
-                    .set(data)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            Log.d("Activity Successfully Written", "Activity Successfully Written");
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d("Activity Write Failure", "Activity Write Failure");
-                        }
-                    });
-        }
+        db.collection("Activities")
+                .document(ActivityID)
+                .set(data)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("Activity Successfully Written", "Activity Successfully Written");
 
-        public void setListener(SaveActivityDialogListener listener) {
+                        NotificationUtil.showSavedActivityNotification(context);
+
+                        if (listener != null) {
+                            listener.onSaveConfirmed();
+                        }
+
+                        Activity activity = getActivity();
+                        if (activity != null) {
+                            Intent intent = new Intent(activity, HomeActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            activity.finish(); // Finish MainActivity so user can't return
+                        } else {
+                            Log.e("SaveActivityDialog", "Activity is null, cannot start HomeActivity");
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("Activity Write Failure", "Activity Write Failure");
+                        Toast.makeText(getContext(), "Failed to save activity. Please try again.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+
+    public void setListener(SaveActivityDialogListener listener) {
             this.listener = listener;
         }
 

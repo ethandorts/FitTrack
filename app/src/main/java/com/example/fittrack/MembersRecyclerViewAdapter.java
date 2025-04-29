@@ -30,12 +30,14 @@ public class MembersRecyclerViewAdapter extends RecyclerView.Adapter<MembersRecy
     private GroupsDatabaseUtil groupUtil = new GroupsDatabaseUtil(db);
     private FirebaseDatabaseHelper userUtil = new FirebaseDatabaseHelper(db);
     private String GroupID;
+    private boolean isAdmin;
 
 
-    public MembersRecyclerViewAdapter(Context context, ArrayList<MemberModel> memberList, String GroupID) {
+    public MembersRecyclerViewAdapter(Context context, ArrayList<MemberModel> memberList, String GroupID, boolean isAdmin) {
         this.context = context;
         this.memberList = memberList;
         this.GroupID = GroupID;
+        this.isAdmin = isAdmin;
     }
 
     @NonNull
@@ -48,47 +50,60 @@ public class MembersRecyclerViewAdapter extends RecyclerView.Adapter<MembersRecy
     @Override
     public void onBindViewHolder(@NonNull MembersViewHolder holder, int position) {
         MemberModel member = memberList.get(position);
+
         userUtil.retrieveChatName(member.getUserName(), new FirebaseDatabaseHelper.ChatUserCallback() {
             @Override
             public void onCallback(String Chatname) {
                 holder.txtMemberName.setText(Chatname);
             }
         });
+
         userUtil.retrieveProfilePicture(member.getUserName() + ".jpeg", new FirebaseDatabaseHelper.ProfilePictureCallback() {
             @Override
             public void onCallback(Uri PicturePath) {
-                if(PicturePath != null) {
+                if (PicturePath != null) {
                     Glide.with(context)
                             .load(PicturePath)
                             .into(holder.UserImage);
                 } else {
-                    Log.e("No profile picture found", "No profile picture found.");
                     holder.UserImage.setImageResource(R.drawable.profile);
                 }
             }
         });
-        if(!member.isAdmin()) {
-            holder.AdminImage.setImageResource(R.drawable.make_admin);
+
+        if (member.isAdmin()) {
+            holder.AdminImage.setVisibility(View.VISIBLE);
+            holder.AdminImage.setImageResource(R.drawable.admin);
+        } else {
+            if (isAdmin) {
+                holder.AdminImage.setVisibility(View.VISIBLE);
+                holder.AdminImage.setImageResource(R.drawable.make_admin);
+            } else {
+                holder.AdminImage.setVisibility(View.GONE); // normal users don't see non-admin members
+            }
+        }
+
+        if (isAdmin) {
+            holder.AdminImage.setClickable(true);
+            holder.AdminImage.setEnabled(true);
+
             holder.AdminImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    groupUtil.addAdmin(GroupID, member.getUserName());
-                    holder.AdminImage.setImageResource(R.drawable.admin);
-                    member.setAdmin(true);
-                    //updateAdminPhoto(holder, true);
+                    if (member.isAdmin()) {
+                        groupUtil.removeAdmin(GroupID, member.getUserName());
+                        holder.AdminImage.setImageResource(R.drawable.make_admin);
+                        member.setAdmin(false);
+                    } else {
+                        groupUtil.addAdmin(GroupID, member.getUserName());
+                        holder.AdminImage.setImageResource(R.drawable.admin);
+                        member.setAdmin(true);
+                    }
                 }
             });
         } else {
-            holder.AdminImage.setImageResource(R.drawable.admin);
-            holder.AdminImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    groupUtil.removeAdmin(GroupID, member.getUserName());
-                    holder.AdminImage.setImageResource(R.drawable.make_admin);
-                    member.setAdmin(false);
-                    //updateAdminPhoto(holder, false);
-                }
-            });
+            holder.AdminImage.setClickable(false);
+            holder.AdminImage.setEnabled(false);
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

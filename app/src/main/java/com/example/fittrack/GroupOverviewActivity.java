@@ -110,7 +110,8 @@ public class GroupOverviewActivity extends AppCompatActivity {
                     }
                 }
 
-                MembersRecyclerViewAdapter adapter = new MembersRecyclerViewAdapter(GroupOverviewActivity.this, members, GroupID);
+                boolean isAdmin = admins.contains(currentUser);
+                MembersRecyclerViewAdapter adapter = new MembersRecyclerViewAdapter(GroupOverviewActivity.this, members, GroupID, isAdmin);
                 membersRecyclerView.setLayoutManager(new LinearLayoutManager(GroupOverviewActivity.this));
                 membersRecyclerView.setAdapter(adapter);
                 membersRecyclerView.addItemDecoration(new DividerItemDecoration(GroupOverviewActivity.this, DividerItemDecoration.VERTICAL));

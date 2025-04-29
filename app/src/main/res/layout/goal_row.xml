@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginBottom="8dp">
 
     <androidx.cardview.widget.CardView
@@ -49,8 +49,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="start|center_vertical"
                 android:orientation="horizontal"
+                android:gravity="start|center_vertical"
                 android:layout_marginTop="4dp">
 
                 <TextView
@@ -71,13 +71,17 @@
                     android:textSize="14sp" />
             </LinearLayout>
 
-            <ProgressBar
-                android:id="@+id/progress_bar"
-                android:layout_width="match_parent"
-                android:layout_height="4dp"
+            <Button
+                android:id="@+id/btn_extend_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
-                android:indeterminate="false"
-                android:progress="50" />
+                android:backgroundTint="@color/button_blue"
+                android:padding="8dp"
+                android:text="Don't Give Up – Set a New Completion Date"
+                android:textSize="14sp"
+                android:visibility="visible" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private long timeNow;
     private long splitTime;
     private long fullTime;
+    private int locationUpdateCount = 0;
     long timeElapsed = 0;
     private ArrayList<ActivityLocationsEntity> entities;
     private ActivityLocationsDao activityLocationsDao;
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Button btnClear = findViewById(R.id.btnClearMap);
         Button btnStopStart = findViewById(R.id.stopStartBtn);
         txtRunTime = findViewById(R.id.txtRunTime);
+        speedView = findViewById(R.id.txtSpeedView);
 
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakelock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Fittrack:PREVENT_DOZE_MODE");
@@ -499,6 +501,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         public void onReceive(Context context, Intent intent) {
             Location newLocation = intent.getParcelableExtra("location");
+            float currentSpeed = intent.getFloatExtra("speed", 0f);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -513,6 +516,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }).start();
             updateMapWithLocation(newLocation);
             previousLocation = newLocation;
+            if (isTrackingRun) {
+                locationUpdateCount++;
+                if (locationUpdateCount >= 5) {
+                    speedView.setText(ConversionUtil.convertToMinutesPerKM(currentSpeed));
+                    locationUpdateCount = 0;
+                }
+            } else {
+                speedView.setText("0:00 /KM");
+            }
         }
     }
 }
