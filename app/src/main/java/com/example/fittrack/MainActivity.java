@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private long timeNow;
     private long splitTime;
     private long fullTime;
+    private boolean isActivityFinished;
     private int locationUpdateCount = 0;
     long timeElapsed = 0;
     private ArrayList<ActivityLocationsEntity> entities;
@@ -114,11 +115,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         timer = new Runnable() {
             @Override
             public void run() {
-                if (isTrackingRun) {
+                if (isTrackingRun && !isRunEnding && !isActivityFinished) {
                     long currentTime = System.currentTimeMillis();
                     timeElapsed = currentTime - startTime - totalPausedTime;
                     txtRunTime.setText(formatRunTime((int) (timeElapsed / 1000)));
                     runTimeHandler.postDelayed(this, 1000);
+                } else {
+                    runTimeHandler.removeCallbacks(this);
                 }
             }
         };
@@ -230,7 +233,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         saveActivityDialog.setListener(new SaveActivityDialog.SaveActivityDialogListener() {
                             @Override
                             public void onSaveConfirmed() {
+                                stopTrackingLocation();
 
+                                long totalSessionTime = System.currentTimeMillis() - startTime;
+                                long activeTime = totalSessionTime - totalPausedTime;
+
+                                System.out.println("Total session time: " + formatMillis(totalSessionTime));
+                                System.out.println("Total paused time: " + formatMillis(totalPausedTime));
+                                System.out.println("Total active recording time: " + formatMillis(activeTime));
                             }
 
                             @Override
@@ -273,14 +283,36 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void startTrackingLocation() {
+        System.out.println("Starting Location Tracking");
+        updatesBroadcastReceiver = new LocationUpdatesBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter("com.example.broadcast.LOCATION_UPDATE");
+        registerReceiver(updatesBroadcastReceiver, intentFilter);
+
         Intent locationTracker = new Intent(MainActivity.this, LocationTracker.class);
         startForegroundService(locationTracker);
-        LocationUpdatesBroadcastReceiver receiver = new LocationUpdatesBroadcastReceiver();
-        IntentFilter intentFilter = new IntentFilter("com.example.broadcast.LOCATION_UPDATE");
-        registerReceiver(receiver, intentFilter);
     }
 
+    private void stopTrackingLocation() {
+        System.out.println("Stopping location tracking...");
+        if (updatesBroadcastReceiver != null) {
+            try {
+                unregisterReceiver(updatesBroadcastReceiver);
+                updatesBroadcastReceiver = null;
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+        }
+        Intent locationTracker = new Intent(MainActivity.this, LocationTracker.class);
+        stopService(locationTracker);
+
+        isActivityFinished = true;
+    }
+
+
     private void updateMapWithLocation(Location location) {
+        if (isActivityFinished) {
+            return;
+        }
         currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
         Location lastKnownLocation = previousLocation;
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16));
@@ -331,6 +363,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 long effectiveTime = currTime - totalPausedTime;
 
                 synchronized (kmSplits) {
+                    System.out.println("Entering synchronised loop");
                     while (distanceTravelled >= (kmSplits.size() + 1) * 1000) {
                         double nextSplitDistance = (kmSplits.size() + 1) * 1000;
                         if (distanceTravelled < nextSplitDistance) break;
@@ -464,6 +497,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onStop();
         Intent locationTracker = new Intent(MainActivity.this, LocationTracker.class);
         stopService(locationTracker);
+        System.out.println("ACTIVITY STOPPED");
     }
 
     @Override
@@ -475,10 +509,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onResume() {
         super.onResume();
-        System.out.println("Activity Resumed");
-        System.out.println(isTrackingRun + " :result");
-        Intent locationTracker = new Intent(MainActivity.this, LocationTracker.class);
-        startForegroundService(locationTracker);
+        if (!isActivityFinished) {
+            Intent locationTracker = new Intent(MainActivity.this, LocationTracker.class);
+            startForegroundService(locationTracker);
+        }
     }
 
     @Override
@@ -527,4 +561,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     }
+
+    private String formatMillis(long millis) {
+        long seconds = millis / 1000;
+        long minutes = seconds / 60;
+        seconds = seconds % 60;
+        long hours = minutes / 60;
+        minutes = minutes % 60;
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
 }

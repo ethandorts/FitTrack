@@ -80,8 +80,6 @@
                     android:textStyle="bold" />
             </TableRow>
 
-            <!-- Data rows will be added dynamically from Java -->
-
         </TableLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

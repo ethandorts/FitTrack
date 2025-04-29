@@ -55,7 +55,8 @@ public class GroupPostsFragment extends Fragment {
         ImageButton btnImgSend = view.findViewById(R.id.btnImgSend);
         Query query = db.collection("Groups")
                 .document(GroupID)
-                .collection("Posts");
+                .collection("Posts")
+                .orderBy("Date", Query.Direction.DESCENDING);
 
         btnImgSend.setOnClickListener(new View.OnClickListener() {
             @Override

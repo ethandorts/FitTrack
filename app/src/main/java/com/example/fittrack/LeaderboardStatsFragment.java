@@ -235,30 +235,50 @@ public class LeaderboardStatsFragment extends Fragment {
     private void updateLeaderboard(ArrayList<LeaderboardModel> leaderboardStats, String selectedMetric) {
         table.removeViews(1, Math.max(0, table.getChildCount() - 1));
 
-        // Update leaderboard title and column header
         if (leaderboardTitle != null) {
             switch (selectedMetric) {
                 case "Time":
                     leaderboardTitle.setText("🏆 Fastest Time Leaderboard");
                     txtValue.setText("Time");
-                    Collections.sort(leaderboardStats, Comparator.comparingDouble(LeaderboardModel::getDistance));
+                    Collections.sort(leaderboardStats, new Comparator<LeaderboardModel>() {
+                        @Override
+                        public int compare(LeaderboardModel a, LeaderboardModel b) {
+                            return Double.compare(a.getDistance(), b.getDistance());
+                        }
+                    });
                     break;
                 case "ActivityFrequency":
                     leaderboardTitle.setText("🏆 Frequency Leaderboard");
                     txtValue.setText("Frequency");
-                    Collections.sort(leaderboardStats, (a, b) -> Double.compare(b.getDistance(), a.getDistance()));
+                    Collections.sort(leaderboardStats, new Comparator<LeaderboardModel>() {
+                        @Override
+                        public int compare(LeaderboardModel a, LeaderboardModel b) {
+                            return Double.compare(b.getDistance(), a.getDistance());
+                        }
+                    });
                     break;
                 case "Distance":
                     leaderboardTitle.setText("🏆 Distance Leaderboard");
                     txtValue.setText("Distance (KM)");
-                    Collections.sort(leaderboardStats, (a, b) -> Double.compare(b.getDistance(), a.getDistance()));
+                    Collections.sort(leaderboardStats, new Comparator<LeaderboardModel>() {
+                        @Override
+                        public int compare(LeaderboardModel a, LeaderboardModel b) {
+                            return Double.compare(b.getDistance(), a.getDistance());
+                        }
+                    });
                     break;
                 default:
                     leaderboardTitle.setText("🏆 " + selectedMetric + " Leaderboard");
                     txtValue.setText(selectedMetric);
-                    Collections.sort(leaderboardStats, (a, b) -> Double.compare(b.getDistance(), a.getDistance()));
+                    Collections.sort(leaderboardStats, new Comparator<LeaderboardModel>() {
+                        @Override
+                        public int compare(LeaderboardModel a, LeaderboardModel b) {
+                            return Double.compare(b.getDistance(), a.getDistance());
+                        }
+                    });
             }
         }
+
 
         int rank = 1;
         for (LeaderboardModel stats : leaderboardStats) {

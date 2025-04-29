@@ -110,7 +110,9 @@ public class LocationTracker extends Service {
     }
 
     private void stopLocationUpdates() {
-        //fusedLocationClient.removeLocationUpdates(retrieveLocationPendingIntent);
+        if (fusedLocationClient != null && locationCallback != null) {
+            fusedLocationClient.removeLocationUpdates(locationCallback);
+        }
     }
 
     LocationCallback locationCallback = new LocationCallback() {
