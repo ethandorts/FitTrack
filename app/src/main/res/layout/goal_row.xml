@@ -81,7 +81,7 @@
                 android:padding="8dp"
                 android:text="Don't Give Up – Set a New Completion Date"
                 android:textSize="14sp"
-                android:visibility="visible" />
+                android:visibility="gone" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

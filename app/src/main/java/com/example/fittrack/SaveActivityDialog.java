@@ -151,10 +151,6 @@ public class SaveActivityDialog extends DialogFragment {
                             Constraints networkConstraints = new Constraints.Builder()
                                     .setRequiredNetworkType(NetworkType.CONNECTED)
                                     .build();
-
-                            OneTimeWorkRequest statsRequest = new OneTimeWorkRequest.Builder(UpdateStats.class)
-                                    .setConstraints(networkConstraints)
-                                    .build();
                             OneTimeWorkRequest checkGoalsRequest = new OneTimeWorkRequest.Builder(GoalCompletedChecker.class).setInitialDelay(10, TimeUnit.SECONDS)
                                     .setConstraints(networkConstraints)
                                     .setInitialDelay(5, TimeUnit.SECONDS).

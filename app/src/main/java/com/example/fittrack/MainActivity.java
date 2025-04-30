@@ -204,7 +204,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         for (long split : kmSplits) {
             runTime += split;
         }
-        int activityTime = (int) (runTime / 1000);
+        long effectiveElapsedTime = System.currentTimeMillis() - startTime - totalPausedTime;
+        int activityTime = (int) (effectiveElapsedTime / 1000);
 
         Bundle runningData = new Bundle();
         runningData.putDouble("distance", distanceTravelled);

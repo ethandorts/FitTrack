@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Edit Profile"
-            android:textColor="@android:color/white"
+            android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_gravity="center" />
@@ -68,7 +68,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Ethan Doherty"
                     android:background="@drawable/rounded_text"
                     android:textSize="18sp"
                     android:textColor="#000000"
@@ -176,7 +175,7 @@
                     android:minLines="3"
                     android:gravity="top|start"
                     android:inputType="textMultiLine"
-                    android:background="@android:color/white" />
+                    android:background="@color/white" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
@@ -213,7 +212,7 @@
                 android:layout_marginBottom="32dp"
                 android:text="Save Profile"
                 android:backgroundTint="@color/button_blue"
-                android:textColor="@android:color/white"
+                android:textColor="@color/white"
                 android:elevation="4dp" />
         </LinearLayout>
     </ScrollView>

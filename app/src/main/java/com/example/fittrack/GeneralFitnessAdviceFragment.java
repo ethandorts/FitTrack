@@ -3,6 +3,7 @@ package com.example.fittrack;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +57,19 @@ public class GeneralFitnessAdviceFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         txtResponse = view.findViewById(R.id.txtAIResponseGF);
-        txtResponse.setText("Hi I am FitBot, your fitness tracking AI coach ask me any question.");
+        String welcomeMessage = "👋 <b>Welcome to FitBot, your AI Fitness & Nutrition Coach!</b><br><br>" +
+                "I can help you with personalized:<br>" +
+                "✅ <b>Meal plans</b> tailored to your calorie goals<br>" +
+                "✅ <b>Workout nutrition</b> (pre/post-workout meals)<br>" +
+                "✅ <b>Diet adjustments</b> for weight loss/muscle gain<br><br>" +
+                "<b>Try asking me:</b><br>" +
+                "• <i>\"Create a 2000-calorie meal plan for muscle gain\"</i><br>" +
+                "• <i>\"Suggest a high-protein breakfast under 400 calories\"</i><br>" +
+                "• <i>\"What should I eat before a morning workout?\"</i><br>" +
+                "• <i>\"Healthy snack ideas for busy schedules\"</i><br><br>" +
+                "Just type your question below, and let's get started! 🚀";
+
+        txtResponse.setText(Html.fromHtml(welcomeMessage, Html.FROM_HTML_MODE_COMPACT));
         btnSendRequest = view.findViewById(R.id.btnSendRequestGF);
         editMessage = view.findViewById(R.id.editModifyGF);
         progressBarGFA = view.findViewById(R.id.progressBarGF);
@@ -78,7 +91,9 @@ public class GeneralFitnessAdviceFragment extends Fragment {
                         String question = editMessage.getText().toString();
                         AskFitTrackCoachingAssistant("Here is my information, I weigh" + getUserWeight() + "kg" +
                                 " and I am " + getUserHeight() + "cm tall. " +
-                                "Use this background information that may you help you make an informed decision on how to bets answer this question: " +
+                                "My current fitness goal is " + getFitnessGoal() +
+                                "My calorie goal is " + getDailyCalorieGoal() +
+                                "Use this background information that may you help you make an informed decision on how to best answer this question: " +
                                 question);
                         editMessage.setText("");
                     }
@@ -92,7 +107,6 @@ public class GeneralFitnessAdviceFragment extends Fragment {
         JSONArray messagesArray = new JSONArray();
 
         txtResponse.setText("");
-        txtResponse.setTextSize(24);
         progressBarGFA.setVisibility(View.VISIBLE);
 
         try {
@@ -132,7 +146,7 @@ public class GeneralFitnessAdviceFragment extends Fragment {
                             JSONObject messageObject = choiceObject.getJSONObject("message");
 
                             String message = messageObject.getString("content");
-                            txtResponse.setText(message);
+                            txtResponse.setText(ConversionUtil.cleanAIResponse(message));
                             lastMessage = message;
 
                             progressBarGFA.setVisibility(View.GONE);
@@ -181,5 +195,10 @@ public class GeneralFitnessAdviceFragment extends Fragment {
     private long getDailyCalorieGoal() {
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("UserPI", Context.MODE_PRIVATE);
         return sharedPreferences.getLong("DailyCalorieGoal", 0);
+    }
+
+    private String getFitnessGoal() {
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("UserPI", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("FitnessGoal", " ");
     }
 }

@@ -25,7 +25,6 @@
             android:visibility="visible" />
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- Profile Info Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,7 +48,6 @@
                 android:id="@+id/txtProfilePageName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="John Doe"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -63,7 +61,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Tabs -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabProfile"
         android:layout_width="match_parent"
@@ -72,7 +69,6 @@
         app:tabSelectedTextColor="@color/button_blue"
         app:tabTextColor="@android:color/darker_gray" />
 
-    <!-- ViewPager -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/pagerProfile"
         android:layout_width="match_parent"

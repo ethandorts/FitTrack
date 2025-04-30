@@ -31,7 +31,6 @@
             android:textStyle="bold" />
     </androidx.appcompat.widget.Toolbar>
 
-
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager3"
         android:layout_width="0dp"

@@ -14,6 +14,14 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Activity Type"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/sportSelectorLayout"
             android:layout_width="match_parent"
@@ -23,12 +31,10 @@
                 android:id="@+id/activitySelector"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Select Activity"
                 android:padding="12dp"
                 android:inputType="none"
                 android:textColor="@color/black"
-                android:background="@drawable/rounded_table_bg"
-                android:textColorHint="@android:color/darker_gray" />
+                android:background="@drawable/rounded_table_bg" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <RadioGroup

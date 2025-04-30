@@ -6,7 +6,6 @@
     android:layout_height="wrap_content"
     android:padding="4dp">
 
-
     <LinearLayout
         android:id="@+id/currentUserMessage"
         android:layout_width="wrap_content"
@@ -46,19 +45,4 @@
             android:textColor="@color/black"
             android:textSize="14sp" />
     </LinearLayout>
-
-
-    <!--    <TextView-->
-    <!--        android:id="@+id/MessageBody"-->
-    <!--        android:layout_width="200dp"-->
-    <!--        android:layout_height="57dp"-->
-    <!--        android:layout_marginStart="16dp"-->
-    <!--        android:layout_marginTop="16dp"-->
-    <!--        android:autoSizeMaxTextSize="50sp"-->
-    <!--        android:autoSizeMinTextSize="12sp"-->
-    <!--        android:autoSizeTextType="uniform"-->
-    <!--        android:background="@drawable/sender_message_layout"-->
-    <!--        android:text="Hi do you fancy going for a run tonight?"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="parent" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>

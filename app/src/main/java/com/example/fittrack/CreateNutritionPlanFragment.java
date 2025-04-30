@@ -3,6 +3,7 @@ package com.example.fittrack;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,18 +65,28 @@ public class CreateNutritionPlanFragment extends Fragment {
         btnSendRequest.setVisibility(View.GONE);
 
                 AskFitTrackCoachingAssistant("Create me a nutrition plan for tomorrow. I have a goal to eat" + getDailyCalorieGoal() + " calories a day. " +
-                        "I weigh" + getUserWeight() + "kg and I am " + getUserHeight() +"cm tall. Provide me with a nutritional plan.\n" +
-                        "\n" +
-                        "Provide the Nutritional Plan in this format, for example:\n" +
+                        "I weigh" + getUserWeight() + "kg and I am " + getUserHeight() +"cm tall." +
+                        " Provide me with a nutritional plan.\n" +
+                        "\n My current fitness goal is " + getFitnessGoal() +
+                        ". Based on the information provided above, provide a nutritional plan for me to meet my calorie goal and that would help reach my fitness goal provided." +
+                        "Refer to my fitness goal and calorie count when you describe your reasoning for selection in Nutrient Benefits section. " +
+                        "Make sure the total calories of the food strictly add up to the provided calorie goal. " +
+                        "Provide your response in this format, for example:\n" +
                         "\n" +
                         "Breakfast \n" +
                         "Food: Rice Crispies, Toast (add grams)\n" +
+                        "Total Calorie Count: 523 calories \n" +
+                        "Nutrient Benefits: High carbs for running activities." +
                         "\n" +
                         "Lunch\n" +
                         "Food: Ham Sandwich \n" +
+                        "Total Calorie Count: 523 calories \n" +
+                        "Nutrient Benefits: High carbs for running activities." +
                         "\n" +
                         "Dinner\n" +
-                        "Food: Fish, Chips\n");
+                        "Food: Fish, Chips\n"+
+                        "Total Calorie Count: 523 calories \n" +
+                        "Nutrient Benefits: High carbs for running activities.");
 
                 if(txtResponse.getText().length() > 0) {
                     editMessage.setVisibility(View.VISIBLE);
@@ -149,7 +160,16 @@ public class CreateNutritionPlanFragment extends Fragment {
                             JSONObject messageObject = choiceObject.getJSONObject("message");
 
                             String message = messageObject.getString("content");
-                            txtResponse.setText(message);
+                            String cleanMessage = ConversionUtil.cleanAIResponse(message);
+                            String formattedMessage = cleanMessage
+                                    .replaceAll("(?m)^(Breakfast|Lunch|Dinner)\\b", "🍽️ <b><u>$1</u></b>")
+                                    .replaceAll("(?m)^Food:\\s*(.*)", "🍴 <b>Food:</b> <i>$1</i>")
+                                    .replaceAll("(?m)^Total Calorie Count:\\s*(.*)", "🔥 <b>Calories:</b> <i>$1</i>")
+                                    .replaceAll("(?m)^Nutrient Benefits:\\s*(.*)", "💪 <b>Benefits:</b> <i>$1</i>")
+                                    .replaceAll("\\n", "<br>")
+                                    .replaceAll("(?m)(<br>🍽️)", "<hr>$1");
+
+                            txtResponse.setText(Html.fromHtml(formattedMessage, Html.FROM_HTML_MODE_COMPACT));
                             lastMessage = message;
 
                             progressBarNP.setVisibility(View.GONE);
@@ -198,5 +218,10 @@ public class CreateNutritionPlanFragment extends Fragment {
     private long getDailyCalorieGoal() {
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("UserPI", Context.MODE_PRIVATE);
         return sharedPreferences.getLong("DailyCalorieGoal", 0);
+    }
+
+    private String getFitnessGoal() {
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("UserPI", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("FitnessGoal", " ");
     }
 }

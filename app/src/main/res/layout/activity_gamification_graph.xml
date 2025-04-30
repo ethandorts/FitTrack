@@ -60,9 +60,6 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-
-
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/graphInputLayout"
         android:layout_width="0dp"

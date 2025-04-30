@@ -12,15 +12,13 @@ public class GroupModel {
     private String Activity;
     private String Location;
     private ArrayList<String> Runners;
-    private ImageView GroupIcon;
 
-    public GroupModel(String groupID, String groupName, String shortDescription, String groupDescription, String groupLocation, ImageView groupIcon, ArrayList<String> members, String activity) {
+    public GroupModel(String groupID, String groupName, String shortDescription, String groupDescription, String groupLocation, ArrayList<String> members, String activity) {
         GroupID = groupID;
         Name = groupName;
         this.shortDescription = shortDescription;
         Description = groupDescription;
         Location = groupLocation;
-        GroupIcon = groupIcon;
         this.Runners = members;
         this.Activity = activity;
     }
@@ -83,13 +81,5 @@ public class GroupModel {
 
     public void setRunners(ArrayList<String> runners) {
         Runners = runners;
-    }
-
-    public ImageView getGroupIcon() {
-        return GroupIcon;
-    }
-
-    public void setGroupIcon(ImageView groupIcon) {
-        GroupIcon = groupIcon;
     }
 }

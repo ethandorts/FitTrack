@@ -2,6 +2,7 @@ package com.example.fittrack;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -108,11 +109,6 @@ public class AdditionalNutrtionalInformationActivity extends AppCompatActivity {
                 "4. For each remaining meal, suggest 2-3 food items with their calorie count and explain briefly what nutrients they provide or how they help balance my intake.\n\n" +
                 "Format your response like this:\n" +
                 "---------------------------\n" +
-                "Calorie Summary:\n" +
-                "- Goal: X kcal\n" +
-                "- Consumed: Y kcal\n" +
-                "- Burned: Z kcal\n" +
-                "- Remaining: N kcal\n\n" +
                 "Meal Plan Suggestions:\n\n" +
                 "Lunch:\n" +
                 "- Grilled chicken breast – 300 kcal: High in protein to support muscle maintenance.\n" +
@@ -164,7 +160,13 @@ public class AdditionalNutrtionalInformationActivity extends AppCompatActivity {
                             JSONObject messageObject = choiceObject.getJSONObject("message");
 
                             String message = messageObject.getString("content");
-                            txtAdvice.setText(message);
+                            String response = ConversionUtil.cleanAIResponse(message);
+                            if (response.contains("Meal Plan Suggestions:")) {
+                                String formatted = formatMealPlan(response);
+                                txtAdvice.setText(Html.fromHtml(formatted, Html.FROM_HTML_MODE_LEGACY));
+                            } else {
+                                txtAdvice.setText(response);
+                            }
                             System.out.println(message);
                             lastMessage = message;
 
@@ -209,4 +211,17 @@ public class AdditionalNutrtionalInformationActivity extends AppCompatActivity {
         }
         return formatted.toString();
     }
+
+    private String formatMealPlan(String response) {
+        return response
+                .replaceAll("(?m)^Meal Plan Suggestions:", "<b><u>Meal Plan Suggestions:</u></b><br>")
+                .replaceAll("(?m)^Breakfast:", "<br><b><u>Breakfast:</u></b>")
+                .replaceAll("(?m)^Lunch:", "<br><b><u>Lunch:</u></b>")
+                .replaceAll("(?m)^Dinner:", "<br><b><u>Dinner:</u></b>")
+                .replaceAll("(?m)^Snack:", "<br><b><u>Snack:</u></b>")
+                .replaceAll("(?m)^-\\s*(.*?)\\s*–\\s*(\\d+\\s*kcal):", "• <i>$1</i> – <b>$2</b>:")
+                .replaceAll("\n", "<br>");
+    }
+
+
 }

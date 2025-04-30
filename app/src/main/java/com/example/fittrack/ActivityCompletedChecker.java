@@ -51,6 +51,7 @@ public class ActivityCompletedChecker extends Worker {
                 System.out.println("FormatDate: " + format);
                 if(querySnapshot.getDocuments().size() > 0) {
                     Query todayActivitiesQuery = db.collection("Activities")
+                            .whereEqualTo("UserID", UserID)
                             .whereEqualTo("shortDate", format);
                     todayActivitiesQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override

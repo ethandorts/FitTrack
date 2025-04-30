@@ -1,5 +1,6 @@
 package com.example.fittrack;
 
+import static com.example.fittrack.ConversionUtil.cleanAIResponse;
 import static com.example.fittrack.ConversionUtil.longToTimeConversion;
 
 import android.app.people.ConversationStatus;
@@ -69,7 +70,7 @@ public class GoalProgressReportActivity extends AppCompatActivity {
     private TextView txtTotalProgress, txtBestPace, txtDaysRemaining, txtProgressNumber, txtAIAdvice;
     private ActivitiesRecyclerViewAdapter activitiesAdapter;
     private RecyclerView recyclerGoalEfforts;
-    private ProgressBar aiProgressBar;
+    private ProgressBar aiProgressBar, chartProgressBar;
     private Cartesian cartesian;
     private AnyChartView progressLine;
     private String lastMessage;
@@ -94,6 +95,7 @@ public class GoalProgressReportActivity extends AppCompatActivity {
 
         recyclerGoalEfforts = findViewById(R.id.recyclerGoalEfforts);
         aiProgressBar = findViewById(R.id.aiGoalAdvice);
+        chartProgressBar = findViewById(R.id.progressBarChart);
 
         progressLine = findViewById(R.id.progressLineChart);
         APIlib.getInstance().setActiveAnyChartView(progressLine);
@@ -210,8 +212,8 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                             double totalDistanceKm = totalDistance / 1000;
                             double targetDistanceKm = targetDistance / 1000;
 
-                            double rawPercentage = (totalDistanceKm / targetDistanceKm) * 100;
-                            int progressPercentage = (int) Math.min(rawPercentage, 100);
+                            double percentage = (totalDistanceKm / targetDistanceKm) * 100;
+                            int progressPercentage = (int) Math.min(percentage, 100);
                             txtProgressNumber.setText("Progress: " + progressPercentage + "%");
                         } else if(goalType.equals("Time")) {
                             long bestTime = Long.MAX_VALUE;
@@ -287,6 +289,7 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                             txtTotalProgress.setText("No qualifying activities yet.");
                             txtBestPace.setVisibility(View.GONE);
                             txtProgressNumber.setVisibility(View.GONE);
+                            chartProgressBar.setVisibility(View.GONE);
                             return;
                         }
 
@@ -318,6 +321,7 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                             double yAxisMax = Math.max(goalKm, maxDistanceReached / 1000);
                             cartesian.yScale().maximum(yAxisMax);
                             cartesian.legend().enabled(true);
+                            chartProgressBar.setVisibility(View.GONE);
                             progressLine.setChart(cartesian);
                         } else if (goalType.equals("Time")) {
                             cartesian = AnyChart.column();
@@ -334,10 +338,20 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                                 }
                             }
 
-                            qualifyingActivities.sort((a, b) -> {
-                                long timeA = a.getSplits().stream().mapToLong(Long::longValue).sum();
-                                long timeB = b.getSplits().stream().mapToLong(Long::longValue).sum();
-                                return Long.compare(timeA, timeB);
+                            Collections.sort(qualifyingActivities, new Comparator<ActivityModel>() {
+                                @Override
+                                public int compare(ActivityModel a, ActivityModel b) {
+                                    long timeA = 0;
+                                    for (Long split : a.getSplits()) {
+                                        timeA += split;
+                                    }
+
+                                    long timeB = 0;
+                                    for (Long split : b.getSplits()) {
+                                        timeB += split;
+                                    }
+                                    return Long.compare(timeA, timeB);
+                                }
                             });
 
                             List<ActivityModel> top5 = qualifyingActivities.subList(0, Math.min(5, qualifyingActivities.size()));
@@ -363,17 +377,6 @@ public class GoalProgressReportActivity extends AppCompatActivity {
 
                             progressLine.setChart(cartesian);
                         }
-//                        // Add red target line at the goal
-//                        if (!xLabels.isEmpty()) {
-//                            Line targetLine = cartesian.line(new ArrayList<DataEntry>() {{
-//                                add(new ValueDataEntry(xLabels.get(0), goalKm));
-//                                add(new ValueDataEntry(xLabels.get(xLabels.size() - 1), goalKm));
-//                            }});
-//                            targetLine.stroke("3 red");
-//                            targetLine.tooltip().enabled(false);
-//                            targetLine.hovered().markers().enabled(false);
-//                            targetLine.name("🎯 Target");
-//                        }
                     }
                 });
             }
@@ -390,7 +393,7 @@ public class GoalProgressReportActivity extends AppCompatActivity {
         for(ActivityModel activity : activitiesInfo) {
             activitiesDetails.append("Activity: ").append(activity.getType())
                     .append(", Distance: ").append(activity.getDistance()).append("metres")
-                    .append(", Duration: ").append(activity.getTime()).append("seconds")
+                    .append(", Duration: ").append(ConversionUtil.convertSecondsToTime((int) activity.getTime())).append("seconds")
                     .append(", Date: ").append(activity.getDate())
                     .append(", Splits: ").append(activity.getSplits()).append("in milliseconds")
                     .append(", Average Pace: ").append(activity.getPace()).append(" /km")
@@ -401,14 +404,16 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                 activitiesDetails.toString() +
                 "\n\nMy current fitness level is: " + fitnessLevel + "." +
                 "\nMy fitness goal is: " + goalDescription + ", which I aim to achieve by: " + endDate + "." +
+                "My total progress is " + txtTotalProgress.getText().toString() + " and the progress number is " + txtProgressNumber.getText().toString() +
                 "\n\nPlease perform the following tasks:\n" +
-                "1. Analyze each of my completed activities individually, identifying strengths and weaknesses for each activity.\n" +
+                "1. Analyze each of my completed activities individually, identifying strengths and weaknesses for each activity. Whenever you analyse put the seconds into minutes and seconds.\n" +
                 "2. Summarize overall trends and patterns in my training (e.g., consistency, pacing, volume).\n" +
                 "3. Identify specific areas I need to improve based on my goal and my current performance.\n" +
                 "4. Recommend targeted training sessions I should focus on (e.g., endurance runs, speed intervals, recovery days).\n" +
                 "5. Provide a detailed, realistic weekly training plan for me, from today until my goal deadline, based on my history and fitness level.\n" +
                 "6. Ensure advice is specific, actionable, and personalized based on my previous performance data.\n\n" +
-                "Be highly detailed, structured, critical but encouraging, and prioritize practical, realistic improvements.";
+                "Be highly detailed, structured, critical but encouraging, and prioritize practical, realistic improvements." +
+                " In your response, can you remove all unnecessary characters like ### and *";
 
 
 
@@ -458,7 +463,7 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                             JSONObject messageObject = choiceObject.getJSONObject("message");
 
                             String message = messageObject.getString("content");
-                            txtAIAdvice.setText(message);
+                            txtAIAdvice.setText(cleanAIResponse(message));
                             System.out.println(message);
                             lastMessage = message;
 

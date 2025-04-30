@@ -3,6 +3,7 @@ package com.example.fittrack;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -84,9 +86,13 @@ public class CreateTrainingScheduleFragment extends Fragment {
                 AskFitTrackCoachingAssistant("Create a training schedule for the next week." +
                         "Today's date is " + formattedDate + ". Here is my information, I weigh " + getUserWeight() +
                         "kg and I am " + getUserHeight() + "cm tall. " +
-                        "My goals are " + goalsList + "." + "Other Considerations is none. \n" +
+                        "My fitness level is " + getFitnessLevel() +
+                        "My general fitness goal is " + getMainFitnessGoal() +
+                        "My other specific performance goals are " + goalsList + "." + "Other Considerations is none. \n" +
                         "\n" +
-                        "I would like to complete " + getActivityFrequency() + " fitness activities per week only. " +
+                        "I would like to complete " + getActivityFrequency() + " fitness activities per week only. Show me the schedule for the next two weeks." +
+                        "Strictly do not put any asterixes in the response" +
+                        "In your response, start it strictly with here is your training schedule:" +
                         "Display the training schedule in this format strictly with no asterixes following words, for example:\n" +
                         "\n" +
                         "Date: 24/10/2024\n" +
@@ -132,7 +138,6 @@ public class CreateTrainingScheduleFragment extends Fragment {
         JSONArray messagesArray = new JSONArray();
 
         txtResponse.setText("");
-        txtResponse.setTextSize(24);
         progressBarTS.setVisibility(View.VISIBLE);
 
         try {
@@ -172,7 +177,13 @@ public class CreateTrainingScheduleFragment extends Fragment {
                             JSONObject messageObject = choiceObject.getJSONObject("message");
 
                             String message = messageObject.getString("content");
-                            txtResponse.setText(message);
+                            String formattedMessage = message
+                                    .replaceAll("(?m)^Date:\\s*(.*)", "<b>📅 Date:</b><br><i>$1</i>")
+                                    .replaceAll("(?m)^Activity Type:\\s*(.*)", "<b>🏋️ Activity Type:</b><br><i>$1</i>")
+                                    .replaceAll("(?m)^Activity Title:\\s*(.*)", "<b>📝 Title:</b><br><i>$1</i>")
+                                    .replaceAll("(?m)^Details:\\s*(.*)", "<b>📄 Details:</b><br><i>$1</i>")
+                                    .replaceAll("\\n", "<br>");
+                            txtResponse.setText(Html.fromHtml(formattedMessage, Html.FROM_HTML_MODE_LEGACY));
                             System.out.println(message);
                             lastMessage = message;
 
@@ -190,9 +201,6 @@ public class CreateTrainingScheduleFragment extends Fragment {
                                     }
                                 });
                             }
-
-
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -237,6 +245,16 @@ public class CreateTrainingScheduleFragment extends Fragment {
         return sharedPreferences.getLong("ActivityFrequency", 0);
     }
 
+    private String getMainFitnessGoal() {
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("UserPI", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("FitnessGoal", "");
+    }
+
+    private String getFitnessLevel() {
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("UserPI", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("FitnessLevel", "");
+    }
+
     private void addToCalendar(String activityType, String dateTime, String eventName, String description) {
         Map<String, Object> activityEvent = new HashMap<>();
         activityEvent.put("ActivityType", activityType);
@@ -262,6 +280,7 @@ public class CreateTrainingScheduleFragment extends Fragment {
     }
 
     private void extractAIRoutine(String response) {
+        boolean isEventSaved = false;
         try {
             String[] futureActivities = response.split("\\n");
             String dateTime = "";
@@ -276,12 +295,12 @@ public class CreateTrainingScheduleFragment extends Fragment {
                 activity = activity.trim();
 
                 if (activity.startsWith("Date:")) {
-                    String rawDate = activity.replace("Date:", "").trim();
+                    String Date = activity.replace("Date:", "").trim();
                     try {
-                        dateTime = LocalDate.parse(rawDate, inputFormat).format(outputFormat);
+                        dateTime = LocalDate.parse(Date, inputFormat).format(outputFormat);
                         System.out.println(dateTime);
                     } catch (Exception dateParseException) {
-                        Log.e("Date Parse Error", "Invalid date format: " + rawDate);
+                        Log.e("Date Parse Error", "Invalid date format: " + Date);
                     }
                 } else if (activity.startsWith("Activity Type:")) {
                     activityType = activity.replace("Activity Type:", "").trim();
@@ -297,6 +316,7 @@ public class CreateTrainingScheduleFragment extends Fragment {
                 if (!dateTime.isEmpty() && !activityType.isEmpty() && !eventName.isEmpty() && !description.isEmpty()) {
                     addToCalendar(activityType, dateTime, eventName, description);
                     Log.d("DB_SAVED", "Saved Event: " + dateTime + ", " + activityType + ", " + eventName);
+                    isEventSaved = true;
 
                     dateTime = "";
                     activityType = "";
@@ -308,8 +328,13 @@ public class CreateTrainingScheduleFragment extends Fragment {
             if (!dateTime.isEmpty() && !activityType.isEmpty() && !eventName.isEmpty() && !description.isEmpty()) {
                 addToCalendar(activityType, dateTime, eventName, description);
                 Log.d("AI Events Saved", "Saved AI event for " + dateTime);
+                isEventSaved = true;
             } else {
                 System.out.println("Events not saved");
+            }
+
+            if(isEventSaved) {
+                Toast.makeText(getContext(), "Training events added to calendar!", Toast.LENGTH_SHORT).show();
             }
 
         } catch (Exception e) {

@@ -7,7 +7,6 @@
     android:background="@color/button_blue"
     tools:context=".RegisterActivity">
 
-    <!-- Title -->
     <TextView
         android:id="@+id/txtRegister"
         android:layout_width="335dp"
@@ -37,18 +36,4 @@
         app:layout_constraintTop_toBottomOf="@+id/txtRegister">
 
     </FrameLayout>
-
-    <!-- First Name -->
-
-    <!-- Surname -->
-
-    <!-- Height -->
-
-    <!-- Weight -->
-
-    <!-- Fitness Goal -->
-
-    <!-- Date of Birth -->
-
-    <!-- Rest of the form remains unchanged -->
 </androidx.constraintlayout.widget.ConstraintLayout>

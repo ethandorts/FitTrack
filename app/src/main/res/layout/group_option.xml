@@ -22,7 +22,6 @@
         android:layout_height="wrap_content"
         android:padding="12dp">
 
-        <!-- Circular Group Icon -->
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/group_icon"
             android:layout_width="65dp"
@@ -36,7 +35,6 @@
             app:srcCompat="@drawable/default_group"
             />
 
-        <!-- Group Info -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -65,7 +63,6 @@
             android:textColor="@android:color/white" />
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
-
     </androidx.constraintlayout.widget.ConstraintLayout>

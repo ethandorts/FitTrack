@@ -31,7 +31,6 @@
             android:textStyle="bold" />
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- Description TextView -->
     <TextView
         android:id="@+id/pointsDescription"
         android:layout_width="0dp"

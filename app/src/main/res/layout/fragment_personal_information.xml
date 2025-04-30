@@ -91,7 +91,6 @@
         android:layout_marginEnd="24dp"
         android:layout_marginTop="8dp"/>
 
-    <!-- Weight -->
     <TextView
         android:id="@+id/txtWeight"
         android:layout_width="wrap_content"

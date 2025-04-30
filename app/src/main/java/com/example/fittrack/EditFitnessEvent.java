@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -35,14 +36,27 @@ public class EditFitnessEvent extends AppCompatActivity {
 
         EditText editEventName = findViewById(R.id.enterEditEventName);
         EditText editDescription = findViewById(R.id.enterEditDescription);
-        Spinner editActivityType = findViewById(R.id.enterEditActivityType);
+        AutoCompleteTextView editActivityType = findViewById(R.id.enterEditActivityType);
         Button btnEditFitnessEvent = findViewById(R.id.btnEditEvent);
         Button btnDeleteFitnessEvent = findViewById(R.id.btnDeleteEvent);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter
-                .createFromResource(getApplicationContext(), R.array.fitness_activities, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
+        String[] fitnessActivities = getResources().getStringArray(R.array.fitness_activities);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                fitnessActivities
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         editActivityType.setAdapter(adapter);
+        editActivityType.setText("Running", false);
+
+        editActivityType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editActivityType.showDropDown();
+            }
+        });
 
         editEventName.setText(eventName);
         editDescription.setText(description);
@@ -59,7 +73,7 @@ public class EditFitnessEvent extends AppCompatActivity {
             public void onClick(View view) {
                 String updatedEventName = editEventName.getText().toString();
                 String updatedDescription = editDescription.getText().toString();
-                String updatedActivityType = editActivityType.getSelectedItem().toString();
+                String updatedActivityType = editActivityType.getText().toString();
 
                 eventUtil.updateEvent(EventID, updatedEventName, updatedDescription, updatedActivityType, date);
                 finish();

@@ -64,7 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="🎯 Target: 5.0 KM"
+                    android:text="🎯 Target:"
                     android:textSize="14sp" />
 
                 <TextView
@@ -80,7 +80,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="📊 Progress: 3.2 KM"
+                    android:text="📊 Progress: "
                     android:textSize="14sp" />
 
                 <TextView
@@ -88,18 +88,32 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="📅 Deadline: 15/05/2025"
+                    android:text="📅 Deadline: "
                     android:textSize="14sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <com.anychart.AnyChartView
-            android:id="@+id/progressLineChart"
+        <FrameLayout
+            android:id="@+id/frameChart"
             android:layout_width="match_parent"
             android:layout_height="400dp"
             android:layout_marginTop="16dp"
             android:background="@android:color/white"
-            android:padding="8dp" />
+            android:padding="8dp">
+
+            <com.anychart.AnyChartView
+                android:id="@+id/progressLineChart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ProgressBar
+                android:id="@+id/progressBarChart"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+        </FrameLayout>
+
 
         <androidx.cardview.widget.CardView
             android:id="@+id/statsSummaryCard"
@@ -128,25 +142,25 @@
                     android:id="@+id/txtTotalProgress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Total Progress: 4.5 / 5 KM" />
+                    android:text="Total Progress: " />
 
                 <TextView
                     android:id="@+id/txtAveragePace"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Average Pace: 5:30 / km" />
+                    android:text="Average Pace: " />
 
                 <TextView
                     android:id="@+id/txtDaysRemaining"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Days Remaining: 10" />
+                    android:text="Days Remaining: " />
 
                 <TextView
                     android:id="@+id/txtProgressPercentage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Progress: 90%" />
+                    android:text="Progress: " />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -209,7 +223,7 @@
                     android:id="@+id/txtAIAdvice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="You're 90% toward your goal! Keep your pace consistent, and aim for one more short run this week to complete it."
+                    android:text=""
                     android:textStyle="italic" />
 
                 <ProgressBar

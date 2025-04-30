@@ -54,7 +54,6 @@
             android:rowCount="2"
             android:padding="16dp">
 
-            <!-- Distance Block -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

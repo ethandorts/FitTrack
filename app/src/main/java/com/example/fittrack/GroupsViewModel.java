@@ -44,7 +44,6 @@ public class GroupsViewModel extends ViewModel {
                                 (String) data.get("shortDescription"),
                                 (String) data.get("Description"),
                                 (String) data.get("Location"),
-                                null,
                                 (ArrayList<String>) data.get("Runners"),
                                 (String) data.get("Activity")
                         );
@@ -71,7 +70,6 @@ public class GroupsViewModel extends ViewModel {
                             (String) data.get("shortDescription"),
                             (String) data.get("Description"),
                             (String) data.get("Location"),
-                            null,
                             (ArrayList<String>) data.get("Runners"),
                             (String) data.get("Activity")
                     );

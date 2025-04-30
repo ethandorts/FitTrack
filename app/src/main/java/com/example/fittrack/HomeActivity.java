@@ -139,8 +139,6 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
         OneTimeWorkRequest checkGoalsRequest = new OneTimeWorkRequest.Builder(GoalCompletedChecker.class)
                 .build();
 
-        OneTimeWorkRequest statsRequest = new OneTimeWorkRequest.Builder(UpdateStats.class)
-                .build();
 
         OneTimeWorkRequest checkBadgesRequest = new OneTimeWorkRequest.Builder(BadgesEarnedChecker.class)
                 .build();
@@ -222,6 +220,8 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
                         PIEditor.putLong("Height", height);
                         PIEditor.putLong("ActivityFrequency", activityFrequency);
                         PIEditor.putLong("DailyCalorieGoal", dailyCalorieGoal);
+                        PIEditor.putString("FitnessGoal", fitnessGoal);
+                        PIEditor.putString("FitnessLevel", level);
                         PIEditor.apply();
                     }
                 });

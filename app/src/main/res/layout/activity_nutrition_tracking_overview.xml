@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".NutritionTrackingOverview">
 
-    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/CreatePostsToolbar"
         android:layout_width="0dp"
@@ -30,7 +29,6 @@
             android:textStyle="bold" />
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- Centered Date Picker Field -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/dateInputLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -59,7 +57,6 @@
             android:textStyle="bold" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- TabLayout -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayoutMealTypes"
         android:layout_width="0dp"
@@ -70,7 +67,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- ViewPager2 -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/pagerFoods"
         android:layout_width="0dp"

@@ -164,4 +164,11 @@ public class ConversionUtil {
         return String.format("%.2f km", km);
     }
 
+    public static String cleanAIResponse(String message) {
+        return message.replace("*", "")
+                .replace("~", "")
+                .replace("#", "")
+                .trim();
+    }
+
 }

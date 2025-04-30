@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".AIAssistantActivity">
 
-    <!-- Toolbar with centered title -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/CreatePostsToolbar"
         android:layout_width="0dp"
@@ -39,7 +38,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Button section -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/buttonContainer"
         android:layout_width="0dp"
@@ -50,7 +48,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Button 1 -->
         <Button
             android:id="@+id/btnCreateTrainingSchedule"
             android:layout_width="0dp"
@@ -64,7 +61,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btnCreateNutritionPlan" />
 
-        <!-- Button 2 -->
         <Button
             android:id="@+id/btnCreateNutritionPlan"
             android:layout_width="0dp"
@@ -78,7 +74,6 @@
             app:layout_constraintStart_toEndOf="@id/btnCreateTrainingSchedule"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Button 3 -->
         <Button
             android:id="@+id/btnFitnessAdvice"
             android:layout_width="0dp"
@@ -93,7 +88,6 @@
             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Fragment area below buttons -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerAIAdvice"
         android:layout_width="0dp"
