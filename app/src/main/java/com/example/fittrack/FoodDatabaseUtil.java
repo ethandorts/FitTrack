@@ -281,7 +281,7 @@ public class FoodDatabaseUtil {
         });
     }
 
-    public void deleteFoodItem(String documentID) {
+    public void deleteFoodItem(String selectedDate, String documentID) {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         Date today = new Date();
@@ -290,12 +290,12 @@ public class FoodDatabaseUtil {
         db.collection("Users")
                 .document(UserID)
                 .collection("Nutrition")
-                .document(date)
+                .document(selectedDate)
                 .collection("Meals")
                 .document(documentID).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-
+                        System.out.println("Food successfully deleted");
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override

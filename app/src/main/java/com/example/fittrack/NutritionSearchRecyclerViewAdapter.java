@@ -66,6 +66,10 @@ public class NutritionSearchRecyclerViewAdapter extends RecyclerView.Adapter<Nut
                 System.out.println(model.getMealType());
                 foodUtil.saveFood(food, selectedDate);
                 Toast.makeText(view.getContext(), "Logged food successfully", Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(view.getContext(), NutritionTrackingOverview.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                view.getContext().startActivity(intent);
             }
         });
         holder.itemView.setOnClickListener(new View.OnClickListener() {

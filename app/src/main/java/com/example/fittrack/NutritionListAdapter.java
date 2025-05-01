@@ -23,10 +23,12 @@ public class NutritionListAdapter extends FirestoreRecyclerAdapter<FoodModel, Nu
     private FoodDatabaseUtil FoodUtil = new FoodDatabaseUtil(db);
     private Context context;
     private ArrayList<FoodModel> foodList = new ArrayList<>();
+    private String selectedDate;
 
-    public NutritionListAdapter(@NonNull FirestoreRecyclerOptions<FoodModel> options, Context context) {
+    public NutritionListAdapter(@NonNull FirestoreRecyclerOptions<FoodModel> options, Context context, String selectedDate) {
         super(options);
         this.context = context;
+        this.selectedDate = selectedDate;
     }
 
     @NonNull
@@ -66,7 +68,8 @@ public class NutritionListAdapter extends FirestoreRecyclerAdapter<FoodModel, Nu
         holder.btnRemoveFood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FoodUtil.deleteFoodItem(DocumentID);
+                FoodUtil.deleteFoodItem(selectedDate, DocumentID);
+                System.out.println("Deletion date " + selectedDate);
             }
         });
 

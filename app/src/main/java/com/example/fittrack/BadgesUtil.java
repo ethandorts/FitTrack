@@ -90,19 +90,19 @@ public class BadgesUtil {
         List<String> earned = new ArrayList<>();
         double[] thresholds = {1000, 5000, 21100, 42200};
 
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.DAY_OF_MONTH, 1);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
 
-        String month = new SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(cal.getTime());
+        String month = new SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(calendar.getTime());
 
         CountDownLatch latch = new CountDownLatch(1);
 
         db.collection("Activities")
                 .whereEqualTo("UserID", UserID)
                 .whereEqualTo("type", activityType)
-                .whereGreaterThanOrEqualTo("date", new Timestamp(cal.getTime()))
+                .whereGreaterThanOrEqualTo("date", new Timestamp(calendar.getTime()))
                 .get()
-                .addOnSuccessListener(new com.google.android.gms.tasks.OnSuccessListener<QuerySnapshot>() {
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot snapshot) {
                         for (QueryDocumentSnapshot doc : snapshot) {
@@ -120,7 +120,7 @@ public class BadgesUtil {
                         latch.countDown();
                     }
                 })
-                .addOnFailureListener(new com.google.android.gms.tasks.OnFailureListener() {
+                .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         latch.countDown();
@@ -129,7 +129,9 @@ public class BadgesUtil {
 
         try {
             latch.await();
-        } catch (InterruptedException ignored) {}
+        } catch (InterruptedException ignored) {
+
+        }
 
         return earned;
     }
@@ -163,7 +165,9 @@ public class BadgesUtil {
                                 if (time >= 2700) earned.add("Completed a Fitness Activity of over 45 minutes in " + month);
                                 if (time >= 3600) earned.add("Completed a Fitness Activity of over 1 hour in " + month);
                                 if (time >= 7200) earned.add("Completed a Fitness Activity of over 2 hours in " + month);
-                            } catch (Exception ignored) {}
+                            } catch (Exception ignored) {
+
+                            }
                         }
                         latch.countDown();
                     }
@@ -199,14 +203,14 @@ public class BadgesUtil {
                 .whereGreaterThanOrEqualTo("date", start)
                 .whereLessThanOrEqualTo("date", end)
                 .get()
-                .addOnSuccessListener(new com.google.android.gms.tasks.OnSuccessListener<QuerySnapshot>() {
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot snapshot) {
                         hasActivity[0] = !snapshot.isEmpty();
                         latch.countDown();
                     }
                 })
-                .addOnFailureListener(new com.google.android.gms.tasks.OnFailureListener() {
+                .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         latch.countDown();

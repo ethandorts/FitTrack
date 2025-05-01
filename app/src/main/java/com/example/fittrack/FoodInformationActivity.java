@@ -137,7 +137,8 @@ public class FoodInformationActivity extends AppCompatActivity {
                     editServingSize.setText("");
                     editServingQuantity.setText("");
 
-                    Intent intent = new Intent(FoodInformationActivity.this, NutritionTracking.class);
+                    Intent intent = new Intent(FoodInformationActivity.this, NutritionTrackingOverview.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
                 }
@@ -162,8 +163,8 @@ public class FoodInformationActivity extends AppCompatActivity {
             double servingSize = Double.parseDouble(servingSizeStr);
             double servingQuantity = Double.parseDouble(servingQuantityStr);
 
-            if (servingSize <= 0) {
-                editServingSize.setError("Serving size must be greater than 0!");
+            if (servingSize <= 0 || servingSize > 1000) {
+                editServingSize.setError("Serving size must be greater than 0 and less than or equal to 1000 grams!");
                 return false;
             }
             if (servingQuantity <= 0) {

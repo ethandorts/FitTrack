@@ -70,7 +70,7 @@ public class MealsScrollerFragment extends Fragment {
                             .setQuery(query, FoodModel.class)
                             .build();
 
-            mealsAdapter = new NutritionListAdapter(options, getContext());
+            mealsAdapter = new NutritionListAdapter(options, getContext(), selectedDateViewModel.getSelectedDate().getValue().toString());
             mealsRecyclerView.setAdapter(mealsAdapter);
             mealsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             mealsAdapter.startListening();

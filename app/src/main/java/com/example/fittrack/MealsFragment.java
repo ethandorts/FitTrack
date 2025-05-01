@@ -85,9 +85,9 @@ public class MealsFragment extends Fragment {
                         .setQuery(dinnerQuery, FoodModel.class)
                         .build();
 
-        breakfastAdapter = new NutritionListAdapter(breakfastOptions, getContext());
-        lunchAdapter = new NutritionListAdapter(lunchOptions, getContext());
-        dinnerAdapter = new NutritionListAdapter(dinnerOptions, getContext());
+        breakfastAdapter = new NutritionListAdapter(breakfastOptions, getContext(), stringDate);
+        lunchAdapter = new NutritionListAdapter(lunchOptions, getContext(), stringDate);
+        dinnerAdapter = new NutritionListAdapter(dinnerOptions, getContext(), stringDate);
 //        breakfastRecycler.setAdapter(breakfastAdapter);
 //        breakfastRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 //        lunchRecycler.setAdapter(lunchAdapter);

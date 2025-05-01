@@ -70,7 +70,7 @@ public class GoalProgressReportActivity extends AppCompatActivity {
     private TextView txtTotalProgress, txtBestPace, txtDaysRemaining, txtProgressNumber, txtAIAdvice;
     private ActivitiesRecyclerViewAdapter activitiesAdapter;
     private RecyclerView recyclerGoalEfforts;
-    private ProgressBar aiProgressBar, chartProgressBar;
+    private ProgressBar aiProgressBar;
     private Cartesian cartesian;
     private AnyChartView progressLine;
     private String lastMessage;
@@ -95,7 +95,6 @@ public class GoalProgressReportActivity extends AppCompatActivity {
 
         recyclerGoalEfforts = findViewById(R.id.recyclerGoalEfforts);
         aiProgressBar = findViewById(R.id.aiGoalAdvice);
-        chartProgressBar = findViewById(R.id.progressBarChart);
 
         progressLine = findViewById(R.id.progressLineChart);
         APIlib.getInstance().setActiveAnyChartView(progressLine);
@@ -136,145 +135,28 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                 txtTarget.setText(String.format("\uD83C\uDFAF Target: %.2f KM", targetDistance / 1000));
                 txtDeadline.setText("⏳ Deadline: " + ConversionUtil.AltTimestamptoString(endDate));
 
-
                 if(goalType.equals("Time")) {
-                    Query timeQuery = db.collection("Activities")
-                            .whereEqualTo("UserID", UserID)
-                            .whereEqualTo("type", activityType)
-                            .whereGreaterThanOrEqualTo("date", startDate)
-                            .whereLessThanOrEqualTo("date", endDate)
-                            .orderBy("date", Query.Direction.DESCENDING);
-
-                    timeQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot querySnapshot) {
-                            ArrayList<ActivityModel> activitiesList = new ArrayList<>();
-                            System.out.println("Queries: " + querySnapshot.size());
-                            for(DocumentSnapshot doc : querySnapshot) {
-                                if(Double.parseDouble((String) doc.get("distance")) > targetDistance) {
-                                    String activityID = (String) doc.get("ActivityID");
-                                    String type = (String) doc.get("type");
-                                    Timestamp date = (Timestamp) doc.get("date");
-                                    String pace = (String) doc.get("pace");
-                                    String distance = (String) doc.get("distance");
-                                    List<Long> splits = (List<Long>) doc.get("splits");
-                                    List<Object> activityCoordinates = (List<Object>) doc.get("activityCoordinates");
-                                    double time = doc.getDouble("time") != null ? doc.getDouble("time") : 0.0;
-
-                                    ActivityModel model = new ActivityModel(type, null, date, String.valueOf(distance), time, pace, UserID, null, activityCoordinates, activityID, splits);
-                                    activitiesList.add(model);
-                                }
-                            }
-                            ManualActivityRecyclerAdapter adapter = new ManualActivityRecyclerAdapter(GoalProgressReportActivity.this, activitiesList);
-                            recyclerGoalEfforts.setAdapter(adapter);
-                            recyclerGoalEfforts.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                            recyclerGoalEfforts.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.HORIZONTAL));
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            System.out.println("Error: " + e.getMessage());
-                        }
-                    });
+                    retrieveTimeGoal(targetDistance, targetTime, activityType, startDate, endDate);
                 } else if (goalType.equals("Distance")) {
-                    Query query = db.collection("Activities")
-                            .whereEqualTo("UserID", UserID)
-                            .whereEqualTo("type", activityType)
-                            .whereGreaterThanOrEqualTo("date", startDate)
-                            .whereLessThanOrEqualTo("date", endDate)
-                            .orderBy("date", Query.Direction.DESCENDING);
-
-
-                    FirestoreRecyclerOptions<ActivityModel> options = new FirestoreRecyclerOptions.Builder<ActivityModel>()
-                            .setQuery(query, ActivityModel.class)
-                            .build();
-
-                    activitiesAdapter = new ActivitiesRecyclerViewAdapter(options, GoalProgressReportActivity.this);
-                    recyclerGoalEfforts.setAdapter(activitiesAdapter);
-
-                    LinearLayoutManager layout = new LinearLayoutManager(getApplicationContext());
-                    recyclerGoalEfforts.setLayoutManager(layout);
-                    recyclerGoalEfforts.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.HORIZONTAL));
-                    activitiesAdapter.startListening();
+                    retrieveDistanceGoal(activityType, startDate, endDate, targetDistance);
                 }
 
                 gamUtil.getActivityProgressData(UserID, activityType, startDate, endDate, new GamificationUtil.ProgressCallback() {
                     @Override
                     public void onCallback(ArrayList<ActivityModel> activities) {
-                        double totalDistance = 0;
-
                         if(goalType.equals("Distance")) {
-                            for(ActivityModel activity : activities) {
-                                totalDistance = totalDistance + Double.parseDouble(activity.getDistance());
-                            }
-                            txtTotalProgress.setText("Total Progress: " + String.format("%.2f", totalDistance / 1000) + " / " + String.format("%.2f", targetDistance / 1000) + " KM");
-                            txtBestPace.setVisibility(View.GONE);
-                            double totalDistanceKm = totalDistance / 1000;
-                            double targetDistanceKm = targetDistance / 1000;
-
-                            double percentage = (totalDistanceKm / targetDistanceKm) * 100;
-                            int progressPercentage = (int) Math.min(percentage, 100);
-                            txtProgressNumber.setText("Progress: " + progressPercentage + "%");
+                            showDistanceProgress(activities, targetDistance);
                         } else if(goalType.equals("Time")) {
-                            long bestTime = Long.MAX_VALUE;
-                            boolean qualifyActivities = false;
-                            for(ActivityModel activity : activities) {
-                                if (Double.parseDouble(activity.getDistance()) >= targetDistance) {
-                                    qualifyActivities = true;
-                                    List<Long> splits = activity.getSplits();
-                                    long splitTime = 0;
-                                    for (Long split : splits) {
-                                        splitTime = splitTime + split;
-                                    }
-                                    if (splitTime < bestTime) {
-                                        bestTime = splitTime;
-                                    }
-                                }
-                            }
-                            String formattedBestTime = longToTimeConversion(bestTime);
-                            txtTotalProgress.setText("Best Time: " + formattedBestTime);
 
-                            if (qualifyActivities == false) {
-                                txtTotalProgress.setText("No qualifying activities yet.");
-                                txtBestPace.setVisibility(View.GONE);
-                                txtProgressNumber.setVisibility(View.GONE);
-                            } else {
-                                txtBestPace.setVisibility(View.VISIBLE);
-                                txtProgressNumber.setVisibility(View.VISIBLE);
-                            }
-
-                            long target = targetTime * 1000L;
-                            long timeDifference = bestTime - target;
-                            String label;
-
-                            if (timeDifference <= 0) {
-                                label = "Faster by " + longToTimeConversion(Math.abs(timeDifference));
-                            } else {
-                                label = "Slower by " + longToTimeConversion(timeDifference);
-                            }
-                            txtBestPace.setText(label);
-
-                            double doubleTarget = Double.parseDouble(String.valueOf(target));
-                            double doubleBest = Double.parseDouble(String.valueOf(bestTime));
-                            double progress = doubleTarget / doubleBest * 100;
-                            String formattedProgress = String.valueOf((int) progress);
-                            if (progress > 100) {
-                                progress = 100;
-                            }
-                            txtProgressNumber.setText("Progress: " + formattedProgress + "%");
                         }
 
                         Timestamp now = Timestamp.now();
-
                         long millisNow = now.toDate().getTime();
                         long millisEnd = endDate.toDate().getTime();
-
                         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                         String formattedDate = sdf.format(new Date(millisEnd));
-
                         long diffInMillis = millisEnd - millisNow;
                         long daysRemaining = Math.max(diffInMillis / (1000 * 60 * 60 * 24), 0);
-
                         txtDaysRemaining.setText("Days Remaining: " + daysRemaining + " Days");
 
                         userUtil.retrieveFitnessLevel(UserID, new FirebaseDatabaseHelper.ChatUserCallback() {
@@ -284,103 +166,228 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                             }
                         });
 
-                        System.out.println(activities.toString());
                         if (activities.isEmpty()) {
                             txtTotalProgress.setText("No qualifying activities yet.");
                             txtBestPace.setVisibility(View.GONE);
                             txtProgressNumber.setVisibility(View.GONE);
-                            chartProgressBar.setVisibility(View.GONE);
-                            return;
-                        }
-
-                        System.out.println( "Activities :" + activities.size());
-
-                        if(goalType.equals("Distance")) {
-                            List<DataEntry> data = new ArrayList<>();
-                            List<String> xLabels = new ArrayList<>();
-                            double cummulativeDistance = 0;
-                            double maxDistanceReached = 0;
-
-                            Collections.sort(activities, Comparator.comparing(ActivityModel::getDate));
-
-                            for (ActivityModel activity : activities) {
-                                double distance = Double.parseDouble(activity.getDistance());
-                                cummulativeDistance += distance;
-
-                                String date = ConversionUtil.dateFormatter(activity.getDate());
-                                xLabels.add(date);
-                                data.add(new ValueDataEntry(date, cummulativeDistance / 1000));
-                                System.out.println(cummulativeDistance + "TotalDistance ");
-
-                                if (cummulativeDistance > maxDistanceReached) {
-                                    maxDistanceReached = cummulativeDistance;
-                                }
-                            }
-                            cartesian.data(data);
-                            double goalKm = targetDistance / 1000;
-                            double yAxisMax = Math.max(goalKm, maxDistanceReached / 1000);
-                            cartesian.yScale().maximum(yAxisMax);
-                            cartesian.legend().enabled(true);
-                            chartProgressBar.setVisibility(View.GONE);
-                            progressLine.setChart(cartesian);
-                        } else if (goalType.equals("Time")) {
-                            cartesian = AnyChart.column();
-                            progressLine.setChart(cartesian);
-                            cartesian.animation(true);
-                            cartesian.title("Top 5 Quickest Times");
-                            cartesian.yAxis(0).title("Time (mm:ss)");
-                            cartesian.xAxis(0).title("Date");
-
-                            List<ActivityModel> qualifyingActivities = new ArrayList<>();
-                            for (ActivityModel activity : activities) {
-                                if (Double.parseDouble(activity.getDistance()) >= targetDistance) {
-                                    qualifyingActivities.add(activity);
-                                }
-                            }
-
-                            Collections.sort(qualifyingActivities, new Comparator<ActivityModel>() {
-                                @Override
-                                public int compare(ActivityModel a, ActivityModel b) {
-                                    long timeA = 0;
-                                    for (Long split : a.getSplits()) {
-                                        timeA += split;
-                                    }
-
-                                    long timeB = 0;
-                                    for (Long split : b.getSplits()) {
-                                        timeB += split;
-                                    }
-                                    return Long.compare(timeA, timeB);
-                                }
-                            });
-
-                            List<ActivityModel> top5 = qualifyingActivities.subList(0, Math.min(5, qualifyingActivities.size()));
-
-                            List<DataEntry> data = new ArrayList<>();
-                            for (ActivityModel activity : top5) {
-                                long splitTime = activity.getSplits().stream().mapToLong(Long::longValue).sum();
-                                int timeInSeconds = (int) (splitTime / 1000);
-                                String date = ConversionUtil.dateFormatter(activity.getDate());
-                                data.add(new ValueDataEntry(date, timeInSeconds));
-                            }
-
-                            cartesian.data(data);
-
-                            cartesian.tooltip()
-                                    .format("function() { var m = Math.floor(this.value / 60); var s = ('0' + (this.value % 60)).slice(-2); return 'Time: ' + m + ':' + s; }");
-
-                            cartesian.yAxis(0).labels()
-                                    .format("function() { return Math.floor(this.value / 60) + ':' + ('0' + (this.value % 60)).slice(-2); }");
-
-                            cartesian.yScale().minimum(0);
-                            cartesian.legend().enabled(false);
-
-                            progressLine.setChart(cartesian);
                         }
                     }
                 });
             }
         });
+    }
+
+    private void retrieveTimeGoal(double targetDistance, int targetTime, String activityType, Timestamp startDate, Timestamp endDate) {
+        Query timeQuery = db.collection("Activities")
+                .whereEqualTo("UserID", UserID)
+                .whereEqualTo("type", activityType)
+                .whereGreaterThanOrEqualTo("date", startDate)
+                .whereLessThanOrEqualTo("date", endDate)
+                .orderBy("date", Query.Direction.DESCENDING);
+
+        timeQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot querySnapshot) {
+                ArrayList<ActivityModel> qualifyingActivities = new ArrayList<>();
+                List<ActivityTimeRecord> allQualifyingTimes = new ArrayList<>();
+                double requiredDistanceMeters = targetDistance;
+
+                for (DocumentSnapshot document : querySnapshot) {
+                    try {
+                        String distance = (String) document.get("distance");
+                        double distanceValue = Double.parseDouble(distance);
+
+                        if (distanceValue >= requiredDistanceMeters) {
+                            String activityID = (String) document.get("ActivityID");
+                            String type = (String) document.get("type");
+                            Timestamp date = document.getTimestamp("date");
+                            String pace = (String) document.get("pace");
+                            List<Long> splits = (List<Long>) document.get("splits");
+                            List<Object> activityCoordinates = (List<Object>) document.get("activityCoordinates");
+                            double time = document.getDouble("time") != null ? document.getDouble("time") : 0.0;
+
+                            ActivityModel model = new ActivityModel(type, null, date, distance, time, pace, UserID, null, activityCoordinates, activityID, splits);
+                            qualifyingActivities.add(model);
+
+                            if (splits != null) {
+                                int requiredSplits = (int) (targetDistance / 1000);
+                                boolean isExactDistance = Math.abs(distanceValue - requiredDistanceMeters) < 1;
+
+                                if (isExactDistance && splits.size() == requiredSplits) {
+                                    long totalTime = 0;
+                                    for (Long split : splits) {
+                                        totalTime += split;
+                                    }
+                                    String label = ConversionUtil.dateFormatter(date);
+                                    allQualifyingTimes.add(new ActivityTimeRecord(totalTime, label, date));
+                                } else {
+                                    int completeSplitsAvailable = (int) (distanceValue / 1000);
+                                    int segmentsToCheck = Math.min(completeSplitsAvailable - requiredSplits + 1,
+                                            splits.size() - requiredSplits + 1);
+
+                                    for (int i = 0; i < segmentsToCheck; i++) {
+                                        long segmentTime = 0;
+                                        boolean validSegment = true;
+                                        for (int j = 0; j < requiredSplits; j++) {
+                                            if (i + j >= completeSplitsAvailable) {
+                                                validSegment = false;
+                                                break;
+                                            }
+                                            segmentTime += splits.get(i + j);
+                                        }
+
+                                        if (validSegment) {
+                                            String segmentLabel = ConversionUtil.dateFormatter(date);
+                                            allQualifyingTimes.add(new ActivityTimeRecord(
+                                                    segmentTime,
+                                                    segmentLabel,
+                                                    date
+                                            ));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Error parsing document: " + e.getMessage());
+                    }
+                }
+
+                Collections.sort(allQualifyingTimes, new Comparator<ActivityTimeRecord>() {
+                    @Override
+                    public int compare(ActivityTimeRecord a, ActivityTimeRecord b) {
+                        return Long.compare(a.time, b.time);
+                    }
+                });
+
+                List<ActivityTimeRecord> top5Times = allQualifyingTimes.subList(
+                        0, Math.min(5, allQualifyingTimes.size()));
+
+                if (!top5Times.isEmpty()) {
+                    ActivityTimeRecord bestTimeRecord = top5Times.get(0);
+                    txtTotalProgress.setText("Best Time: " + longToTimeConversion(bestTimeRecord.time) + " on " + bestTimeRecord.label);
+
+                    long timeDifference = bestTimeRecord.time - (targetTime * 1000L);
+                    String differenceLabel = timeDifference <= 0 ?
+                            "Faster by " + longToTimeConversion(Math.abs(timeDifference)) :
+                            "Slower by " + longToTimeConversion(timeDifference);
+                    txtBestPace.setText(differenceLabel);
+
+                    double progress = ((double)(targetTime * 1000L) / bestTimeRecord.time) * 100;
+                    txtProgressNumber.setText("Progress: " + (int)Math.min(progress, 100) + "%");
+                } else {
+                    txtTotalProgress.setText("No qualifying activities yet.");
+                    txtBestPace.setVisibility(View.GONE);
+                    txtProgressNumber.setVisibility(View.GONE);
+                }
+                ManualActivityRecyclerAdapter adapter = new ManualActivityRecyclerAdapter(
+                        GoalProgressReportActivity.this, qualifyingActivities);
+                recyclerGoalEfforts.setAdapter(adapter);
+                recyclerGoalEfforts.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                recyclerGoalEfforts.addItemDecoration(new DividerItemDecoration(
+                        getApplicationContext(), DividerItemDecoration.HORIZONTAL));
+
+                createTimeChart(top5Times);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+        });
+    }
+
+    private void createTimeChart(List<ActivityTimeRecord> top5Times) {
+        cartesian = AnyChart.column();
+        progressLine.setChart(cartesian);
+        cartesian.animation(true);
+        cartesian.title("Top 5 Quickest Times");
+        cartesian.yAxis(0).title("Time (mm:ss)");
+        cartesian.xAxis(0).title("Date");
+
+        List<DataEntry> data = new ArrayList<>();
+        for (ActivityTimeRecord record : top5Times) {
+            int timeInSeconds = (int) (record.time / 1000);
+            data.add(new ValueDataEntry(record.label, timeInSeconds));
+        }
+
+        cartesian.data(data);
+        cartesian.tooltip()
+                .format("function() { var m = Math.floor(this.value / 60); " + "var s = ('0' + (this.value % 60)).slice(-2); " + "return 'Time: ' + m + ':' + s; }");
+
+        cartesian.yAxis(0).labels()
+                .format("function() { return Math.floor(this.value / 60) + ':' + " + "('0' + (this.value % 60)).slice(-2); }");
+
+        cartesian.yScale().minimum(0);
+        cartesian.legend().enabled(false);
+        progressLine.setChart(cartesian);
+    }
+
+    private void retrieveDistanceGoal(String activityType, Timestamp startDate, Timestamp endDate, double targetDistance) {
+        Query query = db.collection("Activities")
+                .whereEqualTo("UserID", UserID)
+                .whereEqualTo("type", activityType)
+                .whereGreaterThanOrEqualTo("date", startDate)
+                .whereLessThanOrEqualTo("date", endDate)
+                .orderBy("date", Query.Direction.DESCENDING);
+
+        FirestoreRecyclerOptions<ActivityModel> options = new FirestoreRecyclerOptions.Builder<ActivityModel>()
+                .setQuery(query, ActivityModel.class)
+                .build();
+
+        activitiesAdapter = new ActivitiesRecyclerViewAdapter(options, GoalProgressReportActivity.this);
+        recyclerGoalEfforts.setAdapter(activitiesAdapter);
+
+        LinearLayoutManager layout = new LinearLayoutManager(getApplicationContext());
+        recyclerGoalEfforts.setLayoutManager(layout);
+        recyclerGoalEfforts.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.HORIZONTAL));
+        activitiesAdapter.startListening();
+    }
+
+    private void showDistanceProgress(ArrayList<ActivityModel> activities, double targetDistance) {
+        double totalDistance = 0;
+        for(ActivityModel activity : activities) {
+            totalDistance = totalDistance + Double.parseDouble(activity.getDistance());
+        }
+        txtTotalProgress.setText("Total Progress: " + String.format("%.2f", totalDistance / 1000) + " / " + String.format("%.2f", targetDistance / 1000) + " KM");
+        txtBestPace.setVisibility(View.GONE);
+        double totalDistanceKm = totalDistance / 1000;
+        double targetDistanceKm = targetDistance / 1000;
+
+        double percentage = (totalDistanceKm / targetDistanceKm) * 100;
+        int progressPercentage = (int) Math.min(percentage, 100);
+        txtProgressNumber.setText("Progress: " + progressPercentage + "%");
+
+        createDistanceChart(activities, targetDistance);
+    }
+
+    private void createDistanceChart(ArrayList<ActivityModel> activities, double targetDistance) {
+        List<DataEntry> data = new ArrayList<>();
+        List<String> xLabels = new ArrayList<>();
+        double cumulativeDistance = 0;
+        double maxDistanceReached = 0;
+
+        Collections.sort(activities, Comparator.comparing(ActivityModel::getDate));
+
+        for (ActivityModel activity : activities) {
+            double distance = Double.parseDouble(activity.getDistance());
+            cumulativeDistance += distance;
+
+            String date = ConversionUtil.dateFormatter(activity.getDate());
+            xLabels.add(date);
+            data.add(new ValueDataEntry(date, cumulativeDistance / 1000));
+
+            if (cumulativeDistance > maxDistanceReached) {
+                maxDistanceReached = cumulativeDistance;
+            }
+        }
+
+        cartesian.data(data);
+        double goalKm = targetDistance / 1000;
+        double yAxisMax = Math.max(goalKm, maxDistanceReached / 1000);
+        cartesian.yScale().maximum(yAxisMax);
+        cartesian.legend().enabled(true);
+        progressLine.setChart(cartesian);
     }
 
     public void GetFitnessAdvice(String fitnessLevel, String goalDescription, String endDate, ArrayList<ActivityModel> activitiesInfo) {
@@ -414,16 +421,6 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                 "6. Ensure advice is specific, actionable, and personalized based on my previous performance data.\n\n" +
                 "Be highly detailed, structured, critical but encouraging, and prioritize practical, realistic improvements." +
                 " In your response, can you remove all unnecessary characters like ### and *";
-
-
-
-//        String question = "You are an AI Fitness Coach. Based on the following information I have provided of activities I have completed: \n" +
-//                activitiesInfo.toString() +
-//                "My fitness level type is: " + fitnessLevel +
-//                ". Please suggest ways in which such as a training plan or technique to achieve my fitness goal which is " +
-//                goalDescription + ", before the date of " + endDate +
-//                ". Please provide me a plan from today to the date provided here: " + endDate;
-
 
         try {
             JSONObject aiDescription = new JSONObject();
@@ -466,9 +463,6 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                             txtAIAdvice.setText(cleanAIResponse(message));
                             System.out.println(message);
                             lastMessage = message;
-
-//                            editMessage.setVisibility(View.VISIBLE);
-//                            btnSendRequest.setVisibility(View.VISIBLE);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -512,5 +506,4 @@ public class GoalProgressReportActivity extends AppCompatActivity {
             activitiesAdapter.stopListening();
         }
     }
-
 }
