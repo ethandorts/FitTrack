@@ -332,20 +332,20 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
         Map<String, Object> data = new HashMap<>();
         data.put("userId", UserID);
 
-//        function.getHttpsCallable("recalculateStatsOnCall")
-//                .call(data)
-//                .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
-//                    @Override
-//                    public void onSuccess(HttpsCallableResult result) {
-//                        Log.d("Firebase Starting Function", "Stats Updated on App Start " + result.getData());
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(Exception e) {
-//                        Log.e("Firebase Starting Function", "Failed to invoke function");
-//                    }
-//                });
+        function.getHttpsCallable("recalculateStatsOnCall")
+                .call(data)
+                .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
+                    @Override
+                    public void onSuccess(HttpsCallableResult result) {
+                        Log.d("Firebase Starting Function", "Stats Updated on App Start " + result.getData());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.e("Firebase Starting Function", "Failed to invoke function");
+                    }
+                });
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {

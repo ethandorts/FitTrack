@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -55,6 +56,7 @@ public class SettingsActivity extends AppCompatActivity {
         MenuOptionsRecyclerAdapter adapter = new MenuOptionsRecyclerAdapter(this, menuOptions);
         recyclerMenu.setAdapter(adapter);
         recyclerMenu.setLayoutManager(new LinearLayoutManager(this));
+        recyclerMenu.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
 
 //        Button btnGoals = findViewById(R.id.btnGoals);
 //        Button btnCalendar = findViewById(R.id.btnCalendar);

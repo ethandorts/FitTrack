@@ -146,8 +146,6 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                     public void onCallback(ArrayList<ActivityModel> activities) {
                         if(goalType.equals("Distance")) {
                             showDistanceProgress(activities, targetDistance);
-                        } else if(goalType.equals("Time")) {
-
                         }
 
                         Timestamp now = Timestamp.now();
@@ -158,6 +156,7 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                         long diffInMillis = millisEnd - millisNow;
                         long daysRemaining = Math.max(diffInMillis / (1000 * 60 * 60 * 24), 0);
                         txtDaysRemaining.setText("Days Remaining: " + daysRemaining + " Days");
+
 
                         userUtil.retrieveFitnessLevel(UserID, new FirebaseDatabaseHelper.ChatUserCallback() {
                             @Override
@@ -256,7 +255,7 @@ public class GoalProgressReportActivity extends AppCompatActivity {
                 Collections.sort(allQualifyingTimes, new Comparator<ActivityTimeRecord>() {
                     @Override
                     public int compare(ActivityTimeRecord a, ActivityTimeRecord b) {
-                        return Long.compare(a.time, b.time);
+                        return Long.compare(a.getTime(), b.getTime());
                     }
                 });
 
@@ -265,15 +264,15 @@ public class GoalProgressReportActivity extends AppCompatActivity {
 
                 if (!top5Times.isEmpty()) {
                     ActivityTimeRecord bestTimeRecord = top5Times.get(0);
-                    txtTotalProgress.setText("Best Time: " + longToTimeConversion(bestTimeRecord.time) + " on " + bestTimeRecord.label);
+                    txtTotalProgress.setText("Best Time: " + longToTimeConversion(bestTimeRecord.getTime()) + " on " + bestTimeRecord.getLabel());
 
-                    long timeDifference = bestTimeRecord.time - (targetTime * 1000L);
+                    long timeDifference = bestTimeRecord.getTime() - (targetTime * 1000L);
                     String differenceLabel = timeDifference <= 0 ?
                             "Faster by " + longToTimeConversion(Math.abs(timeDifference)) :
                             "Slower by " + longToTimeConversion(timeDifference);
                     txtBestPace.setText(differenceLabel);
 
-                    double progress = ((double)(targetTime * 1000L) / bestTimeRecord.time) * 100;
+                    double progress = ((double)(targetTime * 1000L) / bestTimeRecord.getTime()) * 100;
                     txtProgressNumber.setText("Progress: " + (int)Math.min(progress, 100) + "%");
                 } else {
                     txtTotalProgress.setText("No qualifying activities yet.");
@@ -307,8 +306,8 @@ public class GoalProgressReportActivity extends AppCompatActivity {
 
         List<DataEntry> data = new ArrayList<>();
         for (ActivityTimeRecord record : top5Times) {
-            int timeInSeconds = (int) (record.time / 1000);
-            data.add(new ValueDataEntry(record.label, timeInSeconds));
+            int timeInSeconds = (int) (record.getTime() / 1000);
+            data.add(new ValueDataEntry(record.getLabel(), timeInSeconds));
         }
 
         cartesian.data(data);
@@ -382,7 +381,7 @@ public class GoalProgressReportActivity extends AppCompatActivity {
             }
         }
 
-        cartesian.data(data);
+        cartesian.line(data).name("Distance");
         double goalKm = targetDistance / 1000;
         double yAxisMax = Math.max(goalKm, maxDistanceReached / 1000);
         cartesian.yScale().maximum(yAxisMax);

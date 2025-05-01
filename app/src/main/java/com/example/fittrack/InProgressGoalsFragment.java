@@ -25,6 +25,10 @@ public class InProgressGoalsFragment extends Fragment {
     private GoalsRecyclerViewAdapter goalsAdapter;
     private String status;
 
+    public InProgressGoalsFragment() {
+
+    }
+
     public InProgressGoalsFragment(String status) {
         this.status = status;
     }

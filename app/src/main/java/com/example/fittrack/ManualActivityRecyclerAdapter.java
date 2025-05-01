@@ -67,6 +67,16 @@ public class ManualActivityRecyclerAdapter extends RecyclerView.Adapter<ManualAc
                 holder.activityUser.setText(Chatname);
             }
         });
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, OverviewFitnessStats.class);
+                intent.putExtra("ActivityID", activity.getActivityID());
+                context.startActivity(intent);
+            }
+        });
+
         holder.activityMapContainer.onCreate(null);
         holder.activityMapContainer.onResume();
         holder.activityMapContainer.getMapAsync(new OnMapReadyCallback() {
@@ -99,6 +109,8 @@ public class ManualActivityRecyclerAdapter extends RecyclerView.Adapter<ManualAc
                 }
             }
         });
+
+
     }
 
     @Override
@@ -134,12 +146,6 @@ public class ManualActivityRecyclerAdapter extends RecyclerView.Adapter<ManualAc
                         Log.e("No profile picture found", "No profile picture found.");
                     }
                 }
-            });
-
-            itemView.setOnClickListener(v -> {
-                Intent intent = new Intent(context, OverviewFitnessStats.class);
-                intent.putExtra("ActivityID", String.valueOf(itemView.getTag()));
-                context.startActivity(intent);
             });
         }
     }

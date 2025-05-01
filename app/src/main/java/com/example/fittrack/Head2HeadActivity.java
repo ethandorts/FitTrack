@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
@@ -76,16 +77,22 @@ public class Head2HeadActivity extends AppCompatActivity {
 
         retrieveUsersInGroup(groupId);
 
-        spinnerUser.setOnItemClickListener((parent, view, position, id) -> {
-            selectedOpponentId = userIds.get(position);
-            clearStatsUI();
-            fetchAndCompareStats();
-        });
-
-        timeFilterGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            if (selectedOpponentId != null) {
+        spinnerUser.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedOpponentId = userIds.get(position);
                 clearStatsUI();
                 fetchAndCompareStats();
+            }
+        });
+
+        timeFilterGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (selectedOpponentId != null) {
+                    clearStatsUI();
+                    fetchAndCompareStats();
+                }
             }
         });
     }
@@ -147,24 +154,41 @@ public class Head2HeadActivity extends AppCompatActivity {
 
         db.collection("Users").document(UserID).collection("Statistics").document(statsDoc)
                 .get()
-                .addOnSuccessListener(currentUserSnapshot -> {
-                    if (currentUserSnapshot.exists()) {
-                        db.collection("Users").document(selectedOpponentId).collection("Statistics").document(statsDoc)
-                                .get()
-                                .addOnSuccessListener(opponentSnapshot -> {
-                                    if (opponentSnapshot.exists()) {
-                                        updateStatsUI(currentUserSnapshot, opponentSnapshot);
-                                    } else {
-                                        Toast.makeText(this, "Opponent has no stats.", Toast.LENGTH_SHORT).show();
-                                    }
-                                })
-                                .addOnFailureListener(e -> Toast.makeText(this, "Failed to load opponent stats.", Toast.LENGTH_SHORT).show());
-                    } else {
-                        Toast.makeText(this, "You have no stats.", Toast.LENGTH_SHORT).show();
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot currentUserSnapshot) {
+                        if (currentUserSnapshot.exists()) {
+                            db.collection("Users").document(selectedOpponentId).collection("Statistics").document(statsDoc)
+                                    .get()
+                                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot opponentSnapshot) {
+                                            if (opponentSnapshot.exists()) {
+                                                updateStatsUI(currentUserSnapshot, opponentSnapshot);
+                                            } else {
+                                                Toast.makeText(Head2HeadActivity.this, "Opponent has no stats.", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(Head2HeadActivity.this, "Failed to load opponent stats.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        } else {
+                            Toast.makeText(Head2HeadActivity.this, "You have no stats.", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 })
-                .addOnFailureListener(e -> Toast.makeText(this, "Failed to load your stats.", Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(Head2HeadActivity.this, "Failed to load your stats.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
+
 
     private void updateStatsUI(DocumentSnapshot user1, DocumentSnapshot user2) {
         userUtil.retrieveProfilePicture(UserID + ".jpeg", new FirebaseDatabaseHelper.ProfilePictureCallback() {
