@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter Target Distance..."
-            android:inputType="number" />
+            android:inputType="numberDecimal" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
@@ -142,11 +142,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="32dp"
-        android:text="Create Time Goal"
         android:backgroundTint="@color/button_blue"
-        app:layout_constraintTop_toBottomOf="@id/inputLayoutActivityType"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="Create Time Goal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/inputLayoutActivityType"
+        app:layout_constraintVertical_bias="0.018" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

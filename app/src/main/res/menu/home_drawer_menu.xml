@@ -7,7 +7,7 @@
 
     <item
         android:id="@+id/nav_goals"
-        android:icon="@drawable/goals_image"
+        android:icon="@drawable/rounded_my_location_24"
         android:title="My Fitness Goals" />
 
     <item
@@ -22,7 +22,7 @@
 
     <item
         android:id="@+id/nav_ai_coach"
-        android:icon="@drawable/robot_ai"
+        android:icon="@drawable/outline_robot_2_24"
         android:title="AI Fitness Coach" />
 
     <item
@@ -37,10 +37,11 @@
 
     <item
         android:id="@+id/nav_nutrition"
-        android:icon="@drawable/nutrition"
+        android:icon="@drawable/baseline_fastfood_24"
         android:title="Nutrition" />
 
     <item
         android:id="@+id/nav_logout"
+        android:icon="@drawable/rounded_door_open_24"
         android:title="Logout" />
 </menu>

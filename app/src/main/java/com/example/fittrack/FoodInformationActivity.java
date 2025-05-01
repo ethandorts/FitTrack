@@ -2,6 +2,8 @@ package com.example.fittrack;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Html;
 import android.text.InputFilter;
 import android.view.View;
@@ -136,11 +138,15 @@ public class FoodInformationActivity extends AppCompatActivity {
                     foodUtil.saveFood(food, selectedDate);
                     editServingSize.setText("");
                     editServingQuantity.setText("");
-
-                    Intent intent = new Intent(FoodInformationActivity.this, NutritionTrackingOverview.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent(FoodInformationActivity.this, NutritionTrackingOverview.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            finish();
+                        }
+                    }, 2000);
                 }
             }
         });

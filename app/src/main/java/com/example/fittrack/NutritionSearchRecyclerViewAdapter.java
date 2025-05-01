@@ -2,6 +2,8 @@ package com.example.fittrack;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,9 +69,11 @@ public class NutritionSearchRecyclerViewAdapter extends RecyclerView.Adapter<Nut
                 foodUtil.saveFood(food, selectedDate);
                 Toast.makeText(view.getContext(), "Logged food successfully", Toast.LENGTH_SHORT).show();
 
-                Intent intent = new Intent(view.getContext(), NutritionTrackingOverview.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                view.getContext().startActivity(intent);
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    Intent intent = new Intent(view.getContext(), NutritionTrackingOverview.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    view.getContext().startActivity(intent);
+                }, 2000);
             }
         });
         holder.itemView.setOnClickListener(new View.OnClickListener() {

@@ -54,19 +54,21 @@ public class CreateMeetupDialogFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 Calendar calendar = Calendar.getInstance();
-                new DatePickerDialog(
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
                         getContext(),
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                                String selectedDate = String.format(Locale.getDefault(), "%02d/%02d/%02d", year, month + 1, day);
+                                String selectedDate = String.format(Locale.getDefault(), "%04d/%02d/%02d", year, month + 1, day);
                                 editDate.setText(selectedDate);
                             }
                         },
                         calendar.get(Calendar.YEAR),
                         calendar.get(Calendar.MONTH),
                         calendar.get(Calendar.DAY_OF_MONTH)
-                ).show();
+                );
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+                datePickerDialog.show();
             }
         });
 
@@ -103,13 +105,18 @@ public class CreateMeetupDialogFragment extends DialogFragment {
                 String title = editTitle.getText().toString();
                 String location = editLocation.getText().toString();
                 String description = editDescription.getText().toString();
-                if(!TextUtils.isEmpty(stringDate) && !TextUtils.isEmpty(stringTime)) {
-                    meetupDate = convertDate(stringDate, stringTime);
-                    System.out.println("Conversion");
-                } else {
+
+                if(TextUtils.isEmpty(stringDate) || TextUtils.isEmpty(stringTime)) {
                     editDate.setError("Date and Time is required!");
                     editDate.requestFocus();
-                    System.out.println("Validation error");
+                    return;
+                }
+
+                meetupDate = convertDate(stringDate, stringTime);
+                Date now = new Date();
+                if (meetupDate.toDate().before(now)) {
+                    editDate.setError("Meetup date and time must be in the future!");
+                    editDate.requestFocus();
                     return;
                 }
 
@@ -131,19 +138,13 @@ public class CreateMeetupDialogFragment extends DialogFragment {
                     return;
                 }
 
-                if (meetupDate.toDate().before(new Date())) {
-                    editDate.setError("Meetup date and time must be in the future!");
-                    editDate.requestFocus();
-                    return;
-                }
-
                 groupsUtil.createNewMeetup(GroupID,
                         UserID,
                         title,
                         meetupDate,
                         location,
                         description
-                        );
+                );
                 dismiss();
             }
         });

@@ -44,8 +44,7 @@ public class ManualActivityFragment extends Fragment {
     private static final DecimalFormat TwoDecimalRounder = new DecimalFormat("0.00");
     private String activityType;
 
-    public ManualActivityFragment() {
-    }
+    public ManualActivityFragment() {}
 
     @Nullable
     @Override
@@ -66,9 +65,9 @@ public class ManualActivityFragment extends Fragment {
         editDate.setShowSoftInputOnFocus(false);
         editDate.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view1) {
                 final Calendar calendar = Calendar.getInstance();
-                new DatePickerDialog(
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
                         getContext(),
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
@@ -84,7 +83,6 @@ public class ManualActivityFragment extends Fragment {
                                             public void onTimeSet(android.widget.TimePicker timePicker, int hourOfDay, int minute) {
                                                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                                                 calendar.set(Calendar.MINUTE, minute);
-
                                                 SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
                                                 editDate.setText(dateTimeFormat.format(calendar.getTime()));
                                             }
@@ -98,16 +96,14 @@ public class ManualActivityFragment extends Fragment {
                         calendar.get(Calendar.YEAR),
                         calendar.get(Calendar.MONTH),
                         calendar.get(Calendar.DAY_OF_MONTH)
-                ).show();
+                );
+                datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+                datePickerDialog.show();
             }
         });
 
         final String[] activityTypes = {"Running", "Walking", "Cycling"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                requireContext(),
-                android.R.layout.simple_dropdown_item_1line,
-                activityTypes
-        );
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, activityTypes);
         spinnerManual.setAdapter(adapter);
         spinnerManual.setText("Running", false);
         activityType = "Running";
@@ -115,7 +111,7 @@ public class ManualActivityFragment extends Fragment {
         spinnerManual.setShowSoftInputOnFocus(false);
         spinnerManual.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 spinnerManual.showDropDown();
             }
         });
@@ -129,33 +125,39 @@ public class ManualActivityFragment extends Fragment {
 
         btnSaveActivity.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 String stringDistance = editDistance.getText().toString().trim();
                 String stringTime = editTime.getText().toString().trim();
                 String stringDate = editDate.getText().toString().trim();
 
                 if (!isValidDistance(stringDistance)) {
-                    Toast.makeText(getContext(), "Invalid distance was entered!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Please enter a valid distance greater than 0.", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if (!isValidTime(stringTime)) {
-                    Toast.makeText(getContext(), "Invalid time format. Use HH:mm:ss", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Time must be in format HH:mm:ss and greater than 00:00:00.", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if (!isValidDate(stringDate)) {
-                    Toast.makeText(getContext(), "Invalid date was entered!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Enter a valid past date (not before year 2000).", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if (activityType == null) {
+                if (activityType == null || activityType.trim().isEmpty()) {
                     Toast.makeText(getContext(), "Please select an activity type.", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 int totalTime = ConversionUtil.convertTimeToSeconds(stringTime);
                 double distance = Double.parseDouble(stringDistance);
+                int userWeight = getUserWeight();
+
+                if (!isValidWeight(userWeight)) {
+                    Toast.makeText(getContext(), "Invalid or missing weight. Please update your profile.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
                 Date today = new Date();
@@ -171,7 +173,6 @@ public class ManualActivityFragment extends Fragment {
                 }
 
                 CaloriesCalculator caloriesCalculator = new CaloriesCalculator();
-
                 String activityID = DocumentIDGenerator.GenerateActivityID();
 
                 Map<String, Object> data = new HashMap<>();
@@ -187,7 +188,7 @@ public class ManualActivityFragment extends Fragment {
                         totalTime,
                         calculateAveragePace(stringDistance, totalTime),
                         activityType,
-                        getUserWeight())
+                        userWeight)
                 );
 
                 db.collection("Activities")
@@ -216,7 +217,15 @@ public class ManualActivityFragment extends Fragment {
     }
 
     private boolean isValidDistance(String distance) {
-        return !distance.isEmpty() && Pattern.matches("\\d+(\\.\\d{1,2})?", distance);
+        if (distance.isEmpty() || !Pattern.matches("\\d+(\\.\\d{1,2})?", distance)) {
+            return false;
+        }
+        try {
+            double d = Double.parseDouble(distance);
+            return d > 0 && d <= 1000;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     private boolean isValidTime(String time) {
@@ -229,8 +238,9 @@ public class ManualActivityFragment extends Fragment {
             int hours = Integer.parseInt(parts[0]);
             int minutes = Integer.parseInt(parts[1]);
             int seconds = Integer.parseInt(parts[2]);
+            int totalSeconds = hours * 3600 + minutes * 60 + seconds;
 
-            return hours >= 0 && minutes >= 0 && minutes < 60 && seconds >= 0 && seconds < 60;
+            return hours >= 0 && minutes >= 0 && minutes < 60 && seconds >= 0 && seconds < 60 && totalSeconds > 0;
         } catch (NumberFormatException e) {
             return false;
         }
@@ -241,10 +251,17 @@ public class ManualActivityFragment extends Fragment {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
             Date inputDate = dateFormat.parse(dateStr);
-            return inputDate != null && inputDate.before(new Date());
+            Date now = new Date();
+            Calendar minDate = Calendar.getInstance();
+            minDate.set(2000, Calendar.JANUARY, 1);
+            return inputDate != null && inputDate.before(now) && inputDate.after(minDate.getTime());
         } catch (ParseException e) {
             return false;
         }
+    }
+
+    private boolean isValidWeight(int weight) {
+        return weight > 30 && weight <= 300;
     }
 
     public static String calculateAveragePace(String distanceStr, int timeInSeconds) {

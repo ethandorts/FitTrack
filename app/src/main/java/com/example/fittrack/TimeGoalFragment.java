@@ -154,7 +154,12 @@ public class TimeGoalFragment extends Fragment {
         int minutes = Integer.parseInt(parts[1]);
         int seconds = Integer.parseInt(parts[2]);
 
-        return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59 && seconds >= 0 && seconds <= 59;
+        int totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
+        return hours >= 0 && hours <= 23 &&
+                minutes >= 0 && minutes <= 59 &&
+                seconds >= 0 && seconds <= 59 &&
+                totalSeconds > 0;
     }
 
     private int convertTimeToSeconds(String time) {

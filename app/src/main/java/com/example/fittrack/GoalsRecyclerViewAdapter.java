@@ -96,7 +96,7 @@ public class GoalsRecyclerViewAdapter extends FirestoreRecyclerAdapter<GoalModel
 
                                 if ("Distance".equalsIgnoreCase(goalType)) {
                                     newDescription = "Achieve a distance of " +
-                                            String.format("%.1f", model.getTargetDistance() / 1000.0) +
+                                            String.format("%.2f", model.getTargetDistance() / 1000.0) +
                                             " KM by " + formattedDate;
                                 } else if ("Time".equalsIgnoreCase(goalType)) {
                                     long totalSeconds = (long) model.getTargetTime();

@@ -1,6 +1,7 @@
 package com.example.fittrack;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -100,5 +101,13 @@ public class NutritionTrackingOverview extends AppCompatActivity {
                         }
                     }
                 }).attach();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(NutritionTrackingOverview.this, HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 }
