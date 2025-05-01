@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -50,7 +51,7 @@ public class BadgesEarnedChecker extends Worker {
         Set<String> combinedBadges = new HashSet<>();
 
         try {
-            DocumentSnapshot badgeDoc = com.google.android.gms.tasks.Tasks.await(badgeDocRef.get());
+            DocumentSnapshot badgeDoc = Tasks.await(badgeDocRef.get());
             if (badgeDoc.exists() && badgeDoc.contains("Badges")) {
                 existingBadges = (List<String>) badgeDoc.get("Badges");
                 if (existingBadges == null) {

@@ -85,6 +85,7 @@ import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -155,7 +156,6 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
                 workManager
                         .beginWith(oneTimeWorkRequest)
                         .then(checkGoalsRequest)
-                        .then(checkBadgesRequest)
                         .enqueue();
             }).start();
         }, 3000);
@@ -332,20 +332,20 @@ public class HomeActivity extends AppCompatActivity implements DataClient.OnData
         Map<String, Object> data = new HashMap<>();
         data.put("userId", UserID);
 
-        function.getHttpsCallable("recalculateStatsOnCall")
-                .call(data)
-                .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
-                    @Override
-                    public void onSuccess(HttpsCallableResult result) {
-                        Log.d("Firebase Starting Function", "Stats Updated on App Start " + result.getData());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(Exception e) {
-                        Log.e("Firebase Starting Function", "Failed to invoke function");
-                    }
-                });
+//        function.getHttpsCallable("recalculateStatsOnCall")
+//                .call(data)
+//                .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
+//                    @Override
+//                    public void onSuccess(HttpsCallableResult result) {
+//                        Log.d("Firebase Starting Function", "Stats Updated on App Start " + result.getData());
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(Exception e) {
+//                        Log.e("Firebase Starting Function", "Failed to invoke function");
+//                    }
+//                });
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
