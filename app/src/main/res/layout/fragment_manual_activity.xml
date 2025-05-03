@@ -74,7 +74,7 @@
                     android:id="@+id/editManualType"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
+                    android:inputType="none"
                     android:minHeight="56dp"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="14dp"

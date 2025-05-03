@@ -64,6 +64,7 @@ public class MembersRecyclerViewAdapter extends RecyclerView.Adapter<MembersRecy
                 if (PicturePath != null) {
                     Glide.with(context)
                             .load(PicturePath)
+                            .circleCrop()
                             .into(holder.UserImage);
                 } else {
                     holder.UserImage.setImageResource(R.drawable.profile);
@@ -79,7 +80,7 @@ public class MembersRecyclerViewAdapter extends RecyclerView.Adapter<MembersRecy
                 holder.AdminImage.setVisibility(View.VISIBLE);
                 holder.AdminImage.setImageResource(R.drawable.make_admin);
             } else {
-                holder.AdminImage.setVisibility(View.GONE); // normal users don't see non-admin members
+                holder.AdminImage.setVisibility(View.GONE);
             }
         }
 

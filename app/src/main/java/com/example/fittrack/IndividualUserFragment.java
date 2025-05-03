@@ -28,6 +28,10 @@ public class IndividualUserFragment extends Fragment {
         this.UserID = UserID;
     }
 
+    public IndividualUserFragment() {
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

@@ -63,7 +63,8 @@ public class GroupMeetupsFragment extends Fragment {
 
         Query query = db.collection("Groups")
                 .document(GroupID)
-                .collection("Meetups");
+                .collection("Meetups")
+                .orderBy("Date", Query.Direction.ASCENDING);
 
         FirestoreRecyclerOptions<MeetupModel> options =
                 new FirestoreRecyclerOptions.Builder<MeetupModel>()

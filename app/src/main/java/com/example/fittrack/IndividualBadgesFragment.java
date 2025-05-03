@@ -29,6 +29,9 @@ public class IndividualBadgesFragment extends Fragment {
     public IndividualBadgesFragment(String UserID) {
         this.UserID = UserID;
     }
+    public IndividualBadgesFragment() {
+
+    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

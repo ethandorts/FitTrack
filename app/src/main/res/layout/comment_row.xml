@@ -26,11 +26,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Ethan Doherty"
-                android:textSize="14sp"
+                android:textColor="#000000"
+                android:textSize="16sp"
                 android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/txtNutrientValueLabel"
@@ -38,11 +39,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Hello, how are you?"
-                android:textSize="12sp"
-                app:layout_constraintTop_toBottomOf="@id/txtNutrientNameLabel"
-                app:layout_constraintStart_toStartOf="parent"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/txtNutrientNameLabel" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

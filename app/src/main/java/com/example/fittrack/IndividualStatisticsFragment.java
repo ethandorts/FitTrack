@@ -45,6 +45,9 @@ public class IndividualStatisticsFragment extends Fragment {
     public IndividualStatisticsFragment(String UserID) {
         this.UserID = UserID;
     }
+    public IndividualStatisticsFragment() {
+
+    }
 
     @Nullable
     @Override

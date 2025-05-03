@@ -100,6 +100,7 @@ public class GroupsRecyclerViewAdapter extends FirestoreRecyclerAdapter<GroupMod
         });
         holder.GroupName.setText(group.getName());
         holder.GroupDescription.setText(group.getShortDescription());
+        holder.GroupImage.setImageResource(R.drawable.default_group);
         groupsDatabaseUtil.retrieveGroupProfileImage(group.getGroupID() + ".jpg", new GroupsDatabaseUtil.GroupPictureCallback() {
             @Override
             public void onCallback(Uri PicturePath) {

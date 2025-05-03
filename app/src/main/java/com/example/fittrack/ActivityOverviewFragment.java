@@ -222,8 +222,8 @@ public class ActivityOverviewFragment extends Fragment {
                 mapView.getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(@NonNull GoogleMap googleMap) {
-                        googleMap.getUiSettings().setScrollGesturesEnabled(false);
-                        googleMap.getUiSettings().setZoomGesturesEnabled(false);
+//                        googleMap.getUiSettings().setScrollGesturesEnabled(false);
+//                        googleMap.getUiSettings().setZoomGesturesEnabled(false);
                         List<Object> geoData = (List<Object>) data.get("activityCoordinates");
                         if (geoData != null) {
                             PolylineOptions polylineOptions = new PolylineOptions();

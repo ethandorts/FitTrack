@@ -107,17 +107,17 @@ public class SaveActivityDialog extends DialogFragment {
         Date today = new Date();
         String shortDate = dateFormat.format(today);
 
-            data = new HashMap<>();
-            data.put("distance", TwoDecimalRounder.format(distance));
-            data.put("time", time);
-            data.put("UserID", UserID);
-            data.put("date", Timestamp.now());
-            data.put("shortDate", shortDate);
-            data.put("pace", (calculateAveragePace(distance, time)));
-            data.put("type", type);
-            data.put("activityCoordinates", locations);
-            data.put("splits", splits);
-            data.put("caloriesBurned", caloriesCalculator.calculateCalories(time, (calculateAveragePace(distance, time)), type, getUserWeight()));
+        data = new HashMap<>();
+        data.put("distance", TwoDecimalRounder.format(distance));
+        data.put("time", time);
+        data.put("UserID", UserID);
+        data.put("date", Timestamp.now());
+        data.put("shortDate", shortDate);
+        data.put("pace", (calculateAveragePace(distance, time)));
+        data.put("type", type);
+        data.put("activityCoordinates", locations);
+        data.put("splits", splits);
+        data.put("caloriesBurned", caloriesCalculator.calculateCalories(time, (calculateAveragePace(distance, time)), type, getUserWeight()));
 
         new Thread(new Runnable() {
             @Override
@@ -141,50 +141,53 @@ public class SaveActivityDialog extends DialogFragment {
             }
         }).start();
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("Do you want to save your activity?")
-                    .setPositiveButton("Save Activity", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            saveActivity();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Do you want to save your activity?")
+                .setPositiveButton("Save Activity", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        saveActivity();
 
-                            Constraints networkConstraints = new Constraints.Builder()
-                                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                                    .build();
-                            OneTimeWorkRequest checkGoalsRequest = new OneTimeWorkRequest.Builder(GoalCompletedChecker.class).setInitialDelay(10, TimeUnit.SECONDS)
-                                    .setConstraints(networkConstraints)
-                                    .setInitialDelay(5, TimeUnit.SECONDS).
-                                    build();
-                            WorkManager workManager = WorkManager.getInstance(context);
-                            workManager
-                                    .beginWith(checkGoalsRequest)
-                                    .enqueue();
+                        Constraints networkConstraints = new Constraints.Builder()
+                                .setRequiredNetworkType(NetworkType.CONNECTED)
+                                .build();
+                        OneTimeWorkRequest checkGoalsRequest = new OneTimeWorkRequest.Builder(GoalCompletedChecker.class).setInitialDelay(10, TimeUnit.SECONDS)
+                                .setConstraints(networkConstraints)
+                                .setInitialDelay(5, TimeUnit.SECONDS).
+                                build();
+                        WorkManager workManager = WorkManager.getInstance(context);
+                        workManager
+                                .beginWith(checkGoalsRequest)
+                                .enqueue();
 
-                            if (listener != null) {
-                                listener.onSaveConfirmed();
-                            }
-
-                            Activity activity = getActivity();
-                            if (activity != null) {
-                                System.out.println("Activity: " + activity);
-                                Intent intent = new Intent(activity, HomeActivity.class);
-                                startActivity(intent);
-                            } else {
-                                Log.e("SaveActivityDialog", "Activity is null, cannot start HomeActivity");
-                            }
+                        if (listener != null) {
+                            listener.onSaveConfirmed();
                         }
-                    })
-                    .setNegativeButton("Resume Activity", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            if (listener != null) {
-                                listener.onSaveCancelled();
-                            }
-                            dialogInterface.dismiss();
+
+                        Activity activity = getActivity();
+                        if (activity != null) {
+                            System.out.println("Activity: " + activity);
+
+                            Intent intent = new Intent(activity, HomeActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            activity.finish();
+                        } else {
+                            Log.e("SaveActivityDialog", "Activity is null, cannot start HomeActivity");
                         }
-                    });
-            return builder.create();
-        }
+                    }
+                })
+                .setNegativeButton("Resume Activity", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (listener != null) {
+                            listener.onSaveCancelled();
+                        }
+                        dialogInterface.dismiss();
+                    }
+                });
+        return builder.create();
+    }
 
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
@@ -194,35 +197,35 @@ public class SaveActivityDialog extends DialogFragment {
         }
     }
 
-        private String calculateAveragePace (double distance, double time){
-            double speed = distance / time;
-            double kilometresPerHour = speed * 3.6;
-            double averagePace = Double.parseDouble(TwoDecimalRounder.format(60 / kilometresPerHour));
-            int seconds = (int) (averagePace % 1 * 60);
-            int minutes = (int) averagePace;
-            String formattedPace = String.format("%d:%02d", minutes, seconds);
+    private String calculateAveragePace(double distance, double time) {
+        double speed = distance / time;
+        double kilometresPerHour = speed * 3.6;
+        double averagePace = Double.parseDouble(TwoDecimalRounder.format(60 / kilometresPerHour));
+        int seconds = (int) (averagePace % 1 * 60);
+        int minutes = (int) averagePace;
+        String formattedPace = String.format("%d:%02d", minutes, seconds);
 
-            return formattedPace;
-        }
+        return formattedPace;
+    }
 
-//        private void getElevationAndSave() {
-//        if(locations.isEmpty()) {
-//            Log.e("No Activity Coordinates Found", "No activity coordinates found for SaveDialog");
-//            saveActivity();
-//            return;
-//        }
-//            elevationUtil.elevationRequest(locations, new ElevationUtil.ElevationCallback() {
-//                @Override
-//                public void onCallback(double[] elevationValues) {
-//                    List<Double> elevationList = new ArrayList<>();
-//                    for(double value : elevationValues) {
-//                        elevationList.add(value);
-//                    }
-//                    data.put("Elevation", elevationList);
-//                    saveActivity();
-//                }
-//            });
-//        }
+    //        private void getElevationAndSave() {
+    //        if(locations.isEmpty()) {
+    //            Log.e("No Activity Coordinates Found", "No activity coordinates found for SaveDialog");
+    //            saveActivity();
+    //            return;
+    //        }
+    //            elevationUtil.elevationRequest(locations, new ElevationUtil.ElevationCallback() {
+    //                @Override
+    //                public void onCallback(double[] elevationValues) {
+    //                    List<Double> elevationList = new ArrayList<>();
+    //                    for(double value : elevationValues) {
+    //                        elevationList.add(value);
+    //                    }
+    //                    data.put("Elevation", elevationList);
+    //                    saveActivity();
+    //                }
+    //            });
+    //        }
 
     private void saveActivity() {
         String ActivityID = DocumentIDGenerator.GenerateActivityID();
@@ -245,9 +248,9 @@ public class SaveActivityDialog extends DialogFragment {
                         Activity activity = getActivity();
                         if (activity != null) {
                             Intent intent = new Intent(activity, HomeActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
-                            activity.finish(); // Finish MainActivity so user can't return
+                            activity.finish();
                         } else {
                             Log.e("SaveActivityDialog", "Activity is null, cannot start HomeActivity");
                         }
@@ -262,14 +265,13 @@ public class SaveActivityDialog extends DialogFragment {
                 });
     }
 
-
     public void setListener(SaveActivityDialogListener listener) {
-            this.listener = listener;
-        }
+        this.listener = listener;
+    }
 
-        private int getUserWeight() {
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserPI", Context.MODE_PRIVATE);
-                long longWeight = sharedPreferences.getLong("Weight", 0);
-                return Math.toIntExact(longWeight);
-        }
+    private int getUserWeight() {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserPI", Context.MODE_PRIVATE);
+        long longWeight = sharedPreferences.getLong("Weight", 0);
+        return Math.toIntExact(longWeight);
+    }
 }

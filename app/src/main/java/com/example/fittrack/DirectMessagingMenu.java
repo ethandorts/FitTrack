@@ -56,7 +56,6 @@ public class DirectMessagingMenu extends AppCompatActivity implements RecyclerVi
     protected void onResume() {
         super.onResume();
 
-        // Refresh chat users when returning to this activity
         if (userViewModel != null) {
             userViewModel.refreshChatUsers();
         }
